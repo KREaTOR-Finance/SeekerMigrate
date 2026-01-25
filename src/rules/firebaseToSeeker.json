@@ -1,0 +1,98 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "RULE_AUTH_01",
+      "name": "Firebase Email to Solana Wallet",
+      "description": "Convert Firebase email/password authentication to Solana Mobile Wallet Adapter authentication",
+      "source": {
+        "method": "firebase_email",
+        "provider": "firebase"
+      },
+      "target": {
+        "ecosystem": "seeker",
+        "method": "wallet_signature",
+        "provider": "solana_mobile_wallet_adapter",
+        "description": "Replace Firebase email/password UI and logic with a Solana wallet connection button and signature request.",
+        "actions": [
+          "remove_package: firebase",
+          "remove_package: @react-native-firebase/app",
+          "remove_package: @react-native-firebase/auth",
+          "add_package: @solana-mobile/wallet-adapter-mobile-ui",
+          "add_package: @solana-mobile/mobile-wallet-adapter-protocol",
+          "add_package: @solana-mobile/mobile-wallet-adapter-protocol-web3js",
+          "add_package: @solana/web3.js",
+          "add_package: @solana/wallet-adapter-react",
+          "add_package: react-native-get-random-values",
+          "add_package: buffer",
+          "generate_template: wallet-connect-button",
+          "generate_template: auth-context",
+          "generate_template: polyfills",
+          "generate_template: wallet-provider"
+        ]
+      },
+      "behavioralNotes": [
+        "Session persistence moves from Firebase servers to the device's wallet app",
+        "User identity changes from email address to wallet public key",
+        "Password recovery is replaced by wallet recovery phrase (handled by wallet app)",
+        "Multi-device sync requires user to connect wallet on each device"
+      ],
+      "migrationSteps": [
+        "Install new Solana packages",
+        "Add crypto polyfills to app entry point",
+        "Wrap app with WalletProvider context",
+        "Replace login form with WalletConnectButton",
+        "Update user identification from email to publicKey",
+        "Remove Firebase initialization code",
+        "Update any Firebase-specific security rules in backend"
+      ]
+    },
+    {
+      "id": "RULE_AUTH_02",
+      "name": "Firebase Google OAuth to Solana Wallet",
+      "description": "Convert Firebase Google OAuth authentication to Solana Mobile Wallet Adapter authentication",
+      "source": {
+        "method": "google_oauth",
+        "provider": "firebase"
+      },
+      "target": {
+        "ecosystem": "seeker",
+        "method": "wallet_signature",
+        "provider": "solana_mobile_wallet_adapter",
+        "description": "Replace Firebase Google OAuth flow with Solana wallet connection.",
+        "actions": [
+          "remove_package: @react-native-google-signin/google-signin",
+          "remove_package: firebase",
+          "remove_package: @react-native-firebase/app",
+          "remove_package: @react-native-firebase/auth",
+          "add_package: @solana-mobile/wallet-adapter-mobile-ui",
+          "add_package: @solana-mobile/mobile-wallet-adapter-protocol",
+          "add_package: @solana-mobile/mobile-wallet-adapter-protocol-web3js",
+          "add_package: @solana/web3.js",
+          "add_package: @solana/wallet-adapter-react",
+          "generate_template: wallet-connect-button",
+          "generate_template: auth-context",
+          "generate_template: polyfills",
+          "generate_template: wallet-provider"
+        ]
+      },
+      "behavioralNotes": [
+        "Google profile data (name, email, photo) will no longer be available",
+        "User identity changes from Google account to wallet public key",
+        "OAuth token refresh is replaced by wallet connection state"
+      ],
+      "migrationSteps": [
+        "Install new Solana packages",
+        "Remove Google Sign-In configuration",
+        "Replace Google Sign-In button with WalletConnectButton",
+        "Update user profile handling to use on-chain data or local storage"
+      ]
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2024-01-01",
+    "author": "SeekerMigrate",
+    "targetPlatform": "react-native",
+    "supportedFrameworks": ["react-native", "expo"]
+  }
+}

@@ -1,0 +1,176 @@
+/**
+ * Project Analyzer
+ *
+ * Walks through the project directory, identifies relevant files,
+ * and orchestrates the analysis to produce UAM results.
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
+import { glob } from 'glob';
+import type { AnalysisResult, UAM_Auth, SourceLanguage, AnalysisError } from '../schema/uam.js';
+import { FirebaseAuthAnalyzer } from './firebase-auth-analyzer.js';
+import type { AnalyzerOptions, AnalyzableFile } from './types.js';
+import { DEFAULT_OPTIONS } from './types.js';
+
+/**
+ * Analyze a project directory for authentication patterns
+ */
+export async function analyzeProject(
+  options: AnalyzerOptions
+): Promise<AnalysisResult> {
+  const opts = {
+    ...DEFAULT_OPTIONS,
+    ...options,
+  };
+
+  const startTime = new Date();
+  const errors: AnalysisError[] = [];
+
+  // Find all analyzable files
+  const files = await findAnalyzableFiles(opts);
+
+  // Initialize analyzers
+  const firebaseAnalyzer = new FirebaseAuthAnalyzer({ verbose: opts.verbose });
+
+  // Analyze each file
+  const detectionResults = new Map<string, ReturnType<FirebaseAuthAnalyzer['analyzeCode']>>();
+  const languageMap = new Map<string, SourceLanguage>();
+
+  for (const file of files) {
+    try {
+      const code = await fs.promises.readFile(file.absolutePath, 'utf-8');
+      const result = firebaseAnalyzer.analyzeCode(code, file.absolutePath);
+      detectionResults.set(file.relativePath, result);
+      languageMap.set(file.relativePath, file.language);
+    } catch (error) {
+      errors.push({
+        file: file.relativePath,
+        message: error instanceof Error ? error.message : String(error),
+        type: 'file_read_error',
+      });
+    }
+  }
+
+  // Build UAM objects
+  const authFeatures: UAM_Auth[] = [];
+
+  // Check for JavaScript/TypeScript Firebase auth
+  const jsFiles = new Map(
+    [...detectionResults].filter(([path]) =>
+      path.endsWith('.js') || path.endsWith('.jsx')
+    )
+  );
+  const tsFiles = new Map(
+    [...detectionResults].filter(([path]) =>
+      path.endsWith('.ts') || path.endsWith('.tsx')
+    )
+  );
+
+  // Build UAM for JavaScript files
+  if (jsFiles.size > 0) {
+    const jsUAM = firebaseAnalyzer.buildUAM(jsFiles, 'javascript');
+    if (jsUAM) {
+      authFeatures.push(jsUAM);
+    }
+  }
+
+  // Build UAM for TypeScript files
+  if (tsFiles.size > 0) {
+    const tsUAM = firebaseAnalyzer.buildUAM(tsFiles, 'typescript');
+    if (tsUAM) {
+      // Merge with JS UAM if both exist
+      if (authFeatures.length > 0 && authFeatures[0].method === tsUAM.method) {
+        authFeatures[0].sourceFiles.push(...tsUAM.sourceFiles);
+        authFeatures[0].confidence = Math.max(
+          authFeatures[0].confidence,
+          tsUAM.confidence
+        );
+      } else {
+        authFeatures.push(tsUAM);
+      }
+    }
+  }
+
+  // Calculate summary
+  const patternsDetected = [...detectionResults.values()]
+    .reduce((sum, r) => sum + r.patterns.length, 0);
+
+  const primaryMethod = authFeatures.length > 0
+    ? authFeatures.reduce((best, current) =>
+        current.confidence > best.confidence ? current : best
+      ).method
+    : null;
+
+  return {
+    projectPath: opts.rootDir,
+    timestamp: startTime.toISOString(),
+    authFeatures,
+    errors: errors.length > 0 ? errors : undefined,
+    summary: {
+      filesScanned: files.length,
+      patternsDetected,
+      primaryMethod,
+    },
+  };
+}
+
+/**
+ * Find all analyzable files in the project
+ */
+async function findAnalyzableFiles(
+  options: Required<Omit<AnalyzerOptions, 'verbose'>> & { verbose: boolean }
+): Promise<AnalyzableFile[]> {
+  const { rootDir, extensions, excludeDirs } = options;
+
+  // Build glob pattern
+  const patterns = extensions.map((ext) => `**/*${ext}`);
+  const ignore = excludeDirs.map((dir) => `**/${dir}/**`);
+
+  const matchedFiles: string[] = [];
+
+  for (const pattern of patterns) {
+    const matches = await glob(pattern, {
+      cwd: rootDir,
+      ignore,
+      absolute: false,
+      nodir: true,
+    });
+    matchedFiles.push(...matches);
+  }
+
+  // Deduplicate and convert to AnalyzableFile
+  const uniqueFiles = [...new Set(matchedFiles)];
+
+  return uniqueFiles.map((relativePath) => ({
+    absolutePath: path.join(rootDir, relativePath),
+    relativePath,
+    language: getLanguage(relativePath),
+    extension: path.extname(relativePath),
+  }));
+}
+
+/**
+ * Determine the language of a file based on its extension
+ */
+function getLanguage(filePath: string): SourceLanguage {
+  const ext = path.extname(filePath).toLowerCase();
+
+  switch (ext) {
+    case '.ts':
+    case '.tsx':
+      return 'typescript';
+    case '.js':
+    case '.jsx':
+      return 'javascript';
+    case '.dart':
+      return 'dart';
+    case '.swift':
+      return 'swift';
+    case '.kt':
+    case '.kts':
+      return 'kotlin';
+    default:
+      return 'javascript';
+  }
+}
