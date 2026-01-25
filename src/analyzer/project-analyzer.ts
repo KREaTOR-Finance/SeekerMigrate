@@ -10,6 +10,7 @@ import * as path from 'path';
 import { glob } from 'glob';
 import type { AnalysisResult, UAM_Auth, SourceLanguage, AnalysisError } from '../schema/uam.js';
 import { FirebaseAuthAnalyzer } from './firebase-auth-analyzer.js';
+import { SwiftAuthAnalyzer } from './swift-auth-analyzer.js';
 import type { AnalyzerOptions, AnalyzableFile } from './types.js';
 import { DEFAULT_OPTIONS } from './types.js';
 
@@ -32,16 +33,24 @@ export async function analyzeProject(
 
   // Initialize analyzers
   const firebaseAnalyzer = new FirebaseAuthAnalyzer({ verbose: opts.verbose });
+  const swiftAnalyzer = new SwiftAuthAnalyzer({ verbose: opts.verbose });
 
   // Analyze each file
-  const detectionResults = new Map<string, ReturnType<FirebaseAuthAnalyzer['analyzeCode']>>();
+  const jstsDetectionResults = new Map<string, ReturnType<FirebaseAuthAnalyzer['analyzeCode']>>();
+  const swiftDetectionResults = new Map<string, ReturnType<SwiftAuthAnalyzer['analyzeCode']>>();
   const languageMap = new Map<string, SourceLanguage>();
 
   for (const file of files) {
     try {
       const code = await fs.promises.readFile(file.absolutePath, 'utf-8');
-      const result = firebaseAnalyzer.analyzeCode(code, file.absolutePath);
-      detectionResults.set(file.relativePath, result);
+
+      if (file.language === 'swift') {
+        const result = swiftAnalyzer.analyzeCode(code, file.absolutePath);
+        swiftDetectionResults.set(file.relativePath, result);
+      } else {
+        const result = firebaseAnalyzer.analyzeCode(code, file.absolutePath);
+        jstsDetectionResults.set(file.relativePath, result);
+      }
       languageMap.set(file.relativePath, file.language);
     } catch (error) {
       errors.push({
@@ -57,12 +66,12 @@ export async function analyzeProject(
 
   // Check for JavaScript/TypeScript Firebase auth
   const jsFiles = new Map(
-    [...detectionResults].filter(([path]) =>
+    [...jstsDetectionResults].filter(([path]) =>
       path.endsWith('.js') || path.endsWith('.jsx')
     )
   );
   const tsFiles = new Map(
-    [...detectionResults].filter(([path]) =>
+    [...jstsDetectionResults].filter(([path]) =>
       path.endsWith('.ts') || path.endsWith('.tsx')
     )
   );
@@ -92,9 +101,30 @@ export async function analyzeProject(
     }
   }
 
+  // Build UAM for Swift files
+  if (swiftDetectionResults.size > 0) {
+    const swiftUAM = swiftAnalyzer.buildUAM(swiftDetectionResults);
+    if (swiftUAM) {
+      // Merge with existing UAM if same method
+      const existingIndex = authFeatures.findIndex(f => f.method === swiftUAM.method);
+      if (existingIndex >= 0) {
+        authFeatures[existingIndex].sourceFiles.push(...swiftUAM.sourceFiles);
+        authFeatures[existingIndex].confidence = Math.max(
+          authFeatures[existingIndex].confidence,
+          swiftUAM.confidence
+        );
+      } else {
+        authFeatures.push(swiftUAM);
+      }
+    }
+  }
+
   // Calculate summary
-  const patternsDetected = [...detectionResults.values()]
+  const jstsPatterns = [...jstsDetectionResults.values()]
     .reduce((sum, r) => sum + r.patterns.length, 0);
+  const swiftPatterns = [...swiftDetectionResults.values()]
+    .reduce((sum, r) => sum + r.patterns.length, 0);
+  const patternsDetected = jstsPatterns + swiftPatterns;
 
   const primaryMethod = authFeatures.length > 0
     ? authFeatures.reduce((best, current) =>

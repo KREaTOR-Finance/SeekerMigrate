@@ -22,8 +22,8 @@ export interface AnalyzerOptions {
  * Default analyzer options
  */
 export const DEFAULT_OPTIONS: Required<Omit<AnalyzerOptions, 'rootDir'>> = {
-  extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  excludeDirs: ['node_modules', '.git', 'dist', 'build', '__tests__', 'coverage'],
+  extensions: ['.js', '.jsx', '.ts', '.tsx', '.swift'],
+  excludeDirs: ['node_modules', '.git', 'dist', 'build', '__tests__', 'coverage', 'Pods', 'DerivedData'],
   verbose: false,
 };
 
@@ -71,3 +71,25 @@ export const AUTH_UI_PATTERNS = {
   textInputs: ['email', 'password', 'username', 'login'],
   buttons: ['login', 'signin', 'sign in', 'submit', 'register', 'signup', 'sign up'],
 } as const;
+
+/**
+ * Swift/iOS Firebase import patterns
+ */
+export const SWIFT_FIREBASE_IMPORTS = [
+  'FirebaseAuth',
+  'FirebaseCore',
+  'Firebase',
+] as const;
+
+/**
+ * Swift Firebase auth patterns (method calls and types)
+ */
+export const SWIFT_FIREBASE_AUTH_PATTERNS = [
+  'Auth.auth()',
+  'signIn(withEmail:',
+  'createUser(withEmail:',
+  'signOut()',
+  'sendPasswordReset(withEmail:',
+  'addStateDidChangeListener',
+  'AuthStateDidChangeListenerHandle',
+] as const;
