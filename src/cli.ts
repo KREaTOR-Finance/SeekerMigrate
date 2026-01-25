@@ -17,7 +17,6 @@ import { fileURLToPath } from 'url';
 import { analyzeProject } from './analyzer/index.js';
 import { findMatchingRules, parseActions } from './rules/index.js';
 import { TemplateGenerator, ReportGenerator } from './generator/index.js';
-import type { UAM_Auth } from './schema/uam.js';
 
 // Get package.json for version
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

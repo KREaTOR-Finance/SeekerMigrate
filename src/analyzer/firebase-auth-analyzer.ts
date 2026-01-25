@@ -5,9 +5,9 @@
  * and JavaScript/TypeScript code using Babel for parsing.
  */
 
-import { parse } from '@babel/parser';
+import { parse, type ParserPlugin } from '@babel/parser';
 import traverse from '@babel/traverse';
-import type { Node, SourceLocation } from '@babel/types';
+import type { Node, SourceLocation, JSXOpeningElement } from '@babel/types';
 import type { UAM_Auth, DetectedPattern, SourceFile } from '../schema/uam.js';
 import {
   FIREBASE_AUTH_IMPORTS,
@@ -67,17 +67,20 @@ export class FirebaseAuthAnalyzer {
     const isTypeScript = filePath.endsWith('.ts') || filePath.endsWith('.tsx');
     const isJSX = filePath.endsWith('.jsx') || filePath.endsWith('.tsx');
 
+    const plugins: ParserPlugin[] = [
+      'classProperties',
+      'decorators-legacy',
+      'exportDefaultFrom',
+      'optionalChaining',
+      'nullishCoalescingOperator',
+    ];
+
+    if (isJSX) plugins.push('jsx');
+    if (isTypeScript) plugins.push('typescript');
+
     return parse(code, {
       sourceType: 'module',
-      plugins: [
-        isJSX ? 'jsx' : null,
-        isTypeScript ? 'typescript' : null,
-        'classProperties',
-        'decorators-legacy',
-        'exportDefaultFrom',
-        'optionalChaining',
-        'nullishCoalescingOperator',
-      ].filter(Boolean) as string[],
+      plugins,
       errorRecovery: true,
     });
   }
@@ -88,7 +91,7 @@ export class FirebaseAuthAnalyzer {
   private traverseAST(
     ast: Node,
     result: FileDetectionResult,
-    filePath: string
+    _filePath: string
   ): void {
     // Handle both default and named exports from @babel/traverse
     const traverseFn = typeof traverse === 'function'
@@ -234,15 +237,13 @@ export class FirebaseAuthAnalyzer {
   /**
    * Get JSX attributes as a record
    */
-  private getJSXAttributes(
-    element: { attributes: Array<{ type: string; name?: { name?: string }; value?: { value?: string; type?: string } }> }
-  ): Record<string, string> {
+  private getJSXAttributes(element: JSXOpeningElement): Record<string, string> {
     const attrs: Record<string, string> = {};
 
     for (const attr of element.attributes) {
       if (
         attr.type === 'JSXAttribute' &&
-        attr.name?.name &&
+        attr.name.type === 'JSXIdentifier' &&
         attr.value?.type === 'StringLiteral'
       ) {
         attrs[attr.name.name] = attr.value.value ?? '';

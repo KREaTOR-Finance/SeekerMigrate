@@ -17,16 +17,6 @@ import {
 } from './templates/index.js';
 
 /**
- * Default template context
- */
-const DEFAULT_CONTEXT: Omit<TemplateContext, 'projectName'> = {
-  useTypeScript: true,
-  generatedDate: new Date().toISOString(),
-  solanaCluster: 'devnet',
-  appName: 'MyApp',
-};
-
-/**
  * Template generator class
  */
 export class TemplateGenerator {
@@ -42,10 +32,11 @@ export class TemplateGenerator {
     };
 
     this.context = {
-      ...DEFAULT_CONTEXT,
       projectName: this.options.projectName,
       useTypeScript: this.options.useTypeScript,
       appName: this.options.projectName,
+      generatedDate: new Date().toISOString(),
+      solanaCluster: 'devnet',
     };
   }
 
