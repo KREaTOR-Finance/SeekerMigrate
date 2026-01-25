@@ -11,6 +11,7 @@ import { glob } from 'glob';
 import type { AnalysisResult, UAM_Auth, SourceLanguage, AnalysisError } from '../schema/uam.js';
 import { FirebaseAuthAnalyzer } from './firebase-auth-analyzer.js';
 import { SwiftAuthAnalyzer } from './swift-auth-analyzer.js';
+import { KotlinAuthAnalyzer } from './kotlin-auth-analyzer.js';
 import type { AnalyzerOptions, AnalyzableFile } from './types.js';
 import { DEFAULT_OPTIONS } from './types.js';
 
@@ -34,10 +35,12 @@ export async function analyzeProject(
   // Initialize analyzers
   const firebaseAnalyzer = new FirebaseAuthAnalyzer({ verbose: opts.verbose });
   const swiftAnalyzer = new SwiftAuthAnalyzer({ verbose: opts.verbose });
+  const kotlinAnalyzer = new KotlinAuthAnalyzer({ verbose: opts.verbose });
 
   // Analyze each file
   const jstsDetectionResults = new Map<string, ReturnType<FirebaseAuthAnalyzer['analyzeCode']>>();
   const swiftDetectionResults = new Map<string, ReturnType<SwiftAuthAnalyzer['analyzeCode']>>();
+  const kotlinDetectionResults = new Map<string, ReturnType<KotlinAuthAnalyzer['analyzeCode']>>();
   const languageMap = new Map<string, SourceLanguage>();
 
   for (const file of files) {
@@ -47,6 +50,9 @@ export async function analyzeProject(
       if (file.language === 'swift') {
         const result = swiftAnalyzer.analyzeCode(code, file.absolutePath);
         swiftDetectionResults.set(file.relativePath, result);
+      } else if (file.language === 'kotlin') {
+        const result = kotlinAnalyzer.analyzeCode(code, file.absolutePath);
+        kotlinDetectionResults.set(file.relativePath, result);
       } else {
         const result = firebaseAnalyzer.analyzeCode(code, file.absolutePath);
         jstsDetectionResults.set(file.relativePath, result);
@@ -119,12 +125,32 @@ export async function analyzeProject(
     }
   }
 
+  // Build UAM for Kotlin files
+  if (kotlinDetectionResults.size > 0) {
+    const kotlinUAM = kotlinAnalyzer.buildUAM(kotlinDetectionResults);
+    if (kotlinUAM) {
+      // Merge with existing UAM if same method
+      const existingIndex = authFeatures.findIndex(f => f.method === kotlinUAM.method);
+      if (existingIndex >= 0) {
+        authFeatures[existingIndex].sourceFiles.push(...kotlinUAM.sourceFiles);
+        authFeatures[existingIndex].confidence = Math.max(
+          authFeatures[existingIndex].confidence,
+          kotlinUAM.confidence
+        );
+      } else {
+        authFeatures.push(kotlinUAM);
+      }
+    }
+  }
+
   // Calculate summary
   const jstsPatterns = [...jstsDetectionResults.values()]
     .reduce((sum, r) => sum + r.patterns.length, 0);
   const swiftPatterns = [...swiftDetectionResults.values()]
     .reduce((sum, r) => sum + r.patterns.length, 0);
-  const patternsDetected = jstsPatterns + swiftPatterns;
+  const kotlinPatterns = [...kotlinDetectionResults.values()]
+    .reduce((sum, r) => sum + r.patterns.length, 0);
+  const patternsDetected = jstsPatterns + swiftPatterns + kotlinPatterns;
 
   const primaryMethod = authFeatures.length > 0
     ? authFeatures.reduce((best, current) =>

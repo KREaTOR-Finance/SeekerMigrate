@@ -22,8 +22,8 @@ export interface AnalyzerOptions {
  * Default analyzer options
  */
 export const DEFAULT_OPTIONS: Required<Omit<AnalyzerOptions, 'rootDir'>> = {
-  extensions: ['.js', '.jsx', '.ts', '.tsx', '.swift'],
-  excludeDirs: ['node_modules', '.git', 'dist', 'build', '__tests__', 'coverage', 'Pods', 'DerivedData'],
+  extensions: ['.js', '.jsx', '.ts', '.tsx', '.swift', '.kt'],
+  excludeDirs: ['node_modules', '.git', 'dist', 'build', '__tests__', 'coverage', 'Pods', 'DerivedData', '.gradle'],
   verbose: false,
 };
 
