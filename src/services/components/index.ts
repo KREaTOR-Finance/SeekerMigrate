@@ -5,16 +5,18 @@
  * These are generated as part of the SeekerMigrate dAPP for Solana Mobile.
  */
 
-export { default as NameServiceScreenTemplate } from './NameServiceScreen.js';
-export { default as VanityWalletScreenTemplate } from './VanityWalletScreen.js';
+import { NameServiceScreenTemplate } from './NameServiceScreen.js';
+import { VanityWalletScreenTemplate } from './VanityWalletScreen.js';
+
+export { NameServiceScreenTemplate, VanityWalletScreenTemplate };
 
 /**
  * Generate all dAPP service component templates
  */
 export function generateServiceComponents(): Record<string, string> {
   return {
-    'NameServiceScreen.tsx': require('./NameServiceScreen.js').NameServiceScreenTemplate,
-    'VanityWalletScreen.tsx': require('./VanityWalletScreen.js').VanityWalletScreenTemplate,
+    'NameServiceScreen.tsx': NameServiceScreenTemplate,
+    'VanityWalletScreen.tsx': VanityWalletScreenTemplate,
   };
 }
 

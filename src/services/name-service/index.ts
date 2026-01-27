@@ -17,7 +17,6 @@ import {
   NameLookupResult,
   NameRegistrationRequest,
   NameRegistrationResult,
-  NameRegistrationStatus,
   SEEKER_NAME_TLDS,
 } from '../types.js';
 
@@ -239,7 +238,7 @@ export class SeekerNameService {
   async updateResolvedAddress(
     fullName: string,
     newAddress: string,
-    ownerSignature: string
+    _ownerSignature: string
   ): Promise<{ success: boolean; error?: string }> {
     const lookup = await this.lookup(fullName);
     if (!lookup.exists || !lookup.record) {
@@ -259,7 +258,7 @@ export class SeekerNameService {
   async updateMetadata(
     fullName: string,
     metadata: Partial<SeekerNameMetadata>,
-    ownerSignature: string
+    _ownerSignature: string
   ): Promise<{ success: boolean; error?: string }> {
     const lookup = await this.lookup(fullName);
     if (!lookup.exists || !lookup.record) {
@@ -282,7 +281,7 @@ export class SeekerNameService {
   async transfer(
     fullName: string,
     newOwner: string,
-    ownerSignature: string
+    _ownerSignature: string
   ): Promise<{ success: boolean; error?: string; transactionSignature?: string }> {
     const lookup = await this.lookup(fullName);
     if (!lookup.exists || !lookup.record) {

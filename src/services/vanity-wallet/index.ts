@@ -107,7 +107,7 @@ export class VanityWalletGenerator {
    */
   estimateDifficulty(
     pattern: string,
-    mode: VanityMode,
+    _mode: VanityMode,
     caseSensitive: boolean = true
   ): {
     estimatedAttempts: number;
@@ -288,7 +288,6 @@ export class VanityWalletGenerator {
     let attempts = 0;
     let bestMatch = { address: '', matchedChars: 0 };
     const progressInterval = 1000; // Report progress every 1000 attempts
-    let lastProgressTime = startTime;
 
     try {
       while (!this.shouldStop) {
@@ -343,7 +342,6 @@ export class VanityWalletGenerator {
           };
 
           onProgress(progress);
-          lastProgressTime = now;
 
           // Yield to event loop to keep UI responsive
           await new Promise(resolve => setTimeout(resolve, 0));
