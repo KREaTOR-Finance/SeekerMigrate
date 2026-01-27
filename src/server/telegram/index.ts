@@ -44,10 +44,10 @@ app.post('/webhook', async (req: Request, res: Response) => {
 
   try {
     await sendTelegramMessage(message);
-    res.status(202).json({ status: 'accepted' });
+    return res.status(202).json({ status: 'accepted' });
   } catch (error) {
     console.error('Telegram send failed:', error);
-    res.status(500).json({ error: 'Telegram send failed' });
+    return res.status(500).json({ error: 'Telegram send failed' });
   }
 });
 
