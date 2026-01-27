@@ -40,6 +40,47 @@ export type { ExtendedRule, ParsedAction, RuleSet } from './rules/index.js';
 export { TemplateGenerator, ReportGenerator } from './generator/index.js';
 export type { GeneratorOptions, GeneratedFile } from './generator/index.js';
 
+// Export SEEKER dAPP services
+export {
+  // Name Service
+  SeekerNameService,
+  seekerNameService,
+  // Vanity Wallet Generator
+  VanityWalletGenerator,
+  vanityWalletGenerator,
+  // Service registry
+  getAvailableServices,
+  getServiceById,
+  getOfflineServices,
+  SEEKER_DAPP_INFO,
+  SEEKER_SERVICES,
+  SEEKER_NAME_TLDS,
+  BASE58_ALPHABET,
+  VANITY_MAX_CHARS,
+} from './services/index.js';
+
+// Export service types
+export type {
+  // Name Service types
+  SeekerName,
+  SeekerNameTLD,
+  SeekerNameMetadata,
+  NameLookupResult,
+  NameRegistrationRequest,
+  NameRegistrationResult,
+  NameRegistrationStatus,
+  // Vanity Wallet types
+  VanityWalletRequest,
+  VanityWalletResult,
+  VanityProgress,
+  VanityPatternValidation,
+  VanityMode,
+  // Service types
+  SeekerService,
+  SeekerServiceId,
+  ServiceStatus,
+} from './services/index.js';
+
 /**
  * Library version
  */
