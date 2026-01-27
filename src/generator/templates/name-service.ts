@@ -57,7 +57,7 @@ import {
 ${typeDefinitions}
 
 export function NameServiceLookup({
-  rpcUrl,
+  rpcUrl = '/api/name',
   apiKey,
   namespace = 'sns',
   onLookup,

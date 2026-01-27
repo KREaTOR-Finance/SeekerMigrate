@@ -51,7 +51,7 @@ import {
 ${typeDefinitions}
 
 export function VanityWalletGenerator({
-  serviceUrl,
+  serviceUrl = '/api/vanity',
   apiKey,
   defaultPrefix = 'sol',
   costLamports = 50000,

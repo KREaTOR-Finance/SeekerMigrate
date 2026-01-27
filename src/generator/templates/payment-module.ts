@@ -59,7 +59,7 @@ export function WalletPaymentModule({
   merchantAddress,
   memo,
   defaultAmountSol = 0.01,
-  paymentServerUrl,
+  paymentServerUrl = '/api/payments',
   onSuccess,
   onError,
 }${propAnnotation}) {
@@ -110,20 +110,18 @@ export function WalletPaymentModule({
       const signature = await sendTransaction(transaction, connection);
       await connection.confirmTransaction(signature, 'confirmed');
 
-      if (paymentServerUrl) {
-        await fetch(paymentServerUrl + '/receipt', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            merchant: merchantAddress,
-            amountLamports: lamports,
-            memo,
-            signature,
-          }),
-        });
-      }
+      await fetch(paymentServerUrl + '/receipt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          merchant: merchantAddress,
+          amountLamports: lamports,
+          memo,
+          signature,
+        }),
+      });
 
       setStatus('success');
       setMessage(

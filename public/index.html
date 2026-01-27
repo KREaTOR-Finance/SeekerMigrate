@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SeekerMigrate | Solana Mobile DevKit</title>
+    <style>
+      :root {
+        --bg: #05060a;
+        --panel: rgba(20, 24, 35, 0.72);
+        --panel-strong: rgba(30, 36, 54, 0.92);
+        --text: #f4f6ff;
+        --muted: #b7bedb;
+        --accent-a: #14f195;
+        --accent-b: #9945ff;
+        --accent-c: #3d7bff;
+        --danger: #ff6b6b;
+        --shadow: 0 18px 60px rgba(61, 123, 255, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        color: var(--text);
+        background: radial-gradient(1200px 800px at 10% -10%, rgba(153, 69, 255, 0.24), transparent),
+          radial-gradient(900px 700px at 95% 10%, rgba(20, 241, 149, 0.2), transparent),
+          var(--bg);
+        min-height: 100vh;
+      }
+
+      .glow {
+        position: fixed;
+        inset: -30vh -30vw auto;
+        height: 70vh;
+        background: conic-gradient(
+          from 180deg,
+          rgba(153, 69, 255, 0.3),
+          rgba(20, 241, 149, 0.22),
+          rgba(61, 123, 255, 0.26),
+          rgba(153, 69, 255, 0.3)
+        );
+        filter: blur(60px);
+        opacity: 0.55;
+        z-index: 0;
+        animation: drift 18s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      @keyframes drift {
+        0%,
+        100% {
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+        50% {
+          transform: translate3d(-2vw, 2vh, 0) scale(1.04);
+        }
+      }
+
+      main {
+        position: relative;
+        z-index: 1;
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 64px 24px 96px;
+        display: grid;
+        gap: 28px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--accent-b), var(--accent-c));
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-weight: 800;
+        box-shadow: var(--shadow);
+      }
+
+      .tag {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        color: var(--muted);
+        font-size: 12px;
+        background: rgba(10, 12, 18, 0.5);
+      }
+
+      .hero {
+        display: grid;
+        gap: 22px;
+        padding: 36px;
+        border-radius: 28px;
+        background: var(--panel);
+        border: 1px solid rgba(244, 246, 255, 0.08);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto -30% -60% -30%;
+        height: 60%;
+        background: radial-gradient(
+          80% 120% at 50% 0%,
+          rgba(153, 69, 255, 0.38),
+          rgba(61, 123, 255, 0.08),
+          transparent
+        );
+        filter: blur(40px);
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 4.6vw, 58px);
+        line-height: 1.02;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(15px, 2.3vw, 19px);
+        max-width: 840px;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 6px;
+      }
+
+      button,
+      .btn {
+        appearance: none;
+        border: none;
+        cursor: pointer;
+        padding: 12px 18px;
+        border-radius: 14px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent-b), var(--accent-c));
+        color: #fff;
+        box-shadow: 0 12px 30px rgba(153, 69, 255, 0.26);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 40px rgba(153, 69, 255, 0.32);
+      }
+
+      .btn-ghost {
+        background: rgba(244, 246, 255, 0.06);
+        color: var(--text);
+        border: 1px solid rgba(244, 246, 255, 0.12);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        grid-column: span 12;
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid rgba(244, 246, 255, 0.08);
+        background: rgba(12, 16, 26, 0.82);
+        display: grid;
+        gap: 8px;
+        min-height: 132px;
+      }
+
+      .card h3 {
+        margin: 0 0 2px;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      @media (min-width: 880px) {
+        .card.span-4 {
+          grid-column: span 4;
+        }
+        .card.span-6 {
+          grid-column: span 6;
+        }
+      }
+
+      .mission {
+        padding: 22px;
+        border-radius: 22px;
+        background: var(--panel-strong);
+        border: 1px solid rgba(20, 241, 149, 0.18);
+        display: grid;
+        gap: 10px;
+      }
+
+      .mission strong {
+        color: var(--accent-a);
+      }
+
+      .disclosure {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: rgba(5, 6, 10, 0.82);
+        backdrop-filter: blur(12px);
+        z-index: 10;
+      }
+
+      .disclosure-panel {
+        width: min(760px, 100%);
+        padding: 26px;
+        border-radius: 24px;
+        background: var(--panel-strong);
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 10px;
+      }
+
+      .disclosure-panel h2 {
+        margin: 0 0 4px;
+        font-size: 22px;
+      }
+
+      .disclosure-panel p,
+      .disclosure-panel li {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .disclosure-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 6px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      footer {
+        color: rgba(244, 246, 255, 0.64);
+        font-size: 12px;
+        margin-top: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glow" aria-hidden="true"></div>
+    <div id="disclosure" class="disclosure" role="dialog" aria-modal="true">
+      <div class="disclosure-panel">
+        <h2>Welcome to SeekerMigrate</h2>
+        <p>
+          This infrastructure helps teams upgrade existing iOS and Android builds into Solana Mobile
+          dApp Store compatible experiences. It is designed for professional developers and product
+          teams working with real user funds and identity.
+        </p>
+        <ul>
+          <li>You remain responsible for custody, compliance, and production rollout decisions.</li>
+          <li>SeekerMigrate does not store private keys and should never be used to transmit them.</li>
+          <li>All Solana mainnet interactions should be tested thoroughly before public release.</li>
+        </ul>
+        <div class="disclosure-actions">
+          <button id="accept" class="btn btn-primary">Accept and Continue</button>
+          <button id="decline" class="btn btn-ghost">Decline</button>
+        </div>
+      </div>
+    </div>
+    <main id="app" class="hidden">
+      <header>
+        <div class="brand">
+          <div class="brand-mark">SM</div>
+          <div>
+            <div>SeekerMigrate</div>
+            <div style="font-size: 12px; color: var(--muted)">Solana Mobile DevKit</div>
+          </div>
+        </div>
+        <div class="tag">SKR ecosystem aligned</div>
+      </header>
+
+      <section class="hero">
+        <h1>Ship Solana Mobile dApps faster, smoother, and compliant by design.</h1>
+        <p class="lead">
+          SeekerMigrate helps developers devkit existing builds into the Solana Mobile dApp Store
+          standard. We honor the SKR mission by removing migration friction and raising the bar on
+          wallet UX, payments, and trust.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/api/health">Check Deployment Health</a>
+          <a class="btn btn-ghost" href="/api/name/lookup">Name Service Endpoint</a>
+        </div>
+      </section>
+
+      <section class="grid" aria-label="Core capabilities">
+        <article class="card span-4">
+          <h3>Wallet-first authentication</h3>
+          <p>
+            Replace email/password with Solana wallet identity and Mobile Wallet Adapter flows that
+            match the Seeker experience.
+          </p>
+        </article>
+        <article class="card span-4">
+          <h3>Native SKR payments</h3>
+          <p>
+            Confirm on-chain signatures and reconcile payments through a clean backend contract that
+            stays aligned with mainnet truth.
+          </p>
+        </article>
+        <article class="card span-4">
+          <h3>Vanity wallets + naming</h3>
+          <p>
+            Offer premium identity features without breaking trust. Vanity prefixes and SNS flows
+            stay within the same secure surface.
+          </p>
+        </article>
+        <article class="card span-6">
+          <h3>Operational observability</h3>
+          <p>
+            A dedicated webhook surface streams critical events for your team. It is separate from
+            user-facing flows to keep production experiences clean and fast.
+          </p>
+        </article>
+        <article class="card span-6">
+          <h3>Compliance-ready defaults</h3>
+          <p>
+            This deploy targets the Solana Mobile dApp Store bar. Every flow is wired to endpoints
+            you control so you can harden the edge before shipping to users.
+          </p>
+        </article>
+      </section>
+
+      <section class="mission">
+        <div><strong>Aligned with Solana Mobile:</strong></div>
+        <div>
+          We build infrastructure that amplifies SKR by making developer adoption inevitable. When
+          builders can migrate in hours instead of months, the entire ecosystem compounds.
+        </div>
+      </section>
+
+      <footer>
+        SeekerMigrate is infrastructure. The live SKR user experience happens inside your mobile
+        build once you integrate the generated components and backend routes.
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        var disclosureKey = 'seekermigrate.disclosure.accepted';
+        var disclosure = document.getElementById('disclosure');
+        var app = document.getElementById('app');
+        var accept = document.getElementById('accept');
+        var decline = document.getElementById('decline');
+
+        function showApp() {
+          disclosure.classList.add('hidden');
+          app.classList.remove('hidden');
+        }
+
+        if (window.localStorage.getItem(disclosureKey) === 'yes') {
+          showApp();
+        }
+
+        accept.addEventListener('click', function () {
+          window.localStorage.setItem(disclosureKey, 'yes');
+          showApp();
+        });
+
+        decline.addEventListener('click', function () {
+          window.localStorage.removeItem(disclosureKey);
+          alert('You must accept the disclosure to continue.');
+        });
+      })();
+    </script>
+  </body>
+</html>
+

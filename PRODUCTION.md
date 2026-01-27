@@ -8,7 +8,8 @@ The SeekerMigrate repo now supports the full Solana mobile lifecycle that the SK
 - **Payments:** `WalletPaymentModule` allows the mobile app to send lamports to a merchant address and notify your payment backend (`PAYMENTS_ENDPOINT`).
 - **Vanity wallet generator:** `VanityWalletGenerator` submits prefix requests to your vanity service and surfaces the generated public key, ETA, and cost.
 - **Name service:** `NameServiceLookup` handles SNS/Bonk lookups and mint submissions through your configured RPCs.
-- **Telegram webhook bot:** `src/server/telegram/index.ts` is a TLS-backed endpoint that forwards wallet events to the admin chat (`TELEGRAM_ADMIN_CHAT_ID`) after validating `x-telegram-webhook-secret`.
+- **API surface on Vercel:** `/` serves the branded landing page, `/api/*` hosts the backend endpoints, and `/webhook` is the Telegram operations hook.
+- **Telegram webhook bot:** `/webhook` forwards wallet events to the admin chat (`TELEGRAM_ADMIN_CHAT_ID`) after validating `x-telegram-webhook-secret`.
 - **Mock output removal:** `ios-output/` has been deleted; generated files now live in `seekermigrate-output/` per run.
 
 ## App build workflow
@@ -18,6 +19,14 @@ The SeekerMigrate repo now supports the full Solana mobile lifecycle that the SK
 3. Drop `WalletPaymentModule`, `VanityWalletGenerator`, and `NameServiceLookup` into the appropriate screens, wiring each component to the backend URLs/keys defined in `.env` (`PAYMENTS_ENDPOINT`, `VANITY_SERVICE_URL`, `NAME_SERVICE_RPC`, etc.).
 4. Build the app for simulators and physical iOS/Android devices (including Solana Mobile Stack emulators) and verify wallet pairing, payment transfers, vanity requests, and name lookups/mints.
 5. Execute the smoke tests listed below before tagging a release.
+
+Backend endpoints expected by the generated components:
+
+- `POST /api/payments/receipt`
+- `POST /api/vanity`
+- `POST /api/name/lookup`
+- `POST /api/name/mint`
+- `GET /api/health`
 
 ## Telegram bot workflow (ops only)
 

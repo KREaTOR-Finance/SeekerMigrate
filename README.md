@@ -6,9 +6,11 @@ SeekerMigrate started as a migration CLI and now powers a Solana Mobile onboardi
 - **Payments:** the new `WalletPaymentModule` component wires a connected Solana wallet to a merchant account and an optional payment backend.
 - **Vanity wallet generator:** `VanityWalletGenerator` lets your app request custom prefixes from a backend service and shows the generated address.
 - **Name service:** `NameServiceLookup` covers lookups and mint requests for SNS or other Solana naming systems.
-- **Telegram webhook service:** `src/server/telegram` receives anonymized mobile events and forwards them to the admin chat defined in `.env`.
+- **Telegram webhook service:** `/webhook` receives anonymized mobile events and forwards them to the admin chat defined in `.env`.
 
 Each feature can be scaffolded through `npx seekermigrate auth`/`analyze`, which writes all of the components above into your output directory.
+
+The deployed surface on Vercel now includes a Solana-themed landing page at `/`, API routes under `/api/*`, and the operations webhook at `/webhook`.
 
 ## CLI usage (developer-only)
 
@@ -38,28 +40,40 @@ Use these files to replace Firebase-specific UI/logic. The report documents the 
 
 1. Wrap your root component with `SolanaWalletProvider` and consume `useWallet`/`useAuth` from `WalletAuthContext`.
 2. Replace login screens with `WalletConnectButton`.
-3. Drop `WalletPaymentModule` into the flow that handles customer checkouts. Supply the merchant public key and the optional `paymentServerUrl` that reconciles receipts.
-4. Integrate `VanityWalletGenerator` where you let users name their wallet. Point `serviceUrl`/`apiKey` at your vanity backend and show the returned address/ETA.
-5. Surface `NameServiceLookup` for ENS-style lookups and mint submissions; it POSTs to `/lookup` and `/mint` on the configured RPC URL.
+3. Drop `WalletPaymentModule` into the flow that handles customer checkouts. By default it posts receipts to `/api/payments/receipt`.
+4. Integrate `VanityWalletGenerator` where you let users name their wallet. By default it posts to `/api/vanity`.
+5. Surface `NameServiceLookup` for ENS-style lookups and mint submissions; by default it posts to `/api/name/lookup` and `/api/name/mint`.
 6. Update any backend APIs so they record wallet public keys instead of Firebase tokens and accept the signatures from these components.
 
 ## Environment variables
 
-Copy `.env.example` to `.env` and populate:
+Copy `.env.example` to `.env` (and to your Vercel env settings) and populate:
 
 - `APP_ENV`, `SOLANA_NETWORK`, `SOLANA_RPC`
 - Wallet adapter metadata (`WALLET_ADAPTER_IDENTITY`, `WALLET_ADAPTER_RPC`)
-- Payment rails (`PAYMENTS_PROVIDER`, `PAYMENTS_ENDPOINT`, `PAYMENTS_API_KEY`, `PAYMENT_MERCHANT_ADDRESS`, `PAYMENT_MERCHANT_LABEL`)
-- Vanity service (`VANITY_SERVICE_URL`, `VANITY_API_KEY`, `VANITY_COST_LAMPORTS`)
-- Name service (`NAME_SERVICE_RPC`, `NAME_SERVICE_API_KEY`)
+- Payment rails (`PAYMENTS_PROVIDER`, `PAYMENTS_ENDPOINT=/api/payments`, `PAYMENTS_API_KEY`, `PAYMENT_MERCHANT_ADDRESS`, `PAYMENT_MERCHANT_LABEL`)
+- Vanity service (`VANITY_SERVICE_URL=/api/vanity`, `VANITY_API_KEY`, `VANITY_COST_LAMPORTS`, `VANITY_MAX_ATTEMPTS`)
+- Name service (`NAME_SERVICE_RPC=/api/name`, `NAME_SERVICE_API_KEY`, `NAME_ACCOUNT_SPACE`)
 - Telegram bot (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_ADMIN_CHAT_ID`)
 - Observability (`LOG_LEVEL`, `SENTRY_DSN`)
 
 The project’s `.gitignore` already ignores `.env*`, `dist/`, `node_modules/`, and other generated artifacts.
 
+## API routes (production surface)
+
+The Vercel deploy now exposes real Solana-backed endpoints:
+
+- `GET /api/health`
+- `POST /api/payments/receipt`
+- `POST /api/vanity`
+- `POST /api/name/lookup`
+- `POST /api/name/mint`
+
+These are the contracts the generated components call by default.
+
 ## Telegram webhook service (operations only)
 
-The webhook (see `src/server/telegram/index.ts`) exposes `POST /webhook`. It is intended for the SeekerMigrate operations team to monitor app events (wallet connects, payments, vanity/ name-service flows) and is not part of the public SKR experience. The mobile app can emit:
+The webhook (see `src/server/telegram/index.ts`) exposes `POST /webhook`. It is intended for the SeekerMigrate operations team to monitor app events (wallet connects, payments, vanity/name-service flows) and is not part of the public SKR experience. The mobile app can emit:
 
 ```json
 {
@@ -74,13 +88,7 @@ The webhook (see `src/server/telegram/index.ts`) exposes `POST /webhook`. It is 
 
 The handler verifies `x-telegram-webhook-secret`, forwards the message to the admin chat, and returns a 202 response.
 
-Build the service with `npm run build` (the Telegram entry lives in `dist/server/telegram/index.js`) and launch it with:
-
-```bash
-npm run telegram:start
-```
-
-Every deployment must set `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, and `TELEGRAM_ADMIN_CHAT_ID` via `.env`.
+Every deployment must set `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, and `TELEGRAM_ADMIN_CHAT_ID` via `.env` or Vercel environment variables.
 
 ## Development & testing
 
@@ -93,7 +101,7 @@ Before QA builds:
 
 - Run the CLI against a staging Firebase project and hydrate `seekermigrate-output/` into your mobile app.
 - Manually test wallet connects, payment transfers, vanity requests, and name lookups/mints on simulators and devices.
-- Verify the Telegram webhook receives the events above by hitting `/webhook` with the shared secret header.
+- Verify `/api/health` returns 200, then test `/webhook` with the shared secret header.
 
 ## Resources
 

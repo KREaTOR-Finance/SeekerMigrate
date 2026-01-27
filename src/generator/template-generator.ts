@@ -39,7 +39,7 @@ export class TemplateGenerator {
       useTypeScript: this.options.useTypeScript,
       appName: this.options.projectName,
       generatedDate: new Date().toISOString(),
-      solanaCluster: 'devnet',
+      solanaCluster: 'mainnet-beta',
     };
   }
 
