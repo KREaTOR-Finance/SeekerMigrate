@@ -18,4 +18,12 @@ export default defineConfig([
     target: 'node18',
     shims: true,
   },
+  {
+    entry: ['src/server/telegram/index.ts'],
+    format: ['esm'],
+    dts: true,
+    sourcemap: true,
+    target: 'node18',
+    shims: true,
+  },
 ]);

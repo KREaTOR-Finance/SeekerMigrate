@@ -14,6 +14,9 @@ import {
   generateAuthContext,
   generatePolyfills,
   generateWalletProvider,
+  generatePaymentModule,
+  generateVanityGenerator,
+  generateNameService,
 } from './templates/index.js';
 
 /**
@@ -95,6 +98,21 @@ export class TemplateGenerator {
         fileName = `SolanaWalletProvider${ext}`;
         break;
 
+      case 'payment-module':
+        content = generatePaymentModule(this.context);
+        fileName = `WalletPaymentModule${ext}`;
+        break;
+
+      case 'vanity-generator':
+        content = generateVanityGenerator(this.context);
+        fileName = `VanityWalletGenerator${ext}`;
+        break;
+
+      case 'name-service':
+        content = generateNameService(this.context);
+        fileName = `NameServiceLookup${ext}`;
+        break;
+
       default:
         console.warn(`Unknown template: ${templateName}`);
         return null;
@@ -127,6 +145,9 @@ export class TemplateGenerator {
       'auth-context',
       'polyfills',
       'wallet-provider',
+      'payment-module',
+      'vanity-generator',
+      'name-service',
     ];
 
     await this.ensureOutputDir();
@@ -148,7 +169,7 @@ export class TemplateGenerator {
   private async ensureOutputDir(): Promise<void> {
     try {
       await fs.promises.mkdir(this.options.outputDir, { recursive: true });
-    } catch (error) {
+    } catch {
       // Directory might already exist
     }
   }

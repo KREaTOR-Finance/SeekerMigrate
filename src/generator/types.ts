@@ -55,4 +55,7 @@ export type TemplateName =
   | 'wallet-connect-button'
   | 'auth-context'
   | 'polyfills'
-  | 'wallet-provider';
+  | 'wallet-provider'
+  | 'payment-module'
+  | 'vanity-generator'
+  | 'name-service';

@@ -42,6 +42,9 @@ The following files have been generated in the `seekermigrate-output/` directory
 - `WalletAuthContext.tsx`
 - `polyfills.js`
 - `SolanaWalletProvider.tsx`
+- `WalletPaymentModule.tsx`
+- `VanityWalletGenerator.tsx`
+- `NameServiceLookup.tsx`
 
 ## Migration Steps
 
@@ -107,6 +110,22 @@ function LoginScreen() {
 }
 ```
 
+### 4. Add the payment module
+
+Import `WalletPaymentModule` for any checkout experience. Provide your merchant public key (e.g., `PAYMENT_MERCHANT_ADDRESS` in `.env`), set `paymentServerUrl` to the backend that reconciles receipts, and optionally pass a memo for each order.
+
+### 5. Vanity wallet workflow
+
+Drop `VanityWalletGenerator` where users can request a custom prefix. Supply `serviceUrl`/`apiKey` from `.env`, and let the component display the returned address, ETA, and attempt count. Hook the result into your onboarding flow for approval/minting.
+
+### 6. Name service lookup
+
+Use `NameServiceLookup` for SNS/Bonk discovery and mint submissions. Point it at your naming RPC (`NAME_SERVICE_RPC`) and implement `/lookup` + `/mint` endpoints in that service so the component can render owner/expiry information and trigger mint requests.
+
+### 7. Telegram alerts
+
+Deploy the Telegram webhook server (`src/server/telegram/index.ts`). After building (`npm run build`), run `npm run telegram:start` and POST to `/webhook` with events like `wallet_connect`, `payment_request`, `vanity_request`, and `name_lookup` using the shared secret header. The bot delivers those summaries to `TELEGRAM_ADMIN_CHAT_ID`.
+
 ## Important Behavioral Differences
 
 > **Note:** The migration changes how authentication works. Please review these differences:
@@ -133,6 +152,7 @@ Before deploying to production:
 2. **Test on physical device** - Install a Solana wallet app (Phantom, Solflare, etc.)
 3. **Test with Seeker** - If you have access to a Seeker device, test the native experience
 4. **Verify dApp Store compliance** - Review Solana dApp Store guidelines
+5. **Validate payments, vanity wallets, name lookups, and Telegram alerts** - Confirm the wallet payment flow hits `PAYMENTS_ENDPOINT`, the vanity request reaches your service, SNS lookups/mints function, and the Telegram webhook receives the expected events.
 
 ## Resources
 

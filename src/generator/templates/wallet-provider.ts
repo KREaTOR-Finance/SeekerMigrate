@@ -10,8 +10,6 @@ import type { TemplateContext } from '../types.js';
 export function generateWalletProvider(context: TemplateContext): string {
   const { useTypeScript, projectName, solanaCluster } = context;
 
-  const childrenType = useTypeScript ? ': { children: React.ReactNode }' : '';
-
   return `/**
  * SolanaWalletProvider
  *

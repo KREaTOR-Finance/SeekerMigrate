@@ -10,7 +10,6 @@ import type { TemplateContext } from '../types.js';
 
 export function generateWalletConnectButton(context: TemplateContext): string {
   const { useTypeScript, projectName } = context;
-  const ext = useTypeScript ? 'tsx' : 'jsx';
 
   const typeAnnotations = useTypeScript
     ? `

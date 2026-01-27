@@ -1,183 +1,106 @@
-# SeekerMigrate Auth Bridge
+# SeekerMigrate
 
-A CLI tool that automatically converts a mobile app's **Firebase Email Authentication** to a **Solana Seeker/Solana Mobile Wallet Adapter** authentication flow.
+SeekerMigrate started as a migration CLI and now powers a Solana Mobile onboarding experience for Solana Seeker (SKR) users. The repo still contains the CLI/analyzer for developers, but what SKR users open is the mobile app that embeds the generated wallet, payment, vanity, and name-service components. The Telegram bot is an operational tool for the team, not something end users interact with.
 
-## Overview
+- **Wallet authentication:** existing analyzer + generator output still provides `WalletConnectButton`, `WalletAuthContext`, and `SolanaWalletProvider`.
+- **Payments:** the new `WalletPaymentModule` component wires a connected Solana wallet to a merchant account and an optional payment backend.
+- **Vanity wallet generator:** `VanityWalletGenerator` lets your app request custom prefixes from a backend service and shows the generated address.
+- **Name service:** `NameServiceLookup` covers lookups and mint requests for SNS or other Solana naming systems.
+- **Telegram webhook service:** `src/server/telegram` receives anonymized mobile events and forwards them to the admin chat defined in `.env`.
 
-SeekerMigrate analyzes your React Native codebase, detects Firebase authentication patterns, and generates ready-to-use Solana wallet authentication components.
+Each feature can be scaffolded through `npx seekermigrate auth`/`analyze`, which writes all of the components above into your output directory.
 
-### Core Architecture
-
-The system is built on three pillars:
-
-1. **Universal App Model (UAM):** A JSON schema acting as an intermediary, framework-agnostic blueprint of the app's authentication feature.
-2. **Conversion Rulebook:** A database of deterministic rules that map a source UAM pattern to a target implementation and template.
-3. **Analyzer-Generator Engine:** The core Node.js/TypeScript program that performs static code analysis and synthesizes the new code.
-
-## Installation
+## CLI usage (developer-only)
 
 ```bash
-npm install -g seekermigrate
-# or
-npx seekermigrate
+npx seekermigrate auth --source ./my-firebase-app --output ./seekermigrate-output
+npx seekermigrate analyze --source ./my-firebase-app --json
 ```
 
-## Usage
+These CLI commands are used during development / migration runs; SKR end users never invoke them.
 
-### Basic Migration
+## Generated assets
 
-Point the CLI at your React Native project directory:
+After migrating, `seekermigrate-output/` now contains:
+
+- `WalletConnectButton.tsx`
+- `WalletAuthContext.tsx`
+- `SolanaWalletProvider.tsx`
+- `polyfills.js`
+- `WalletPaymentModule.tsx`
+- `VanityWalletGenerator.tsx`
+- `NameServiceLookup.tsx`
+- `MIGRATION_REPORT.md`
+
+Use these files to replace Firebase-specific UI/logic. The report documents the bundle of packages to add/remove and the behavioral diffs.
+
+## Mobile integration
+
+1. Wrap your root component with `SolanaWalletProvider` and consume `useWallet`/`useAuth` from `WalletAuthContext`.
+2. Replace login screens with `WalletConnectButton`.
+3. Drop `WalletPaymentModule` into the flow that handles customer checkouts. Supply the merchant public key and the optional `paymentServerUrl` that reconciles receipts.
+4. Integrate `VanityWalletGenerator` where you let users name their wallet. Point `serviceUrl`/`apiKey` at your vanity backend and show the returned address/ETA.
+5. Surface `NameServiceLookup` for ENS-style lookups and mint submissions; it POSTs to `/lookup` and `/mint` on the configured RPC URL.
+6. Update any backend APIs so they record wallet public keys instead of Firebase tokens and accept the signatures from these components.
+
+## Environment variables
+
+Copy `.env.example` to `.env` and populate:
+
+- `APP_ENV`, `SOLANA_NETWORK`, `SOLANA_RPC`
+- Wallet adapter metadata (`WALLET_ADAPTER_IDENTITY`, `WALLET_ADAPTER_RPC`)
+- Payment rails (`PAYMENTS_PROVIDER`, `PAYMENTS_ENDPOINT`, `PAYMENTS_API_KEY`, `PAYMENT_MERCHANT_ADDRESS`, `PAYMENT_MERCHANT_LABEL`)
+- Vanity service (`VANITY_SERVICE_URL`, `VANITY_API_KEY`, `VANITY_COST_LAMPORTS`)
+- Name service (`NAME_SERVICE_RPC`, `NAME_SERVICE_API_KEY`)
+- Telegram bot (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_ADMIN_CHAT_ID`)
+- Observability (`LOG_LEVEL`, `SENTRY_DSN`)
+
+The project’s `.gitignore` already ignores `.env*`, `dist/`, `node_modules/`, and other generated artifacts.
+
+## Telegram webhook service (operations only)
+
+The webhook (see `src/server/telegram/index.ts`) exposes `POST /webhook`. It is intended for the SeekerMigrate operations team to monitor app events (wallet connects, payments, vanity/ name-service flows) and is not part of the public SKR experience. The mobile app can emit:
+
+```json
+{
+  "eventType": "payment_request",
+  "payload": {
+    "publicKey": "PUBLISHED_KEY",
+    "amountLamports": 75000,
+    "memo": "Order #1234"
+  }
+}
+```
+
+The handler verifies `x-telegram-webhook-secret`, forwards the message to the admin chat, and returns a 202 response.
+
+Build the service with `npm run build` (the Telegram entry lives in `dist/server/telegram/index.js`) and launch it with:
 
 ```bash
-npx seekermigrate auth --source ./my-firebase-app --target seeker
+npm run telegram:start
 ```
 
-This will:
-1. Analyze your codebase for Firebase authentication patterns
-2. Generate Solana wallet authentication components
-3. Create a detailed migration report
+Every deployment must set `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, and `TELEGRAM_ADMIN_CHAT_ID` via `.env`.
 
-### Commands
+## Development & testing
 
-#### `auth` - Migrate Authentication
+1. `npm install`
+2. `npm run build`
+3. `npm run lint`
+4. `npm run test`
 
-```bash
-seekermigrate auth --source <path> [options]
-```
+Before QA builds:
 
-Options:
-- `-s, --source <path>` - Path to source project directory (required)
-- `-t, --target <ecosystem>` - Target ecosystem (default: seeker)
-- `-o, --output <path>` - Output directory (default: ./seekermigrate-output)
-- `--typescript` - Generate TypeScript files (default: true)
-- `--no-typescript` - Generate JavaScript files
-- `-v, --verbose` - Enable verbose output
-- `--dry-run` - Analyze only, do not generate files
-
-#### `analyze` - Analyze Only
-
-```bash
-seekermigrate analyze --source <path> [options]
-```
-
-Options:
-- `-s, --source <path>` - Path to source project directory (required)
-- `-v, --verbose` - Enable verbose output
-- `--json` - Output results as JSON
-
-## Example Output
-
-After running the migration, you'll get:
-
-```
-seekermigrate-output/
-├── WalletConnectButton.tsx    # Wallet connection UI component
-├── WalletAuthContext.tsx      # Auth context replacing Firebase
-├── SolanaWalletProvider.tsx   # Provider wrapper for your app
-├── polyfills.js               # Required crypto polyfills
-└── MIGRATION_REPORT.md        # Detailed migration instructions
-```
-
-## Supported Patterns
-
-### Source (What We Detect)
-
-- Firebase Email/Password authentication
-- Firebase Auth imports (`firebase/auth`, `@react-native-firebase/auth`)
-- Auth function calls (`signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, etc.)
-- Login form UI patterns (email/password TextInputs, login buttons)
-
-### Target (What We Generate)
-
-- Solana Mobile Wallet Adapter integration
-- Wallet connect button component
-- Authentication context with wallet state
-- Crypto polyfills for React Native
-- Provider setup component
-
-## Project Structure
-
-```
-seekermigrate/
-├── src/
-│   ├── cli.ts                 # Entry point, command logic
-│   ├── analyzer/              # Code parsing & UAM creation
-│   ├── rules/                 # JSON rulebook definitions
-│   ├── generator/             # Template rendering and file writing
-│   │   └── templates/         # Component templates
-│   └── schema/                # TypeScript UAM interfaces
-├── fixtures/                  # Sample apps for testing
-└── dist/                      # Compiled output
-```
-
-## Development
-
-### Building
-
-```bash
-npm install
-npm run build
-```
-
-### Testing with Fixture
-
-```bash
-# Build the project
-npm run build
-
-# Run against the sample Firebase app
-node dist/cli.js auth --source ./fixtures/sample-firebase-app --verbose
-```
-
-### Development Mode
-
-```bash
-npm run dev  # Watch mode
-```
-
-## Technology Stack
-
-- **Language:** Node.js with TypeScript
-- **Parsing:** `@babel/parser`, `@babel/traverse`
-- **CLI Framework:** `commander`
-- **Target SDK:** `@solana-mobile/wallet-adapter-mobile-ui`, `@solana/web3.js`
-- **Build Tool:** `tsup`
-
-## Migration Checklist
-
-After running SeekerMigrate:
-
-1. [ ] Review generated files in `seekermigrate-output/`
-2. [ ] Read `MIGRATION_REPORT.md` for detailed instructions
-3. [ ] Install new Solana packages
-4. [ ] Add polyfills to app entry point
-5. [ ] Wrap app with SolanaWalletProvider
-6. [ ] Replace login screens with WalletConnectButton
-7. [ ] Update user identification (email → publicKey)
-8. [ ] Remove Firebase dependencies
-9. [ ] Update backend to accept wallet signatures
-10. [ ] Test with Solana Mobile Stack Simulator
-11. [ ] Test on physical device with wallet app
-12. [ ] Review Solana dApp Store compliance
-
-## Behavioral Differences
-
-When migrating from Firebase to wallet authentication:
-
-| Aspect | Firebase | Solana Wallet |
-|--------|----------|---------------|
-| Identity | Email address | Wallet public key |
-| Session | Server-managed | Wallet app manages |
-| Password reset | Email link | Wallet recovery phrase |
-| Multi-device | Automatic sync | Connect on each device |
-| Verification | Email verification | Cryptographic signature |
+- Run the CLI against a staging Firebase project and hydrate `seekermigrate-output/` into your mobile app.
+- Manually test wallet connects, payment transfers, vanity requests, and name lookups/mints on simulators and devices.
+- Verify the Telegram webhook receives the events above by hitting `/webhook` with the shared secret header.
 
 ## Resources
 
 - [Solana Mobile Documentation](https://docs.solanamobile.com/)
 - [Mobile Wallet Adapter](https://github.com/solana-mobile/mobile-wallet-adapter)
 - [Solana dApp Store](https://dappstore.solanamobile.com/)
-- [Seeker Device](https://docs.solanamobile.com/seeker)
+- [Seeker Documentation](https://docs.solanamobile.com/seeker)
 
 ## License
 

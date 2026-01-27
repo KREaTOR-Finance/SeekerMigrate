@@ -28,7 +28,10 @@
           "generate_template: wallet-connect-button",
           "generate_template: auth-context",
           "generate_template: polyfills",
-          "generate_template: wallet-provider"
+          "generate_template: wallet-provider",
+          "generate_template: payment-module",
+          "generate_template: vanity-generator",
+          "generate_template: name-service"
         ]
       },
       "behavioralNotes": [
@@ -73,7 +76,10 @@
           "generate_template: wallet-connect-button",
           "generate_template: auth-context",
           "generate_template: polyfills",
-          "generate_template: wallet-provider"
+          "generate_template: wallet-provider",
+          "generate_template: payment-module",
+          "generate_template: vanity-generator",
+          "generate_template: name-service"
         ]
       },
       "behavioralNotes": [
