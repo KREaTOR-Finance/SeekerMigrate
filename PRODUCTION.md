@@ -5,12 +5,13 @@ The SeekerMigrate repo now supports the full Solana mobile lifecycle that the SK
 ## Status snapshot
 
 - **Authentication / Wallet connect:** the analyzer/generator still produces `WalletConnectButton`, `WalletAuthContext`, and `SolanaWalletProvider` for every auth migration run.
-- **Payments:** `WalletPaymentModule` allows the mobile app to send lamports to a merchant address and notify your payment backend (`PAYMENTS_ENDPOINT`).
+- **Payments:** `WalletPaymentModule` allows the mobile app to send lamports to a merchant address, verify receipts, and optionally create Stripe checkout sessions.
 - **Vanity wallet generator:** `VanityWalletGenerator` submits prefix requests to your vanity service and surfaces the generated public key, ETA, and cost.
-- **Name service:** `NameServiceLookup` handles SNS/Bonk lookups and mint submissions through your configured RPCs.
+- **Name service:** SeekerMigrate issues `.skr`, `.seeker`, `.seismic`, and `.sol` names. Custom TLDs map to SNS `.sol` domains on-chain.
 - **API surface on Vercel:** `/` serves the branded landing page, `/api/*` hosts the backend endpoints, and `/webhook` is the Telegram operations hook.
 - **Telegram webhook bot:** `/webhook` forwards wallet events to the admin chat (`TELEGRAM_ADMIN_CHAT_ID`) after validating `x-telegram-webhook-secret`.
 - **Mock output removal:** `ios-output/` has been deleted; generated files now live in `seekermigrate-output/` per run.
+- **Access gating:** AUTH conversion + migration report are free; the full DevKit experience is intended to unlock after a resolved SeekerMigrate name.
 
 ## App build workflow
 
@@ -23,6 +24,7 @@ The SeekerMigrate repo now supports the full Solana mobile lifecycle that the SK
 Backend endpoints expected by the generated components:
 
 - `POST /api/payments/receipt`
+- `POST /api/payments/stripe-session`
 - `POST /api/vanity`
 - `POST /api/name/lookup`
 - `POST /api/name/mint`

@@ -2,10 +2,12 @@
 
 SeekerMigrate started as a migration CLI and now powers a Solana Mobile onboarding experience for Solana Seeker (SKR) users. The repo still contains the CLI/analyzer for developers, but what SKR users open is the mobile app that embeds the generated wallet, payment, vanity, and name-service components. The Telegram bot is an operational tool for the team, not something end users interact with.
 
+Auth conversion and the migration report are free. Full DevKit access is designed to unlock after a developer registers and resolves a SeekerMigrate name.
+
 - **Wallet authentication:** existing analyzer + generator output still provides `WalletConnectButton`, `WalletAuthContext`, and `SolanaWalletProvider`.
 - **Payments:** the new `WalletPaymentModule` component wires a connected Solana wallet to a merchant account and an optional payment backend.
 - **Vanity wallet generator:** `VanityWalletGenerator` lets your app request custom prefixes from a backend service and shows the generated address.
-- **Name service:** `NameServiceLookup` covers lookups and mint requests for SNS or other Solana naming systems.
+- **Name service:** SeekerMigrate issues `.skr`, `.seeker`, `.seismic`, and `.sol` names. Non-`.sol` TLDs map to on-chain SNS `.sol` domains.
 - **Telegram webhook service:** `/webhook` receives anonymized mobile events and forwards them to the admin chat defined in `.env`.
 
 Each feature can be scaffolded through `npx seekermigrate auth`/`analyze`, which writes all of the components above into your output directory.
@@ -51,7 +53,7 @@ Copy `.env.example` to `.env` (and to your Vercel env settings) and populate:
 
 - `APP_ENV`, `SOLANA_NETWORK`, `SOLANA_RPC`
 - Wallet adapter metadata (`WALLET_ADAPTER_IDENTITY`, `WALLET_ADAPTER_RPC`)
-- Payment rails (`PAYMENTS_PROVIDER`, `PAYMENTS_ENDPOINT=/api/payments`, `PAYMENTS_API_KEY`, `PAYMENT_MERCHANT_ADDRESS`, `PAYMENT_MERCHANT_LABEL`)
+- Payment rails (`PAYMENTS_PROVIDER`, `PAYMENTS_ENDPOINT=/api/payments`, `PAYMENTS_API_KEY`, `PAYMENT_MERCHANT_ADDRESS`, `PAYMENT_MERCHANT_LABEL`, `STRIPE_SECRET_KEY`, `STRIPE_SUCCESS_URL`, `STRIPE_CANCEL_URL`)
 - Vanity service (`VANITY_SERVICE_URL=/api/vanity`, `VANITY_API_KEY`, `VANITY_COST_LAMPORTS`, `VANITY_MAX_ATTEMPTS`)
 - Name service (`NAME_SERVICE_RPC=/api/name`, `NAME_SERVICE_API_KEY`, `NAME_ACCOUNT_SPACE`)
 - Telegram bot (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, `TELEGRAM_ADMIN_CHAT_ID`)
@@ -65,6 +67,7 @@ The Vercel deploy now exposes real Solana-backed endpoints:
 
 - `GET /api/health`
 - `POST /api/payments/receipt`
+- `POST /api/payments/stripe-session`
 - `POST /api/vanity`
 - `POST /api/name/lookup`
 - `POST /api/name/mint`
@@ -102,6 +105,16 @@ Before QA builds:
 - Run the CLI against a staging Firebase project and hydrate `seekermigrate-output/` into your mobile app.
 - Manually test wallet connects, payment transfers, vanity requests, and name lookups/mints on simulators and devices.
 - Verify `/api/health` returns 200, then test `/webhook` with the shared secret header.
+
+## Mobile app (Expo)
+
+An Expo-first mobile app scaffold lives in `apps/mobile`.
+
+- Uses Expo Router + Tamagui (polish pass in progress)
+- Targets Solana Mobile dApp Store (Android APK)
+- Configure backend base URL with `EXPO_PUBLIC_API_BASE_URL`
+
+See: `apps/mobile/README.md`
 
 ## Resources
 

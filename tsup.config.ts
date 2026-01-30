@@ -1,29 +1,16 @@
 import { defineConfig } from 'tsup';
 
-export default defineConfig([
-  {
-    entry: ['src/cli.ts'],
-    format: ['esm'],
-    dts: true,
-    sourcemap: true,
-    clean: true,
-    target: 'node18',
-    shims: true,
+// Single config with named entries to avoid output filename collisions.
+export default defineConfig({
+  entry: {
+    cli: 'src/cli.ts',
+    index: 'src/index.ts',
+    telegram: 'src/server/telegram/index.ts',
   },
-  {
-    entry: ['src/index.ts'],
-    format: ['esm'],
-    dts: true,
-    sourcemap: true,
-    target: 'node18',
-    shims: true,
-  },
-  {
-    entry: ['src/server/telegram/index.ts'],
-    format: ['esm'],
-    dts: true,
-    sourcemap: true,
-    target: 'node18',
-    shims: true,
-  },
-]);
+  outDir: 'dist',
+  format: ['esm'],
+  dts: true,
+  sourcemap: true,
+  target: 'node18',
+  shims: true,
+});

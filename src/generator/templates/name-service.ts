@@ -2,7 +2,7 @@
  * Name service helper template
  *
  * Generates a component that looks up a Solana name (SNS or similar)
- * and optionally initiates a mint request through your name service backend.
+ * and optionally initiates a registration request through your name service backend.
  */
 
 import type { TemplateContext } from '../types.js';
@@ -16,7 +16,7 @@ interface NameServiceProps {
   apiKey?: string;
   namespace?: string;
   onLookup?: (result: NameServiceLookupResult) => void;
-  onMint?: (result: NameServiceMintResult) => void;
+  onRegister?: (result: NameServiceRegisterResult) => void;
 }
 
 interface NameServiceLookupResult {
@@ -26,7 +26,7 @@ interface NameServiceLookupResult {
   available: boolean;
 }
 
-interface NameServiceMintResult {
+interface NameServiceRegisterResult {
   name: string;
   signature?: string;
   expiresAt?: string;
@@ -39,7 +39,7 @@ interface NameServiceMintResult {
   return `/**
  * NameServiceLookup
  *
- * Queries a name service backend and exposes minting controls.
+ * Queries a name service backend and exposes registration controls.
  * Generated for ${projectName}
  * @generated
  */
@@ -61,12 +61,12 @@ export function NameServiceLookup({
   apiKey,
   namespace = 'sns',
   onLookup,
-  onMint,
+  onRegister,
 }${propAnnotation}) {
   const [name, setName] = useState('');
-  const [status, setStatus] = useState<'idle' | 'searching' | 'minting' | 'ready' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'searching' | 'registering' | 'ready' | 'error'>('idle');
   const [lookupResult, setLookupResult] = useState${resultState}(null);
-  const [mintSignature, setMintSignature] = useState<string | null>(null);
+  const [registerSignature, setRegisterSignature] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleLookup = useCallback(async () => {
@@ -109,17 +109,17 @@ export function NameServiceLookup({
     }
   }, [apiKey, name, namespace, onLookup, rpcUrl]);
 
-  const handleMint = useCallback(async () => {
+  const handleRegister = useCallback(async () => {
     if (!lookupResult?.name || !lookupResult.available) {
-      setError('Name is not available for minting.');
+      setError('Name is not available for registration.');
       return;
     }
 
-    setStatus('minting');
+    setStatus('registering');
     setError(null);
 
     try {
-      const response = await fetch(rpcUrl + '/mint', {
+      const response = await fetch(rpcUrl + '/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,22 +129,22 @@ export function NameServiceLookup({
       });
 
       if (!response.ok) {
-        throw new Error('Name mint request failed');
+        throw new Error('Name registration request failed');
       }
 
       const payload = await response.json();
-      setMintSignature(payload.signature ?? null);
-      onMint?.({
+      setRegisterSignature(payload.signature ?? null);
+      onRegister?.({
         name: lookupResult.name,
         signature: payload.signature,
         expiresAt: payload.expiresAt,
       });
       setStatus('ready');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Mint failed');
+      setError(err instanceof Error ? err.message : 'Registration failed');
       setStatus('error');
     }
-  }, [apiKey, lookupResult, namespace, onMint, rpcUrl]);
+  }, [apiKey, lookupResult, namespace, onRegister, rpcUrl]);
 
   return (
     <View style={styles.container}>
@@ -177,16 +177,16 @@ export function NameServiceLookup({
         <TouchableOpacity
           style={[
             styles.button,
-            (status === 'minting' || lookupResult?.available === false) && styles.buttonDisabled,
+            (status === 'registering' || lookupResult?.available === false) && styles.buttonDisabled,
           ]}
-          onPress={handleMint}
-          disabled={status === 'minting' || lookupResult?.available === false}
+          onPress={handleRegister}
+          disabled={status === 'registering' || lookupResult?.available === false}
           activeOpacity={0.8}
         >
-          {status === 'minting' ? (
+          {status === 'registering' ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Mint</Text>
+            <Text style={styles.buttonText}>Register</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -204,8 +204,8 @@ export function NameServiceLookup({
         </View>
       )}
 
-      {mintSignature && (
-        <Text style={styles.success}>Mint signature: {mintSignature}</Text>
+      {registerSignature && (
+        <Text style={styles.success}>Registration signature: {registerSignature}</Text>
       )}
 
       {error && <Text style={styles.error}>{error}</Text>}

@@ -6,10 +6,7 @@ const SOLANA_RPC = process.env.SOLANA_RPC ?? 'https://api.mainnet-beta.solana.co
 const DEFAULT_NAME_SPACE = Number(process.env.NAME_ACCOUNT_SPACE ?? 2000);
 const connection = new Connection(SOLANA_RPC, { commitment: 'confirmed' });
 
-// NOTE: Deprecated route. Use /api/name/register.
-// Kept for backwards compatibility.
-
-type MintPayload = {
+type RegisterPayload = {
   name?: string;
   buyer: string;
   buyerTokenAccount: string;
@@ -34,6 +31,10 @@ function parseName(name: string, rawTld: string | undefined) {
   const label = parts[0];
   const inferredTld = parts[1];
   const tld = normalizeTld(inferredTld ?? rawTld);
+
+  // IMPORTANT: We anchor registrations to SNS `.sol` names so existing resolvers work.
+  // Custom name types are represented by a suffix convention on-chain.
+  // Example: alice.skr -> alice-skr.sol
   const onChainLabel = tld === 'sol' ? label : `${label}-${tld}`;
   const onChainName = `${onChainLabel}.sol`;
   const displayName = `${label}.${tld}`;
@@ -61,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const payload = req.body as Partial<MintPayload> | undefined;
+  const payload = req.body as Partial<RegisterPayload> | undefined;
   if (!(payload?.name || payload?.domain) || !payload?.buyer || !payload?.buyerTokenAccount) {
     return res.status(400).json({
       error: 'name, buyer, and buyerTokenAccount are required',
@@ -101,7 +102,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'Sign and send these instructions from the buyer wallet. The backend does not custody keys.',
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unable to build mint instructions';
+    const message = error instanceof Error ? error.message : 'Unable to build registration transaction';
     return res.status(502).json({ error: message });
   }
 }

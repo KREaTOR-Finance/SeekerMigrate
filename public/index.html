@@ -6,16 +6,22 @@
     <title>SeekerMigrate | Solana Mobile DevKit</title>
     <style>
       :root {
-        --bg: #05060a;
-        --panel: rgba(20, 24, 35, 0.72);
-        --panel-strong: rgba(30, 36, 54, 0.92);
-        --text: #f4f6ff;
-        --muted: #b7bedb;
+        --bg: #04060f;
+        --bg-soft: #0b1020;
+        --panel: rgba(15, 20, 40, 0.86);
+        --panel-strong: rgba(20, 28, 56, 0.96);
+        --text: #f5f7ff;
+        --muted: #b9c2e3;
         --accent-a: #14f195;
         --accent-b: #9945ff;
         --accent-c: #3d7bff;
+        --accent-d: #00e0ff;
         --danger: #ff6b6b;
-        --shadow: 0 18px 60px rgba(61, 123, 255, 0.18);
+        --warn: #ffd166;
+        --radius-lg: 26px;
+        --radius-md: 20px;
+        --radius-sm: 14px;
+        --shadow: 0 24px 80px rgba(61, 123, 255, 0.2);
       }
 
       * {
@@ -27,27 +33,30 @@
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
           sans-serif;
         color: var(--text);
-        background: radial-gradient(1200px 800px at 10% -10%, rgba(153, 69, 255, 0.24), transparent),
-          radial-gradient(900px 700px at 95% 10%, rgba(20, 241, 149, 0.2), transparent),
+        background:
+          radial-gradient(1200px 820px at -5% -20%, rgba(153, 69, 255, 0.22), transparent 70%),
+          radial-gradient(1000px 760px at 110% -10%, rgba(20, 241, 149, 0.18), transparent 68%),
+          radial-gradient(900px 720px at 40% 115%, rgba(61, 123, 255, 0.18), transparent 70%),
           var(--bg);
         min-height: 100vh;
       }
 
       .glow {
         position: fixed;
-        inset: -30vh -30vw auto;
-        height: 70vh;
+        inset: -36vh -36vw auto;
+        height: 78vh;
         background: conic-gradient(
           from 180deg,
-          rgba(153, 69, 255, 0.3),
-          rgba(20, 241, 149, 0.22),
-          rgba(61, 123, 255, 0.26),
+          rgba(153, 69, 255, 0.34),
+          rgba(20, 241, 149, 0.24),
+          rgba(61, 123, 255, 0.3),
+          rgba(0, 224, 255, 0.22),
           rgba(153, 69, 255, 0.3)
         );
-        filter: blur(60px);
-        opacity: 0.55;
+        filter: blur(74px);
+        opacity: 0.56;
         z-index: 0;
-        animation: drift 18s ease-in-out infinite;
+        animation: drift 22s ease-in-out infinite;
         pointer-events: none;
       }
 
@@ -57,25 +66,25 @@
           transform: translate3d(0, 0, 0) scale(1);
         }
         50% {
-          transform: translate3d(-2vw, 2vh, 0) scale(1.04);
+          transform: translate3d(-2vw, 3vh, 0) scale(1.05);
         }
       }
 
       main {
         position: relative;
         z-index: 1;
-        max-width: 1120px;
+        max-width: 1100px;
         margin: 0 auto;
-        padding: 64px 24px 96px;
+        padding: 60px 20px 110px;
         display: grid;
-        gap: 28px;
+        gap: 22px;
       }
 
       header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
+        gap: 12px;
       }
 
       .brand {
@@ -87,57 +96,71 @@
       }
 
       .brand-mark {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
         background: linear-gradient(135deg, var(--accent-b), var(--accent-c));
         display: grid;
         place-items: center;
         color: #fff;
         font-weight: 800;
         box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
       }
 
-      .tag {
+      .brand-mark::after {
+        content: "";
+        position: absolute;
+        inset: -40% auto auto -40%;
+        width: 150%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 62%);
+        transform: rotate(24deg);
+      }
+
+      .pill {
         padding: 8px 12px;
         border-radius: 999px;
-        border: 1px solid rgba(244, 246, 255, 0.12);
+        border: 1px solid rgba(244, 246, 255, 0.14);
         color: var(--muted);
         font-size: 12px;
-        background: rgba(10, 12, 18, 0.5);
+        background: rgba(10, 14, 26, 0.6);
+        backdrop-filter: blur(12px);
+        white-space: nowrap;
       }
 
       .hero {
         display: grid;
-        gap: 22px;
-        padding: 36px;
-        border-radius: 28px;
+        gap: 16px;
+        padding: 30px;
+        border-radius: var(--radius-lg);
         background: var(--panel);
-        border: 1px solid rgba(244, 246, 255, 0.08);
+        border: 1px solid rgba(244, 246, 255, 0.1);
         box-shadow: var(--shadow);
-        overflow: hidden;
         position: relative;
+        overflow: hidden;
       }
 
       .hero::after {
         content: "";
         position: absolute;
-        inset: auto -30% -60% -30%;
-        height: 60%;
+        inset: auto -30% -70% -30%;
+        height: 72%;
         background: radial-gradient(
           80% 120% at 50% 0%,
-          rgba(153, 69, 255, 0.38),
-          rgba(61, 123, 255, 0.08),
+          rgba(153, 69, 255, 0.44),
+          rgba(61, 123, 255, 0.1),
           transparent
         );
-        filter: blur(40px);
-        opacity: 0.9;
+        filter: blur(48px);
+        opacity: 0.96;
         pointer-events: none;
       }
 
       h1 {
         margin: 0;
-        font-size: clamp(32px, 4.6vw, 58px);
+        font-size: clamp(34px, 6.8vw, 60px);
         line-height: 1.02;
         letter-spacing: -0.02em;
       }
@@ -145,15 +168,16 @@
       .lead {
         margin: 0;
         color: var(--muted);
-        font-size: clamp(15px, 2.3vw, 19px);
-        max-width: 840px;
+        font-size: clamp(15px, 2.8vw, 18px);
+        max-width: 780px;
+        line-height: 1.6;
       }
 
       .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 6px;
+        gap: 10px;
+        margin-top: 4px;
       }
 
       button,
@@ -161,80 +185,524 @@
         appearance: none;
         border: none;
         cursor: pointer;
-        padding: 12px 18px;
-        border-radius: 14px;
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
         font-weight: 600;
         letter-spacing: 0.2px;
-        transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+        transition:
+          transform 120ms ease,
+          box-shadow 120ms ease,
+          border-color 120ms ease,
+          filter 120ms ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: inherit;
+
+        /* Water-drop style: glossy layer + subtle ripple on press */
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button::before,
+      .btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 0;
+        background:
+          radial-gradient(120% 140% at 18% 12%, rgba(255, 255, 255, 0.26), transparent 58%),
+          radial-gradient(120% 140% at 70% 120%, rgba(0, 224, 255, 0.12), transparent 52%);
+        opacity: 0.92;
+        mix-blend-mode: screen;
+      }
+
+      button::after,
+      .btn::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        transform: translate(-50%, -50%) scale(0);
+        pointer-events: none;
+        z-index: 0;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.08) 45%, transparent 70%);
+        opacity: 0;
+        transition: transform 420ms ease, opacity 420ms ease;
+      }
+
+      button:active::after,
+      .btn:active::after {
+        transform: translate(-50%, -50%) scale(18);
+        opacity: 0.85;
+        transition: transform 520ms ease, opacity 680ms ease;
+      }
+
+      button > *,
+      .btn > * {
+        position: relative;
+        z-index: 1;
       }
 
       .btn-primary {
         background: linear-gradient(135deg, var(--accent-b), var(--accent-c));
         color: #fff;
-        box-shadow: 0 12px 30px rgba(153, 69, 255, 0.26);
+        box-shadow: 0 16px 40px rgba(153, 69, 255, 0.3);
+      }
+
+      .btn-primary::before {
+        opacity: 1;
       }
 
       .btn-primary:hover {
         transform: translateY(-1px);
-        box-shadow: 0 18px 40px rgba(153, 69, 255, 0.32);
+        box-shadow: 0 22px 48px rgba(153, 69, 255, 0.36);
       }
 
       .btn-ghost {
-        background: rgba(244, 246, 255, 0.06);
+        background: rgba(244, 246, 255, 0.05);
         color: var(--text);
-        border: 1px solid rgba(244, 246, 255, 0.12);
+        border: 1px solid rgba(244, 246, 255, 0.16);
+        backdrop-filter: blur(12px);
       }
 
-      .grid {
+      .btn-ghost::before {
+        opacity: 0.72;
+      }
+
+      .btn-ghost:hover {
+        border-color: rgba(244, 246, 255, 0.3);
+        transform: translateY(-1px);
+      }
+
+      .btn-inline {
+        padding: 9px 12px;
+        font-size: 13px;
+      }
+      .summary-grid {
         display: grid;
         grid-template-columns: repeat(12, minmax(0, 1fr));
-        gap: 18px;
+        gap: 12px;
       }
 
-      .card {
+      .summary-card {
         grid-column: span 12;
-        padding: 20px;
-        border-radius: 20px;
+        padding: 18px;
+        border-radius: var(--radius-md);
         border: 1px solid rgba(244, 246, 255, 0.08);
-        background: rgba(12, 16, 26, 0.82);
+        background: rgba(12, 18, 36, 0.84);
         display: grid;
-        gap: 8px;
-        min-height: 132px;
+        gap: 6px;
       }
 
-      .card h3 {
-        margin: 0 0 2px;
+      .summary-card strong {
+        font-size: 17px;
+        letter-spacing: -0.01em;
+      }
+
+      .summary-card span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      @media (min-width: 920px) {
+        .summary-card.span-4 {
+          grid-column: span 4;
+        }
+      }
+
+      .gate-banner {
+        display: grid;
+        gap: 10px;
+        padding: 18px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(153, 69, 255, 0.34);
+        background: rgba(153, 69, 255, 0.1);
+      }
+
+      .gate-banner strong {
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      .gate-detail {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+        max-width: 860px;
+      }
+
+      .gate-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .gate-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .gate-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(244, 246, 255, 0.16);
+        background: rgba(10, 14, 30, 0.5);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .lock-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--accent-a);
+        box-shadow: 0 0 0 0 rgba(20, 241, 149, 0.5);
+        animation: pulse 1.4s ease-out infinite;
+      }
+
+      .lock-dot.off {
+        background: var(--warn);
+        box-shadow: none;
+        animation: none;
+      }
+
+      .locked-note {
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px dashed rgba(244, 246, 255, 0.24);
+        background: rgba(244, 246, 255, 0.04);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .surface-title {
+        margin: 6px 0 0;
+        font-size: clamp(24px, 4.6vw, 32px);
+        letter-spacing: -0.015em;
+      }
+
+      .surface-lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+        max-width: 820px;
+      }
+
+      .modules {
+        display: grid;
+        gap: 12px;
+      }
+
+      .module {
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(10, 14, 30, 0.9);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: border-color 140ms ease, transform 140ms ease;
+      }
+
+      .module.open {
+        border-color: rgba(153, 69, 255, 0.48);
+        transform: translateY(-1px);
+      }
+
+      .module-head {
+        width: 100%;
+        text-align: left;
+        background: none;
+        color: inherit;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .module-head strong {
         font-size: 18px;
         letter-spacing: -0.01em;
       }
 
-      .card p {
-        margin: 0;
+      .module-head span {
         color: var(--muted);
-        font-size: 14px;
-        line-height: 1.5;
+        font-size: 13px;
       }
 
-      @media (min-width: 880px) {
-        .card.span-4 {
-          grid-column: span 4;
-        }
-        .card.span-6 {
-          grid-column: span 6;
-        }
+      .chevron {
+        width: 28px;
+        height: 28px;
+        border-radius: 10px;
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        transition: transform 140ms ease, border-color 140ms ease;
       }
 
-      .mission {
-        padding: 22px;
-        border-radius: 22px;
-        background: var(--panel-strong);
-        border: 1px solid rgba(20, 241, 149, 0.18);
+      .module.open .chevron {
+        transform: rotate(180deg);
+        border-color: rgba(153, 69, 255, 0.6);
+        color: var(--text);
+      }
+
+      .module-body {
+        padding: 0 18px 18px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .module-body.hidden {
+        display: none;
+      }
+
+      .panel-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .panel {
+        grid-column: span 12;
+        padding: 16px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(244, 246, 255, 0.09);
+        background: var(--panel);
         display: grid;
         gap: 10px;
       }
 
-      .mission strong {
-        color: var(--accent-a);
+      .panel h3 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+
+      .panel p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .panel-meta {
+        color: var(--muted);
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        background: rgba(244, 246, 255, 0.04);
+        justify-self: start;
+      }
+
+      @media (min-width: 1020px) {
+        .panel.span-6 {
+          grid-column: span 6;
+        }
+      }
+
+      form {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .field {
+        grid-column: span 12;
+        display: grid;
+        gap: 6px;
+      }
+
+      @media (min-width: 760px) {
+        .field.span-6 {
+          grid-column: span 6;
+        }
+      }
+
+      label {
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 11px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(244, 246, 255, 0.14);
+        background: rgba(6, 9, 20, 0.94);
+        color: var(--text);
+        font-size: 14px;
+        outline: none;
+        transition: border-color 120ms ease, box-shadow 120ms ease;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(153, 69, 255, 0.66);
+        box-shadow: 0 0 0 4px rgba(153, 69, 255, 0.18);
+      }
+
+      textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: rgba(244, 246, 255, 0.68);
+        line-height: 1.55;
+      }
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 11px;
+        border-radius: 12px;
+        border: 1px solid rgba(244, 246, 255, 0.14);
+        background: rgba(244, 246, 255, 0.04);
+        font-size: 13px;
+        color: var(--muted);
+        min-height: 36px;
+      }
+
+      .status.busy {
+        border-color: rgba(0, 224, 255, 0.46);
+        color: #dff7ff;
+      }
+
+      .status.ok {
+        border-color: rgba(20, 241, 149, 0.52);
+        color: #d7ffe9;
+      }
+
+      .status.warn {
+        border-color: rgba(255, 209, 102, 0.58);
+        color: #fff3cc;
+      }
+
+      .status.err {
+        border-color: rgba(255, 107, 107, 0.6);
+        color: #ffdede;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 0 0 currentColor;
+        animation: pulse 1.3s ease-out infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 currentColor;
+        }
+        70% {
+          box-shadow: 0 0 0 10px transparent;
+        }
+        100% {
+          box-shadow: 0 0 0 0 transparent;
+        }
+      }
+
+      .result {
+        border-radius: 16px;
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        background: rgba(7, 11, 24, 0.94);
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .result pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 12px;
+        color: #e8ecff;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(244, 246, 255, 0.06);
+        max-height: 200px;
+        overflow: auto;
+      }
+
+      .result-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .metric {
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        background: rgba(244, 246, 255, 0.04);
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .metric strong {
+        color: var(--text);
+        font-size: 13px;
+        margin-right: 4px;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 6px;
+        padding: 10px;
+        border-radius: 16px;
+        border: 1px solid rgba(20, 241, 149, 0.24);
+        background: rgba(20, 241, 149, 0.06);
+      }
+
+      .checklist strong {
+        font-size: 13px;
+      }
+
+      .checklist span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
       }
 
       .disclosure {
@@ -242,67 +710,443 @@
         inset: 0;
         display: grid;
         place-items: center;
-        padding: 24px;
-        background: rgba(5, 6, 10, 0.82);
-        backdrop-filter: blur(12px);
+        padding: 20px;
+        background: rgba(4, 6, 15, 0.88);
+        backdrop-filter: blur(14px);
         z-index: 10;
       }
 
       .disclosure-panel {
-        width: min(760px, 100%);
-        padding: 26px;
-        border-radius: 24px;
+        width: min(820px, 100%);
+        padding: 24px;
+        border-radius: var(--radius-lg);
         background: var(--panel-strong);
-        border: 1px solid rgba(244, 246, 255, 0.12);
+        border: 1px solid rgba(244, 246, 255, 0.14);
         box-shadow: var(--shadow);
         display: grid;
-        gap: 10px;
+        gap: 8px;
       }
 
       .disclosure-panel h2 {
         margin: 0 0 4px;
         font-size: 22px;
+        letter-spacing: -0.01em;
       }
 
       .disclosure-panel p,
       .disclosure-panel li {
         color: var(--muted);
         font-size: 14px;
-        line-height: 1.55;
+        line-height: 1.6;
       }
 
       .disclosure-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 6px;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        padding: 11px 13px;
+        border-radius: 14px;
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        background: rgba(8, 12, 26, 0.96);
+        color: var(--text);
+        font-size: 13px;
+        box-shadow: var(--shadow);
+        z-index: 20;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 180ms ease, transform 180ms ease;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
       }
 
       .hidden {
         display: none !important;
       }
 
+      .icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        background: rgba(244, 246, 255, 0.06);
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        box-shadow: 0 18px 55px rgba(61, 123, 255, 0.14);
+        overflow: hidden;
+        position: relative;
+        isolation: isolate;
+      }
+
+      .icon-badge::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background:
+          radial-gradient(120% 140% at 20% 15%, rgba(255, 255, 255, 0.24), transparent 58%),
+          linear-gradient(135deg, rgba(153, 69, 255, 0.85), rgba(61, 123, 255, 0.85));
+        opacity: 0.95;
+      }
+
+      .icon-badge svg {
+        position: relative;
+        z-index: 1;
+        width: 22px;
+        height: 22px;
+        opacity: 0.92;
+        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+      }
+
+      .module-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .ad-slot {
+        border-radius: var(--radius-lg);
+        border: 1px dashed rgba(244, 246, 255, 0.22);
+        background: rgba(12, 18, 36, 0.62);
+        padding: 18px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .unlock {
+        display: grid;
+        gap: 12px;
+        padding: 20px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(10, 14, 30, 0.82);
+        box-shadow: var(--shadow);
+      }
+
+      .unlock-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .unlock-card {
+        grid-column: span 12;
+        padding: 16px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(12, 18, 36, 0.78);
+        display: grid;
+        gap: 10px;
+      }
+
+      .unlock-card h3 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      .unlock-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      @media (min-width: 920px) {
+        .unlock-card.span-6 {
+          grid-column: span 6;
+        }
+      }
+
+      .ad-slot strong {
+        font-size: 14px;
+        letter-spacing: -0.01em;
+      }
+
+      .ad-slot span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .social-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .social-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(244, 246, 255, 0.14);
+        background: rgba(244, 246, 255, 0.04);
+        color: var(--text);
+        text-decoration: none;
+        font-size: 12px;
+      }
+
+      .social-pill small {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .featured {
+        display: grid;
+        gap: 12px;
+        padding: 20px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(10, 14, 30, 0.82);
+        box-shadow: var(--shadow);
+      }
+
+      .featured-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .featured-head h2 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: -0.01em;
+      }
+
+      .featured-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+        max-width: 720px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(244, 246, 255, 0.14);
+        background: rgba(244, 246, 255, 0.04);
+        color: var(--text);
+        font-size: 12px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .chip.active {
+        border-color: rgba(153, 69, 255, 0.6);
+        background: rgba(153, 69, 255, 0.12);
+      }
+
+      .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .dapp-card {
+        grid-column: span 12;
+        padding: 16px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(12, 18, 36, 0.78);
+        display: grid;
+        gap: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .dapp-card::before {
+        content: "";
+        position: absolute;
+        inset: -40% -40% auto;
+        height: 160px;
+        background: radial-gradient(circle at 30% 40%, rgba(20, 241, 149, 0.18), transparent 60%),
+          radial-gradient(circle at 70% 60%, rgba(153, 69, 255, 0.18), transparent 60%);
+        filter: blur(32px);
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .dapp-top {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .dapp-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(244, 246, 255, 0.14);
+        background: rgba(244, 246, 255, 0.06);
+        overflow: hidden;
+        position: relative;
+        isolation: isolate;
+      }
+
+      .dapp-icon::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background:
+          radial-gradient(120% 140% at 20% 12%, rgba(255, 255, 255, 0.22), transparent 58%),
+          linear-gradient(135deg, rgba(20, 241, 149, 0.75), rgba(61, 123, 255, 0.75));
+        opacity: 0.95;
+      }
+
+      .dapp-icon svg {
+        width: 22px;
+        height: 22px;
+        position: relative;
+        z-index: 1;
+        opacity: 0.92;
+      }
+
+      .dapp-title {
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .dapp-meta {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .dapp-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .profile {
+        display: grid;
+        gap: 12px;
+        padding: 20px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(10, 14, 30, 0.82);
+        box-shadow: var(--shadow);
+      }
+
+      .profile-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .profile-head h2 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: -0.01em;
+      }
+
+      .profile-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+        max-width: 760px;
+      }
+
+      .lookup {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(12, 18, 36, 0.5);
+      }
+
+      .lookup strong {
+        font-size: 14px;
+      }
+
+      .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .profile-panel {
+        grid-column: span 12;
+        padding: 16px;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(244, 246, 255, 0.1);
+        background: rgba(12, 18, 36, 0.78);
+        display: grid;
+        gap: 10px;
+      }
+
+      @media (min-width: 920px) {
+        .dapp-card {
+          grid-column: span 4;
+        }
+        .profile-panel.span-6 {
+          grid-column: span 6;
+        }
+      }
+
       footer {
         color: rgba(244, 246, 255, 0.64);
         font-size: 12px;
-        margin-top: 14px;
+        line-height: 1.6;
+        margin-top: 2px;
       }
     </style>
   </head>
   <body>
     <div class="glow" aria-hidden="true"></div>
+
     <div id="disclosure" class="disclosure" role="dialog" aria-modal="true">
       <div class="disclosure-panel">
         <h2>Welcome to SeekerMigrate</h2>
         <p>
-          This infrastructure helps teams upgrade existing iOS and Android builds into Solana Mobile
-          dApp Store compatible experiences. It is designed for professional developers and product
-          teams working with real user funds and identity.
+          SeekerMigrate is infrastructure for professional teams. It helps you ship Solana Mobile
+          compatible dApps without storing private keys and without guessing about compliance.
         </p>
         <ul>
           <li>You remain responsible for custody, compliance, and production rollout decisions.</li>
-          <li>SeekerMigrate does not store private keys and should never be used to transmit them.</li>
-          <li>All Solana mainnet interactions should be tested thoroughly before public release.</li>
+          <li>Never paste private keys or seed phrases into this app.</li>
+          <li>All mainnet flows should be validated in staging before public release.</li>
         </ul>
         <div class="disclosure-actions">
           <button id="accept" class="btn btn-primary">Accept and Continue</button>
@@ -310,83 +1154,833 @@
         </div>
       </div>
     </div>
+
     <main id="app" class="hidden">
       <header>
         <div class="brand">
-          <div class="brand-mark">SM</div>
+          <div class="brand-mark" aria-label="SeekerMigrate (placeholder logo)">
+            <div class="icon-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3.2c2.6 3.2 6.2 6.6 6.2 10.8A6.2 6.2 0 0 1 12 20.2a6.2 6.2 0 0 1-6.2-6.2c0-4.2 3.6-7.6 6.2-10.8Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M8.2 14.2c.3 2.1 2.1 3.7 4.4 3.7" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
           <div>
             <div>SeekerMigrate</div>
             <div style="font-size: 12px; color: var(--muted)">Solana Mobile DevKit</div>
           </div>
         </div>
-        <div class="tag">SKR ecosystem aligned</div>
+        <div class="pill">Free report</div>
       </header>
 
       <section class="hero">
-        <h1>Ship Solana Mobile dApps faster, smoother, and compliant by design.</h1>
+        <h1>Upgrade your app for Solana Mobile.</h1>
         <p class="lead">
-          SeekerMigrate helps developers devkit existing builds into the Solana Mobile dApp Store
-          standard. We honor the SKR mission by removing migration friction and raising the bar on
-          wallet UX, payments, and trust.
+          SeekerMigrate DevKit is an <strong>Upgrade Kit</strong>: simple, step-by-step tools that help you move an existing
+          iOS/Android app into the Solana Mobile ecosystem.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="/api/health">Check Deployment Health</a>
-          <a class="btn btn-ghost" href="/api/name/lookup">Name Service Endpoint</a>
+          <a class="btn btn-primary" href="#devkit">Start (free report)</a>
+          <a class="btn btn-ghost" href="#explore">Explore Solana Mobile</a>
         </div>
       </section>
 
-      <section class="grid" aria-label="Core capabilities">
-        <article class="card span-4">
-          <h3>Wallet-first authentication</h3>
-          <p>
-            Replace email/password with Solana wallet identity and Mobile Wallet Adapter flows that
-            match the Seeker experience.
-          </p>
+      <section class="summary-grid" aria-label="What you get">
+        <article class="summary-card span-4">
+          <strong>1) Free DevKit</strong>
+          <span>
+            Run the free report first. It tells you what to change for Solana Mobile.
+          </span>
         </article>
-        <article class="card span-4">
-          <h3>Native SKR payments</h3>
-          <p>
-            Confirm on-chain signatures and reconcile payments through a clean backend contract that
-            stays aligned with mainnet truth.
-          </p>
+        <article class="summary-card span-4">
+          <strong>2) Payments that fit</strong>
+          <span>
+            Accept SKR or SOL on-chain, and offer Stripe for teams that still need card rails. Keep
+            receipts and unlocks in one place.
+          </span>
         </article>
-        <article class="card span-4">
-          <h3>Vanity wallets + naming</h3>
-          <p>
-            Offer premium identity features without breaking trust. Vanity prefixes and SNS flows
-            stay within the same secure surface.
-          </p>
-        </article>
-        <article class="card span-6">
-          <h3>Operational observability</h3>
-          <p>
-            A dedicated webhook surface streams critical events for your team. It is separate from
-            user-facing flows to keep production experiences clean and fast.
-          </p>
-        </article>
-        <article class="card span-6">
-          <h3>Compliance-ready defaults</h3>
-          <p>
-            This deploy targets the Solana Mobile dApp Store bar. Every flow is wired to endpoints
-            you control so you can harden the edge before shipping to users.
-          </p>
+        <article class="summary-card span-4">
+          <strong>3) Identity upgrades</strong>
+          <span>
+            SeekerMigrate issues premium names: `.skr`, `.seeker`, `.seismic`, and `.sol`. Resolve a
+            name to unlock all modules.
+          </span>
         </article>
       </section>
 
-      <section class="mission">
-        <div><strong>Aligned with Solana Mobile:</strong></div>
-        <div>
-          We build infrastructure that amplifies SKR by making developer adoption inevitable. When
-          builders can migrate in hours instead of months, the entire ecosystem compounds.
+      <section class="ad-slot" id="ad-primary" aria-label="Sponsored">
+        <strong>Sponsored placement (placeholder)</strong>
+        <span>
+          This is reserved for a future ad banner / promoted dApp card. Add an image + destination URL later
+          without breaking layout.
+        </span>
+        <div class="form-actions">
+          <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Ad URL placeholder</a>
+          <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Creative placeholder</a>
+        </div>
+      </section>
+
+      <section class="unlock" id="unlock" aria-label="Unlock DevKit">
+        <div class="featured-head">
+          <div>
+            <h2>Unlock DevKit ($50)</h2>
+            <p>
+              The free report tells you what to change. DevKit access gives you the tools to generate and download the code.
+              <strong>$50 per wallet.</strong>
+            </p>
+            <div class="chip-row" aria-label="Unlock rules">
+              <div class="chip active" style="cursor: default">$50 / wallet</div>
+              <div class="chip" style="cursor: default">Pay with card, SOL, or SKR</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="unlock-grid">
+          <article class="unlock-card span-6">
+            <h3>Pay with card</h3>
+            <p>Fastest option. Click pay and follow the steps.</p>
+            <div class="form-actions">
+              <a class="btn btn-primary btn-inline" href="#payments">Pay $50</a>
+            </div>
+          </article>
+
+          <article class="unlock-card span-6">
+            <h3>Pay with wallet</h3>
+            <p>Pay with SOL or SKR. If needed, you can paste the payment code under Troubleshooting.</p>
+            <div class="form-actions">
+              <a class="btn btn-primary btn-inline" href="#payments">Pay with SOL/SKR</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="featured" id="explore" aria-label="Explore Solana Mobile">
+        <div class="featured-head">
+          <div>
+            <h2>Explore Solana Mobile</h2>
+            <p>
+              Official docs and resources for shipping to Seeker and the Solana Mobile ecosystem.
+            </p>
+          </div>
+        </div>
+
+        <div class="featured-grid">
+          <article class="dapp-card">
+            <div class="dapp-top">
+              <div class="dapp-icon" aria-hidden="true"></div>
+              <div>
+                <div class="dapp-title">Seeker</div>
+                <div class="dapp-meta">Device + ecosystem overview (official)</div>
+              </div>
+            </div>
+            <div class="dapp-actions">
+              <a class="btn btn-primary btn-inline" href="https://solanamobile.com/seeker" target="_blank" rel="noreferrer noopener">Open</a>
+              <a class="btn btn-ghost btn-inline" href="https://solanamobile.com/" target="_blank" rel="noreferrer noopener">Solana Mobile</a>
+            </div>
+          </article>
+
+          <article class="dapp-card">
+            <div class="dapp-top">
+              <div class="dapp-icon" aria-hidden="true"></div>
+              <div>
+                <div class="dapp-title">MWA (Mobile Wallet Adapter)</div>
+                <div class="dapp-meta">Connect to wallets for sign-in + signing (official)</div>
+              </div>
+            </div>
+            <div class="dapp-actions">
+              <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/developers/mobile-wallet-adapter" target="_blank" rel="noreferrer noopener">Docs</a>
+              <a class="btn btn-ghost btn-inline" href="https://github.com/solana-mobile/mobile-wallet-adapter" target="_blank" rel="noreferrer noopener">GitHub</a>
+              <a class="btn btn-ghost btn-inline" href="https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html" target="_blank" rel="noreferrer noopener">Spec</a>
+            </div>
+          </article>
+
+          <article class="dapp-card">
+            <div class="dapp-top">
+              <div class="dapp-icon" aria-hidden="true"></div>
+              <div>
+                <div class="dapp-title">Expo (recommended)</div>
+                <div class="dapp-meta">Expo setup for Solana Mobile (official)</div>
+              </div>
+            </div>
+            <div class="dapp-actions">
+              <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/react-native/expo" target="_blank" rel="noreferrer noopener">Expo setup</a>
+              <a class="btn btn-ghost btn-inline" href="https://docs.solanamobile.com/react-native/overview" target="_blank" rel="noreferrer noopener">RN overview</a>
+            </div>
+          </article>
+
+          <article class="dapp-card">
+            <div class="dapp-top">
+              <div class="dapp-icon" aria-hidden="true"></div>
+              <div>
+                <div class="dapp-title">Solana Mobile Stack</div>
+                <div class="dapp-meta">What Seeker apps need to support (official)</div>
+              </div>
+            </div>
+            <div class="dapp-actions">
+              <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/getting-started/overview" target="_blank" rel="noreferrer noopener">Overview</a>
+              <a class="btn btn-ghost btn-inline" href="https://solanamobile.com/wallets" target="_blank" rel="noreferrer noopener">Wallets</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="featured" id="featured" aria-label="Featured dApps">
+        <div class="featured-head">
+          <div>
+            <h2>Featured dApps</h2>
+            <p>
+              Discover teams shipping on Seeker. Highlight recent migrations (iOS/Android), upcoming releases,
+              new on Seeker, and trending experiences.
+            </p>
+            <div class="chip-row" role="tablist" aria-label="Featured filters">
+              <div class="chip active" data-featured-filter="new">New on Seeker</div>
+              <div class="chip" data-featured-filter="ios">Recently migrated (iOS)</div>
+              <div class="chip" data-featured-filter="android">Recently migrated (Android)</div>
+              <div class="chip" data-featured-filter="upcoming">Upcoming releases</div>
+              <div class="chip" data-featured-filter="trending">Trending</div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Submit your dApp (placeholder)</a>
+          </div>
+        </div>
+
+        <div class="featured-grid" id="featured-grid">
+          <article class="dapp-card" data-featured-item="new trending">
+            <div class="dapp-top">
+              <div class="dapp-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3.8c2.6 3.2 6.2 6.6 6.2 10.8A6.2 6.2 0 0 1 12 20.2a6.2 6.2 0 0 1-6.2-6.2c0-4.2 3.6-7.6 6.2-10.8Z" stroke="white" stroke-width="1.8"/>
+                </svg>
+              </div>
+              <div>
+                <div class="dapp-title">Placeholder dApp One</div>
+                <div class="dapp-meta">New on Seeker · Category placeholder</div>
+              </div>
+            </div>
+            <div class="dapp-actions">
+              <a class="btn btn-primary btn-inline" href="#" aria-disabled="true">Open</a>
+              <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Learn more</a>
+            </div>
+          </article>
+
+          <article class="dapp-card" data-featured-item="ios new">
+            <div class="dapp-top">
+              <div class="dapp-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8.5 7.8h7a2.2 2.2 0 0 1 2.2 2.2v7A2.2 2.2 0 0 1 15.5 19.2h-7A2.2 2.2 0 0 1 6.3 17v-7A2.2 2.2 0 0 1 8.5 7.8Z" stroke="white" stroke-width="1.8"/>
+                  <path d="M10.1 6.2h3.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="dapp-title">Placeholder dApp Two</div>
+                <div class="dapp-meta">Recently migrated (iOS) · Category placeholder</div>
+              </div>
+            </div>
+            <div class="dapp-actions">
+              <a class="btn btn-primary btn-inline" href="#" aria-disabled="true">Open</a>
+              <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Learn more</a>
+            </div>
+          </article>
+
+          <article class="dapp-card" data-featured-item="android upcoming">
+            <div class="dapp-top">
+              <div class="dapp-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.8 8.7h8.4a2.2 2.2 0 0 1 2.2 2.2v6.1a2.2 2.2 0 0 1-2.2 2.2H7.8a2.2 2.2 0 0 1-2.2-2.2v-6.1a2.2 2.2 0 0 1 2.2-2.2Z" stroke="white" stroke-width="1.8"/>
+                  <path d="M9 8.6 8 6.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M15 8.6 16 6.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="dapp-title">Placeholder dApp Three</div>
+                <div class="dapp-meta">Upcoming release · Recently migrated (Android)</div>
+              </div>
+            </div>
+            <div class="dapp-actions">
+              <a class="btn btn-primary btn-inline" href="#" aria-disabled="true">Notify me</a>
+              <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Learn more</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="gate-banner" id="gate-banner" aria-live="polite">
+        <strong id="gate-title">DevKit access: $50 per wallet</strong>
+        <div id="gate-detail" class="gate-detail">
+          Free: report (what to change). Paid: DevKit tools that generate and download code.
+          Identity is separate: custom address ($25) + name ($25).
+        </div>
+        <div class="gate-row">
+          <div class="gate-pill">
+            <span id="gate-dot" class="lock-dot off" aria-hidden="true"></span>
+            <span id="gate-state-label">Locked</span>
+          </div>
+          <div id="gate-name-pill" class="gate-pill">No wallet selected</div>
+        </div>
+        <div class="gate-actions">
+          <button id="gate-open-unlock" class="btn btn-primary btn-inline" type="button">
+            Unlock DevKit
+          </button>
+          <button id="gate-open-identity" class="btn btn-ghost btn-inline" type="button">
+            Start identity
+          </button>
+        </div>
+      </section>
+
+      <section class="modules" aria-label="App modules">
+        <section id="devkit" class="module open" data-module="devkit">
+          <button class="module-head" type="button" data-module-toggle="devkit">
+            <div class="module-title">
+              <div class="icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 14.2c0 3 2.4 5.5 5.4 5.5 2.7 0 4.9-1.9 5.3-4.4" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 3.5c2.4 3 5.7 6.2 5.7 10.1A5.7 5.7 0 0 1 12 19.3a5.7 5.7 0 0 1-5.7-5.7C6.3 9.7 9.6 6.5 12 3.5Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <strong>DevKit</strong>
+                <span>Free report · Full access $50 / wallet.</span>
+              </div>
+            </div>
+            <div class="chevron" aria-hidden="true">v</div>
+          </button>
+          <div class="module-body" data-module-body="devkit">
+            <div class="panel-grid">
+              <article class="panel span-6">
+                <h3>Simple steps</h3>
+                <p>Follow the steps. No Solana knowledge needed.</p>
+                <div class="checklist">
+                  <strong>Recommended order</strong>
+                  <span>
+                    1) Run the free DevKit report. 2) Unlock DevKit ($50). 3) Add identity (vanity + name) if you want.
+                  </span>
+                  <span>Each step should pass smoke tests before moving forward.</span>
+                </div>
+                <div class="locked-note">
+                  <strong>Free:</strong> DevKit report (what to change).
+                  <strong>Paid:</strong> Full DevKit access is <strong>$50 per wallet</strong>.
+                </div>
+                <div class="locked-note">
+                  Disclaimer: We do our best to prepare your app, but you are responsible for verifying correctness,
+                  compliance, and testing. We assume no liability for app failures.
+                </div>
+                <div class="form-actions">
+                  <a class="btn btn-primary btn-inline" href="/api/health">Deployment Health</a>
+                  <a class="btn btn-ghost btn-inline" href="/webhook">Ops Webhook</a>
+                </div>
+                <div class="hint">
+                  Full access includes code generation (full migration or individual modules) and add-ons.
+                </div>
+
+                <div class="form-actions">
+                  <a class="btn btn-primary btn-inline" href="#unlock">Unlock DevKit ($50)</a>
+                  <a class="btn btn-ghost btn-inline" href="#identity">Start with Identity</a>
+                </div>
+
+                <div class="ad-slot" style="margin-top: 10px">
+                  <strong>Request a module</strong>
+                  <span>Need something specific (AI chatbot, messaging, etc.)? Send a request.</span>
+                  <div class="form-actions">
+                    <a class="btn btn-primary btn-inline" href="mailto:buidlerlabs@gmail.com?subject=%5BSeekerMigrate%5D%20Module%20request%3A%20%3Cmodule%20name%3E&body=Module%20name%3A%0D%0A%0D%0AWhat%20you%20need%3A%0D%0A%0D%0AStack%20(Expo%2FRN%2FBackend)%3A%0D%0A%0D%0ALinks%20(repo%2Fscreenshots)%3A%0D%0A%0D%0APriority%2Ftimeline%3A%0D%0A">Email module request</a>
+                  </div>
+                </div>
+              </article>
+
+              <article class="panel span-6">
+                <h3>What this surface controls</h3>
+                <p>Use this as your QA control center while building the mobile app.</p>
+                <div class="result">
+                  <div class="result-row">
+                    <div class="metric"><strong>DevKit</strong> free forever</div>
+                    <div class="metric"><strong>Premium</strong> vanity + SNS</div>
+                  </div>
+                  <div class="result-row">
+                    <div class="metric"><strong>Payments</strong> SKR, SOL, Stripe</div>
+                    <div class="metric"><strong>Ops</strong> webhook only</div>
+                  </div>
+                </div>
+                <div class="hint">
+                  Identity (vanity + name) is a core part of the Seeker experience. DevKit access is $50 per wallet.
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+        <section class="module" data-module="payments">
+          <button class="module-head" type="button" data-module-toggle="payments">
+            <div class="module-title">
+              <div class="icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 8.5h10.5a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2Z" stroke="white" stroke-width="1.8"/>
+                  <path d="M5.8 12h12.4" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M9 16.2h3.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <strong>DevKit access</strong>
+                <span>Unlock full DevKit ($50 / wallet).</span>
+              </div>
+            </div>
+            <div class="chevron" aria-hidden="true">v</div>
+          </button>
+          <div class="module-body hidden" data-module-body="payments">
+            <div class="panel-grid">
+              <article class="panel span-6">
+                <h3>Unlock full DevKit</h3>
+                <p>
+                  Full DevKit access is <strong>$50 per wallet</strong>. Once unlocked, you can generate code modules and download
+                  the DevKit bundle.
+                </p>
+                <div class="result">
+                  <div class="result-row">
+                    <div class="metric"><strong>$50</strong>DevKit access</div>
+                    <div class="metric"><strong>FREE</strong>DevKit report</div>
+                  </div>
+                </div>
+                <div class="hint">
+                  Checkout verification happens automatically when possible. If anything goes wrong, use Troubleshooting below.
+                </div>
+
+                <details style="margin-top: 10px">
+                  <summary class="hint">Troubleshooting (paste transaction signature)</summary>
+                  <div style="margin-top: 10px">
+                    <form id="payments-form">
+                      <div class="field-grid">
+                        <div class="field span-6">
+                          <label for="pay-currency">Currency</label>
+                          <select id="pay-currency" name="currency">
+                            <option value="SKR">SKR</option>
+                            <option value="SOL">SOL</option>
+                          </select>
+                        </div>
+                        <div class="field span-6">
+                          <label id="pay-amount-label" for="pay-amount">Amount</label>
+                          <input id="pay-amount" name="amount" type="number" min="0" step="any" placeholder="50" required />
+                          <div id="pay-amount-helper" class="hint"></div>
+                        </div>
+                        <div class="field span-6">
+                          <label for="pay-merchant">Merchant address</label>
+                          <input id="pay-merchant" name="merchantAddress" placeholder="Merchant wallet address" required />
+                        </div>
+                        <div class="field span-6">
+                          <label for="pay-signature">Transaction signature</label>
+                          <input id="pay-signature" name="signature" placeholder="Signature" required />
+                        </div>
+                      </div>
+                      <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">Verify</button>
+                        <div id="payments-status" class="status" aria-live="polite"></div>
+                      </div>
+                    </form>
+
+                    <div id="payments-result" class="result hidden" aria-live="polite">
+                      <strong>Verification</strong>
+                      <pre id="payments-result-json"></pre>
+                    </div>
+                  </div>
+                </details>
+              </article>
+
+              <article class="panel span-6">
+                <div class="panel-meta">/api/payments/stripe-session</div>
+                <h3>Pay $50 (Stripe)</h3>
+                <p>
+                  Unlock DevKit access for this wallet. Card payments are the simplest option.
+                </p>
+
+                <form id="stripe-form">
+                  <div class="field-grid">
+                    <div class="field span-6">
+                      <label for="stripe-amount">Amount (USD)</label>
+                      <input
+                        id="stripe-amount"
+                        name="amountUsd"
+                        type="number"
+                        min="50"
+                        step="1"
+                        value="50"
+                        required
+                      />
+                    </div>
+                    <div class="field span-6">
+                      <label for="stripe-label">Label</label>
+                      <input
+                        id="stripe-label"
+                        name="label"
+                        value="DevKit access ($50)"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Create Stripe checkout</button>
+                    <button class="btn btn-ghost" type="button" data-fill="stripe" style="display:none">Fill demo</button>
+                    <div id="stripe-status" class="status" aria-live="polite"></div>
+                  </div>
+                  <div class="hint">
+                    Requires `STRIPE_SECRET_KEY` in Vercel env vars. Success and cancel URLs can be
+                    set in env or passed in the payload.
+                  </div>
+                </form>
+
+                <div id="stripe-result" class="result hidden" aria-live="polite">
+                  <strong>Stripe checkout</strong>
+                  <div class="result-row">
+                    <div class="metric"><strong id="stripe-session">-</strong>session</div>
+                    <div class="metric"><strong id="stripe-amount-out">-</strong>usd</div>
+                  </div>
+                  <div class="form-actions">
+                    <a id="stripe-open" class="btn btn-primary btn-inline" href="#" target="_blank" rel="noreferrer noopener">Open Stripe</a>
+                  </div>
+                  <pre id="stripe-result-json"></pre>
+                </div>
+
+                <details style="margin-top: 10px">
+                  <summary class="hint">I already paid (paste Stripe session)</summary>
+                  <form id="stripe-verify-form" style="margin-top: 10px">
+                    <div class="field-grid">
+                      <div class="field span-6">
+                        <label for="unlock-wallet">Wallet address (who unlocks?)</label>
+                        <input id="unlock-wallet" placeholder="Wallet address" required />
+                      </div>
+                      <div class="field span-6">
+                        <label for="stripe-session-id">Stripe session ID</label>
+                        <input id="stripe-session-id" placeholder="cs_test_..." required />
+                      </div>
+                    </div>
+                    <div class="form-actions">
+                      <button class="btn btn-primary" type="submit">Verify & unlock</button>
+                      <div id="stripe-verify-status" class="status" aria-live="polite"></div>
+                    </div>
+                    <div class="hint">This unlock is stored on this device for that wallet (local test).</div>
+                  </form>
+                </details>
+              </article>
+            </div>
+          </div>
+        </section>
+        <section class="module" data-module="identity">
+          <button class="module-head" type="button" data-module-toggle="identity">
+            <div class="module-title">
+              <div class="icon-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3.8c3.4 0 6.2 2.8 6.2 6.2 0 2.6-1.6 4.9-3.9 5.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M9.7 15.7A6.2 6.2 0 0 1 5.8 10c0-3.4 2.8-6.2 6.2-6.2" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M9.2 12.2h5.6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M12 9.4v5.6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M7.6 20.2h8.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <strong>Names & Vanity</strong>
+                <span>Register names + generate premium vanity addresses.</span>
+              </div>
+            </div>
+            <div class="chevron" aria-hidden="true">v</div>
+          </button>
+          <div class="module-body hidden" data-module-body="identity">
+            <div class="panel-grid">
+              <article class="panel span-6">
+                <div class="panel-meta">/api/vanity</div>
+                <h3>Generate a vanity address</h3>
+                <p>
+                  Pick a short prefix (4–6 characters). Longer prefixes cost more and take longer.
+                  We recommend starting with 4.
+                </p>
+
+                <form id="vanity-form">
+                  <div class="field-grid">
+                    <div class="field span-12">
+                      <label for="vanity-prefix">Prefix (4–6 characters)</label>
+                      <input id="vanity-prefix" name="prefix" placeholder="skr" minlength="4" maxlength="6" required />
+                      <div class="hint">
+                        Tip: 4 characters is fast. 5–6 characters can take significantly longer.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Continue</button>
+                    <button class="btn btn-ghost" type="button" data-fill="vanity">Fill demo</button>
+                    <div id="vanity-status" class="status" aria-live="polite"></div>
+                  </div>
+                </form>
+
+                <div id="vanity-result" class="result hidden" aria-live="polite">
+                  <strong>Vanity result</strong>
+                  <div class="result-row">
+                    <div class="metric"><strong id="vanity-prefix-out">-</strong>prefix</div>
+                    <div class="metric"><strong id="vanity-address">-</strong>address</div>
+                    <div class="metric"><strong id="vanity-attempts-used">-</strong>work</div>
+                  </div>
+                  <pre id="vanity-result-json"></pre>
+                </div>
+              </article>
+
+              <article class="panel span-6">
+                <div class="panel-meta">/api/name/lookup and /api/name/register</div>
+                <h3>SeekerMigrate name service</h3>
+                <p>
+                  Check availability, then register your name. This is the key that unlocks the full DevKit.
+                </p>
+
+                <form id="name-lookup-form">
+                  <div class="field-grid">
+                    <div class="field span-6">
+                      <label for="name-domain">Name</label>
+                      <input id="name-domain" name="domain" placeholder="seekermigrate" required />
+                    </div>
+                    <div class="field span-6">
+                      <label for="name-tld">Name type</label>
+                      <select id="name-tld" name="tld">
+                        <option value="skr">.skr</option>
+                        <option value="seeker">.seeker</option>
+                        <option value="seismic">.seismic</option>
+                        <option value="sol">.sol</option>
+                      </select>
+                    </div>
+                    <div class="field span-6">
+                      <label>Network</label>
+                      <input value="mainnet-beta" disabled />
+                    </div>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Check name</button>
+                    <button class="btn btn-ghost" type="button" data-fill="nameLookup">Fill demo</button>
+                    <div id="name-lookup-status" class="status" aria-live="polite"></div>
+                  </div>
+                </form>
+
+                <div id="name-lookup-result" class="result hidden" aria-live="polite">
+                  <strong>Name lookup</strong>
+                  <div class="result-row">
+                    <div class="metric"><strong id="name-domain-out">-</strong>name</div>
+                    <div class="metric"><strong id="name-tld-out">-</strong>tld</div>
+                    <div class="metric"><strong id="name-availability">-</strong>available</div>
+                    <div class="metric"><strong id="name-onchain">-</strong>on-chain</div>
+                    <div class="metric"><strong id="name-owner">-</strong>owner</div>
+                  </div>
+                  <div class="form-actions">
+                    <button id="name-use" class="btn btn-primary btn-inline hidden" type="button">
+                      Use this name to unlock DevKit
+                    </button>
+                  </div>
+                  <div class="hint">Custom TLDs map to real `.sol` domains on-chain.</div>
+                  <pre id="name-lookup-json"></pre>
+                </div>
+
+                <form id="name-mint-form">
+                  <div class="field-grid">
+                    <div class="field span-6">
+                      <label for="mint-domain">Name</label>
+                      <input id="mint-domain" name="name" placeholder="yourname" maxlength="16" required />
+                      <div class="hint">Names can be up to 16 characters.</div>
+                    </div>
+                    <div class="field span-6">
+                      <label for="mint-tld">Name type</label>
+                      <select id="mint-tld" name="tld">
+                        <option value="skr">.skr</option>
+                        <option value="seeker">.seeker</option>
+                        <option value="seismic">.seismic</option>
+                        <option value="sol">.sol</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <details style="margin-top: 10px">
+                    <summary class="hint">Advanced (developer-only)</summary>
+                    <div class="field-grid" style="margin-top: 10px">
+                      <div class="field span-6">
+                        <label for="mint-space">Account space</label>
+                        <input id="mint-space" name="space" type="number" min="1000" step="100" placeholder="2000" />
+                      </div>
+                      <div class="field span-6">
+                        <label for="mint-buyer">Wallet address</label>
+                        <input id="mint-buyer" name="buyer" placeholder="Wallet address" />
+                      </div>
+                      <div class="field span-6">
+                        <label for="mint-token">Payment token account</label>
+                        <input id="mint-token" name="buyerTokenAccount" placeholder="Payment token account" />
+                      </div>
+                    </div>
+                  </details>
+
+                  <div class="form-actions" style="margin-top: 10px">
+                    <button class="btn btn-primary" type="submit">Register name</button>
+                    <button class="btn btn-ghost" type="button" data-fill="nameMint">Fill demo</button>
+                    <div id="name-mint-status" class="status" aria-live="polite"></div>
+                  </div>
+                  <div class="hint">
+                    Flow: check availability → select → pay → register.
+                  </div>
+                </form>
+
+                <div id="name-mint-result" class="result hidden" aria-live="polite">
+                  <strong>Registration transaction</strong>
+                  <div class="result-row">
+                    <div class="metric"><strong id="mint-domain-out">-</strong>name</div>
+                    <div class="metric"><strong id="mint-tld-out">-</strong>tld</div>
+                    <div class="metric"><strong id="mint-onchain">-</strong>on-chain</div>
+                    <div class="metric"><strong id="mint-instruction-count">-</strong>instructions</div>
+                    <div class="metric"><strong id="mint-cluster-out">-</strong>cluster</div>
+                  </div>
+                  <pre id="name-mint-json"></pre>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="profile" id="profile" aria-label="Project profile badge">
+        <div class="ad-slot" id="ad-profile" aria-label="Sponsored (profile)">
+          <strong>Sponsored placement (placeholder)</strong>
+          <span>Reserved for a future promoted project / ad creative. Safe placeholder.</span>
+          <div class="form-actions">
+            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Ad URL placeholder</a>
+            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Creative placeholder</a>
+          </div>
+        </div>
+        <div class="profile-head">
+          <div>
+            <h2>Project profile (badge)</h2>
+            <p>
+              One profile per wallet. This information will live in the decentralized badge NFT metadata
+              (IPFS/Arweave). It does not affect name resolution.
+            </p>
+          </div>
+          <div class="form-actions">
+            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Upload to IPFS/Arweave (placeholder)</a>
+          </div>
+        </div>
+
+        <div class="lookup" id="profile-lookup">
+          <strong>Look up a profile by name (placeholder)</strong>
+          <div class="field-grid">
+            <div class="field span-6">
+              <label for="lookup-name">Name</label>
+              <input id="lookup-name" placeholder="yourname.skr" />
+            </div>
+            <div class="field span-6">
+              <label for="lookup-cluster">Cluster</label>
+              <select id="lookup-cluster">
+                <option value="mainnet-beta">mainnet-beta</option>
+                <option value="devnet">devnet</option>
+                <option value="testnet">testnet</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary btn-inline" type="button" id="lookup-run">Resolve + find profile</button>
+            <button class="btn btn-ghost btn-inline" type="button" id="lookup-fill">Fill demo</button>
+            <div id="lookup-status" class="status" aria-live="polite"></div>
+          </div>
+          <div class="hint">
+            This will resolve the name owner via SNS, then scan the owner wallet for the SeekerMigrate Profile Badge NFT
+            (collection/verified creator). Wiring is placeholder for now.
+          </div>
+          <div class="result hidden" id="lookup-result">
+            <div class="result-row">
+              <div class="metric"><strong id="lookup-display">-</strong>name</div>
+              <div class="metric"><strong id="lookup-owner">-</strong>owner wallet</div>
+              <div class="metric"><strong id="lookup-badge">-</strong>badge</div>
+            </div>
+            <pre id="lookup-json">{}</pre>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+          <article class="profile-panel span-6">
+            <h3>Profile details</h3>
+            <form id="profile-form">
+              <div class="field-grid">
+                <div class="field span-6">
+                  <label for="profile-wallet">Wallet address</label>
+                  <input id="profile-wallet" placeholder="Wallet address" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-display">Primary display name</label>
+                  <input id="profile-display" placeholder="yourname.skr" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-project">Project / app name</label>
+                  <input id="profile-project" placeholder="Your app" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-tagline">Tagline</label>
+                  <input id="profile-tagline" placeholder="One-line description" />
+                </div>
+                <div class="field span-12">
+                  <label for="profile-desc">Description</label>
+                  <textarea id="profile-desc" placeholder="What does your app do? Who is it for?"></textarea>
+                </div>
+                <div class="field span-6">
+                  <label for="profile-website">Website</label>
+                  <input id="profile-website" placeholder="https://" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-email">Contact email</label>
+                  <input id="profile-email" placeholder="support@" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-x">X (Twitter)</label>
+                  <input id="profile-x" placeholder="@handle" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-telegram">Telegram</label>
+                  <input id="profile-telegram" placeholder="t.me/" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-discord">Discord</label>
+                  <input id="profile-discord" placeholder="invite link" />
+                </div>
+                <div class="field span-6">
+                  <label for="profile-store">Seeker / dApp Store URL</label>
+                  <input id="profile-store" placeholder="https://" />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Generate metadata JSON</button>
+                <button class="btn btn-ghost" type="button" id="profile-fill">Fill demo</button>
+                <div id="profile-status" class="status" aria-live="polite"></div>
+              </div>
+              <div class="hint">
+                This generates the JSON that will be uploaded to IPFS/Arweave and referenced by the profile badge NFT.
+              </div>
+            </form>
+          </article>
+
+          <article class="profile-panel span-6">
+            <h3>Preview</h3>
+            <div class="result" id="profile-preview">
+              <div class="result-row">
+                <div class="metric"><strong id="profile-preview-name">-</strong>name</div>
+                <div class="metric"><strong id="profile-preview-project">-</strong>project</div>
+              </div>
+              <pre id="profile-json">{}</pre>
+            </div>
+          </article>
         </div>
       </section>
 
       <footer>
-        SeekerMigrate is infrastructure. The live SKR user experience happens inside your mobile
-        build once you integrate the generated components and backend routes.
+        <div>
+          SeekerMigrate DevKit is an Upgrade Kit for moving apps into Solana Mobile. Free: report (what to change).
+          Paid: DevKit access ($50 / wallet), custom address ($25), and name ($25).
+        </div>
+
+        <div class="social-grid" aria-label="Contact and social (placeholders)">
+          <a class="social-pill" href="#" aria-disabled="true"><strong>Website</strong> <small>placeholder</small></a>
+          <a class="social-pill" href="#" aria-disabled="true"><strong>X</strong> <small>@placeholder</small></a>
+          <a class="social-pill" href="#" aria-disabled="true"><strong>Discord</strong> <small>invite link</small></a>
+          <a class="social-pill" href="#" aria-disabled="true"><strong>Telegram</strong> <small>channel</small></a>
+          <a class="social-pill" href="#" aria-disabled="true"><strong>Email</strong> <small>support@</small></a>
+          <a class="social-pill" href="#" aria-disabled="true"><strong>Docs</strong> <small>placeholder</small></a>
+        </div>
       </footer>
     </main>
 
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script>
       (function () {
         var disclosureKey = 'seekermigrate.disclosure.accepted';
@@ -394,10 +1988,219 @@
         var app = document.getElementById('app');
         var accept = document.getElementById('accept');
         var decline = document.getElementById('decline');
+        var toast = document.getElementById('toast');
+
+        var modules = Array.prototype.slice.call(document.querySelectorAll('[data-module]'));
+        var resolvedNameKey = 'seekermigrate.identity.resolvedName';
+        var devkitUnlockKey = 'seekermigrate.devkit.unlockedWallets';
+
+        var gateStateLabel = document.getElementById('gate-state-label');
+        var gateNamePill = document.getElementById('gate-name-pill');
+        var gateDot = document.getElementById('gate-dot');
+        var gateOpenUnlock = document.getElementById('gate-open-unlock');
+        var gateOpenIdentity = document.getElementById('gate-open-identity');
+
+        var devkitLock = document.getElementById('devkit-lock');
+        var devkitUnlock = document.getElementById('devkit-unlock');
+        var devkitName = document.getElementById('devkit-name');
+        var paymentsLock = document.getElementById('payments-lock');
+        var paymentsUnlock = document.getElementById('payments-unlock');
+        var paymentsName = document.getElementById('payments-name');
+        var nameUse = document.getElementById('name-use');
+
+        var lastLookup = null;
+
+        // Featured dApps filter (placeholder; safe no-op if section removed later)
+        var featuredChips = Array.prototype.slice.call(
+          document.querySelectorAll('[data-featured-filter]')
+        );
+        var featuredItems = Array.prototype.slice.call(
+          document.querySelectorAll('[data-featured-item]')
+        );
+
+        function setFeaturedFilter(filter) {
+          featuredChips.forEach(function (chip) {
+            chip.classList.toggle('active', chip.getAttribute('data-featured-filter') === filter);
+          });
+          featuredItems.forEach(function (item) {
+            var tags = (item.getAttribute('data-featured-item') || '').split(/\s+/);
+            var show = !filter || tags.indexOf(filter) !== -1;
+            item.classList.toggle('hidden', !show);
+          });
+        }
+
+        featuredChips.forEach(function (chip) {
+          chip.addEventListener('click', function () {
+            setFeaturedFilter(chip.getAttribute('data-featured-filter'));
+          });
+        });
+
+        setFeaturedFilter('new');
+
+        // ---- Profile lookup (name -> owner -> scan for profile badge NFT) ----
+        var lookupName = document.getElementById('lookup-name');
+        var lookupCluster = document.getElementById('lookup-cluster');
+        var lookupRun = document.getElementById('lookup-run');
+        var lookupFill = document.getElementById('lookup-fill');
+        var lookupStatus = document.getElementById('lookup-status');
+        var lookupResult = document.getElementById('lookup-result');
+        var lookupJson = document.getElementById('lookup-json');
+        var lookupDisplay = document.getElementById('lookup-display');
+        var lookupOwner = document.getElementById('lookup-owner');
+        var lookupBadge = document.getElementById('lookup-badge');
+
+        function showLookup(data) {
+          if (lookupResult) lookupResult.classList.remove('hidden');
+          if (lookupJson) lookupJson.textContent = JSON.stringify(data, null, 2);
+          if (lookupDisplay) lookupDisplay.textContent = data.displayName || '-';
+          if (lookupOwner) lookupOwner.textContent = data.owner || '-';
+          if (lookupBadge) lookupBadge.textContent = data.badge || 'not found (placeholder)';
+        }
+
+        async function resolveNameOwner(displayName) {
+          // Use existing lookup endpoint. It normalizes custom TLDs to an on-chain .sol name.
+          // NOTE: the endpoint uses the server's SOLANA_RPC; cluster is currently a UI placeholder.
+          var parts = (displayName || '').trim();
+          return await postJson('/api/name/lookup', { name: parts });
+        }
+
+        if (lookupFill) {
+          lookupFill.addEventListener('click', function () {
+            if (lookupName) lookupName.value = 'seekermigrate.skr';
+            if (lookupCluster) lookupCluster.value = 'mainnet-beta';
+            if (lookupStatus) setStatus(lookupStatus, 'ok', 'Demo name loaded', false);
+          });
+        }
+
+        if (lookupRun) {
+          lookupRun.addEventListener('click', async function () {
+            if (!lookupName) return;
+            if (lookupResult) lookupResult.classList.add('hidden');
+            if (lookupStatus) setStatus(lookupStatus, 'busy', 'Resolving name owner...', true);
+            try {
+              var inputName = (lookupName.value || '').trim();
+              if (!inputName) throw new Error('Enter a name to look up.');
+
+              var lookup = await resolveNameOwner(inputName);
+              var owner = lookup && lookup.owner ? String(lookup.owner) : null;
+
+              var out = {
+                displayName: lookup.name || inputName,
+                onChainName: lookup.onChainName,
+                owner: owner,
+                badge: null,
+                note:
+                  'Next step: scan the owner wallet for a SeekerMigrate Profile Badge NFT (verified collection/creator) and fetch its metadata URI from IPFS/Arweave.',
+              };
+
+              showLookup(out);
+              if (lookupStatus) setStatus(lookupStatus, 'ok', owner ? 'Owner resolved' : 'Name available (no owner)', false);
+            } catch (err) {
+              if (lookupStatus) setStatus(lookupStatus, 'err', err.message || 'Lookup failed', false);
+            }
+          });
+        }
+
+        function readResolvedName() {
+          try {
+            var raw = window.localStorage.getItem(resolvedNameKey);
+            return raw ? JSON.parse(raw) : null;
+          } catch (err) {
+            return null;
+          }
+        }
+
+        function writeResolvedName(value) {
+          window.localStorage.setItem(resolvedNameKey, JSON.stringify(value));
+        }
+
+        function clearResolvedName() {
+          window.localStorage.removeItem(resolvedNameKey);
+        }
+
+        function readUnlockedWallets() {
+          try {
+            var raw = window.localStorage.getItem(devkitUnlockKey);
+            return raw ? JSON.parse(raw) : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function writeUnlockedWallet(wallet) {
+          var w = (wallet || '').trim();
+          if (!w) return;
+          var items = readUnlockedWallets();
+          if (items.indexOf(w) === -1) items.push(w);
+          window.localStorage.setItem(devkitUnlockKey, JSON.stringify(items));
+        }
+
+        function isDevkitUnlocked(wallet) {
+          var w = (wallet || '').trim();
+          if (!w) return false;
+          return readUnlockedWallets().indexOf(w) !== -1;
+        }
+
+        function renderGate() {
+          var resolved = readResolvedName();
+          var wallet = resolved && resolved.owner ? resolved.owner : null;
+          var unlocked = Boolean(wallet && isDevkitUnlocked(wallet));
+
+          gateStateLabel.textContent = unlocked ? 'Unlocked' : 'Locked';
+          gateNamePill.textContent = wallet ? wallet.slice(0, 8) + '...' : 'No wallet selected';
+          gateDot.classList.toggle('off', !unlocked);
+
+          // DevKit lock panels were replaced with plain-language cards; keep these no-ops safe.
+          if (devkitLock) devkitLock.classList.toggle('hidden', unlocked);
+          if (devkitUnlock) devkitUnlock.classList.toggle('hidden', !unlocked);
+          if (devkitName) devkitName.textContent = unlocked ? wallet.slice(0, 8) + '...' : '-';
+
+          if (paymentsLock) paymentsLock.classList.toggle('hidden', unlocked);
+          if (paymentsUnlock) paymentsUnlock.classList.toggle('hidden', !unlocked);
+          if (paymentsName) paymentsName.textContent = unlocked ? wallet.slice(0, 8) + '...' : '-';
+        }
+
+        function showToast(message) {
+          toast.textContent = message;
+          toast.classList.add('show');
+          window.setTimeout(function () {
+            toast.classList.remove('show');
+          }, 1500);
+        }
 
         function showApp() {
           disclosure.classList.add('hidden');
           app.classList.remove('hidden');
+        }
+
+        function openModule(name) {
+          modules.forEach(function (mod) {
+            var modName = mod.getAttribute('data-module');
+            var body = mod.querySelector('[data-module-body]');
+            var isOpen = modName === name;
+            mod.classList.toggle('open', isOpen);
+            if (body) {
+              body.classList.toggle('hidden', !isOpen);
+            }
+          });
+        }
+
+        gateOpenIdentity.addEventListener('click', function () {
+          openModule('identity');
+          var identityModule = document.querySelector('[data-module="identity"]');
+          if (identityModule && identityModule.scrollIntoView) {
+            identityModule.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+
+        if (gateOpenUnlock) {
+          gateOpenUnlock.addEventListener('click', function () {
+            openModule('payments');
+            var payModule = document.querySelector('[data-module="payments"]');
+            if (payModule && payModule.scrollIntoView) {
+              payModule.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
         }
 
         if (window.localStorage.getItem(disclosureKey) === 'yes') {
@@ -407,14 +2210,461 @@
         accept.addEventListener('click', function () {
           window.localStorage.setItem(disclosureKey, 'yes');
           showApp();
+          showToast('Disclosure accepted');
         });
 
         decline.addEventListener('click', function () {
           window.localStorage.removeItem(disclosureKey);
           alert('You must accept the disclosure to continue.');
         });
+
+        modules.forEach(function (mod) {
+          var name = mod.getAttribute('data-module');
+          var toggle = mod.querySelector('[data-module-toggle]');
+          if (!toggle || !name) return;
+          toggle.addEventListener('click', function () {
+            openModule(name);
+          });
+        });
+
+        renderGate();
+
+        // ---- Profile badge (one per wallet) placeholders ----
+        var profileForm = document.getElementById('profile-form');
+        var profileStatus = document.getElementById('profile-status');
+        var profileJsonEl = document.getElementById('profile-json');
+        var profileFill = document.getElementById('profile-fill');
+        var profilePreviewName = document.getElementById('profile-preview-name');
+        var profilePreviewProject = document.getElementById('profile-preview-project');
+
+        function buildProfileJson() {
+          return {
+            schema: 'seekermigrate.profile.v1',
+            wallet: (document.getElementById('profile-wallet').value || '').trim() || undefined,
+            displayName: (document.getElementById('profile-display').value || '').trim() || undefined,
+            projectName: (document.getElementById('profile-project').value || '').trim() || undefined,
+            tagline: (document.getElementById('profile-tagline').value || '').trim() || undefined,
+            description: (document.getElementById('profile-desc').value || '').trim() || undefined,
+            links: {
+              website: (document.getElementById('profile-website').value || '').trim() || undefined,
+              email: (document.getElementById('profile-email').value || '').trim() || undefined,
+              x: (document.getElementById('profile-x').value || '').trim() || undefined,
+              telegram: (document.getElementById('profile-telegram').value || '').trim() || undefined,
+              discord: (document.getElementById('profile-discord').value || '').trim() || undefined,
+              seekerStore: (document.getElementById('profile-store').value || '').trim() || undefined,
+            },
+            images: {
+              avatar: undefined,
+              banner: undefined,
+            },
+            updatedAt: new Date().toISOString(),
+            storage: 'decentralized',
+            note: 'Upload this JSON to IPFS/Arweave and reference it from the SeekerMigrate Profile Badge NFT metadata.',
+          };
+        }
+
+        function renderProfilePreview(json) {
+          if (!profileJsonEl) return;
+          profileJsonEl.textContent = JSON.stringify(json, null, 2);
+          if (profilePreviewName) profilePreviewName.textContent = json.displayName || '-';
+          if (profilePreviewProject) profilePreviewProject.textContent = json.projectName || '-';
+        }
+
+        if (profileFill) {
+          profileFill.addEventListener('click', function () {
+            document.getElementById('profile-wallet').value = 'WalletAddressHere';
+            document.getElementById('profile-display').value = 'yourname.skr';
+            document.getElementById('profile-project').value = 'Your Project';
+            document.getElementById('profile-tagline').value = 'Build for Seeker, ship faster.';
+            document.getElementById('profile-desc').value = 'Short description of your app and what makes it great on Seeker.';
+            document.getElementById('profile-website').value = 'https://example.com';
+            document.getElementById('profile-email').value = 'support@example.com';
+            document.getElementById('profile-x').value = '@yourhandle';
+            document.getElementById('profile-telegram').value = 'https://t.me/yourchannel';
+            document.getElementById('profile-discord').value = 'https://discord.gg/yourinvite';
+            document.getElementById('profile-store').value = 'https://dappstore.solanamobile.com/';
+            var demo = buildProfileJson();
+            renderProfilePreview(demo);
+            if (profileStatus) setStatus(profileStatus, 'ok', 'Demo profile loaded', false);
+          });
+        }
+
+        if (profileForm) {
+          profileForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var json = buildProfileJson();
+            renderProfilePreview(json);
+            if (profileStatus) setStatus(profileStatus, 'ok', 'Metadata JSON ready (upload placeholder)', false);
+          });
+        }
+
+        renderProfilePreview(buildProfileJson());
+
+        // Donation flow removed (DevKit is a simple $50 unlock).
+
+        var fillButtons = Array.prototype.slice.call(document.querySelectorAll('[data-fill]'));
+        fillButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var target = btn.getAttribute('data-fill');
+            if (target === 'payments') {
+              document.getElementById('pay-currency').value = 'SKR';
+              document.getElementById('pay-amount').value = '0.001';
+              document.getElementById('pay-merchant').value = 'MerchantPublicKeyHere';
+              document.getElementById('pay-signature').value = 'SignatureHere';
+              document.getElementById('pay-ref').value = 'order-001';
+              if (typeof renderPaymentAmountUI === 'function') {
+                renderPaymentAmountUI();
+              }
+              openModule('payments');
+            } else if (target === 'stripe') {
+              document.getElementById('stripe-amount').value = '25';
+              document.getElementById('stripe-label').value = 'Premium vanity unlock';
+              openModule('payments');
+            } else if (target === 'vanity') {
+              document.getElementById('vanity-prefix').value = 'seek';
+              openModule('identity');
+            } else if (target === 'nameLookup') {
+              document.getElementById('name-domain').value = 'seekermigrate';
+              document.getElementById('name-tld').value = 'skr';
+              openModule('identity');
+            } else if (target === 'nameMint') {
+              document.getElementById('mint-domain').value = 'seekermigrate';
+              document.getElementById('mint-tld').value = 'skr';
+              document.getElementById('mint-space').value = '2000';
+              document.getElementById('mint-buyer').value = 'BuyerPublicKeyHere';
+              document.getElementById('mint-token').value = 'BuyerTokenAccountHere';
+              openModule('identity');
+            }
+            showToast('Demo values filled');
+          });
+        });
+
+        function setStatus(el, tone, message, busy) {
+          el.className = 'status' + (tone ? ' ' + tone : '');
+          if (!message) {
+            el.textContent = '';
+            return;
+          }
+          el.innerHTML = '';
+          if (busy) {
+            var dot = document.createElement('span');
+            dot.className = 'pulse';
+            el.appendChild(dot);
+          }
+          el.appendChild(document.createTextNode(message));
+        }
+
+        function showResult(container, jsonEl, data) {
+          jsonEl.textContent = JSON.stringify(data, null, 2);
+          container.classList.remove('hidden');
+        }
+
+        async function postJson(url, payload) {
+          var res = await fetch(url, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          var text = await res.text();
+          var data;
+          try {
+            data = text ? JSON.parse(text) : {};
+          } catch (err) {
+            data = { raw: text };
+          }
+          if (!res.ok) {
+            var msg = data && data.error ? data.error : 'Request failed';
+            throw new Error(msg);
+          }
+          return data;
+        }
+
+        // ----- Currency display helpers (consumer-friendly UI; professional on-chain plumbing) -----
+        // SOL uses lamports (1e9). SKR is assumed to be an SPL token with 9 decimals by default.
+        // If SKR decimals differ in your deployment, update SKR_DECIMALS accordingly.
+        var SOL_DECIMALS = 9;
+        var SKR_DECIMALS = 6;
+
+        function decimalsForCurrency(currency) {
+          return currency === 'SOL' ? SOL_DECIMALS : SKR_DECIMALS;
+        }
+
+        function toAtomicAmount(currency, rawAmount) {
+          var amount = Number(rawAmount);
+          if (!isFinite(amount) || amount <= 0) return 0;
+          var decimals = decimalsForCurrency(currency);
+          var factor = Math.pow(10, decimals);
+          return Math.round(amount * factor);
+        }
+
+        function formatAtomicLabel(currency, atomic) {
+          if (!atomic) return '';
+          if (currency === 'SOL') return String(atomic) + ' lamports';
+          return String(atomic) + ' base units';
+        }
+
+        function renderPaymentAmountUI() {
+          var currency = document.getElementById('pay-currency').value;
+          var label = document.getElementById('pay-amount-label');
+          var helper = document.getElementById('pay-amount-helper');
+          var amountEl = document.getElementById('pay-amount');
+
+          if (label) label.textContent = 'Amount (' + currency + ')';
+
+          var atomic = toAtomicAmount(currency, amountEl.value);
+          var atomicLabel = formatAtomicLabel(currency, atomic);
+          helper.textContent = atomicLabel
+            ? 'On-chain: ' + atomicLabel
+            : 'Enter an amount in the selected currency. We’ll convert to on-chain units automatically.';
+        }
+
+        var paymentsForm = document.getElementById('payments-form');
+        var paymentsStatus = document.getElementById('payments-status');
+        var paymentsResult = document.getElementById('payments-result');
+        var paymentsJson = document.getElementById('payments-result-json');
+        var paymentsCurrency = document.getElementById('payments-currency');
+        var paymentsConfirmation = document.getElementById('payments-confirmation');
+        var paymentsSlot = document.getElementById('payments-slot');
+
+        // Keep the amount field consumer-friendly while still sending atomic units to the backend.
+        document.getElementById('pay-currency').addEventListener('change', renderPaymentAmountUI);
+        document.getElementById('pay-amount').addEventListener('input', renderPaymentAmountUI);
+        renderPaymentAmountUI();
+
+        paymentsForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          setStatus(paymentsStatus, 'busy', 'Verifying on-chain receipt...', true);
+          paymentsResult.classList.add('hidden');
+          try {
+            var currency = document.getElementById('pay-currency').value;
+            var atomicAmount = toAtomicAmount(currency, document.getElementById('pay-amount').value);
+            if (!atomicAmount) {
+              throw new Error('Enter a valid amount greater than zero.');
+            }
+            var payload = {
+              merchantAddress: document.getElementById('pay-merchant').value.trim(),
+              signature: document.getElementById('pay-signature').value.trim(),
+              amountLamports: atomicAmount,
+              currency: currency,
+            };
+            var data = await postJson('/api/payments/receipt', payload);
+            showResult(paymentsResult, paymentsJson, data);
+            var receipt = data.receipt || {};
+            paymentsCurrency.textContent = currency;
+            paymentsConfirmation.textContent = receipt.confirmationStatus || 'unknown';
+            paymentsSlot.textContent = receipt.slot != null ? String(receipt.slot) : '-';
+            // Local unlock (device-only) once verified.
+            if (data && data.matched) {
+              var resolved = readResolvedName();
+              var wallet = resolved && resolved.owner ? resolved.owner : null;
+              if (wallet) {
+                writeUnlockedWallet(wallet);
+                renderGate();
+                showToast('DevKit unlocked');
+              }
+            }
+
+            setStatus(paymentsStatus, 'ok', 'Verified', false);
+          } catch (err) {
+            setStatus(paymentsStatus, 'err', err.message || 'Verification failed', false);
+          }
+        });
+
+        var stripeForm = document.getElementById('stripe-form');
+        var stripeStatus = document.getElementById('stripe-status');
+        var stripeResult = document.getElementById('stripe-result');
+        var stripeJson = document.getElementById('stripe-result-json');
+        var stripeSession = document.getElementById('stripe-session');
+        var stripeAmountOut = document.getElementById('stripe-amount-out');
+        var stripeOpen = document.getElementById('stripe-open');
+
+        stripeForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          setStatus(stripeStatus, 'busy', 'Opening checkout...', true);
+          stripeResult.classList.add('hidden');
+          try {
+            var payload = {
+              amountUsd: Number(document.getElementById('stripe-amount').value),
+              label: document.getElementById('stripe-label').value.trim() || undefined,
+              metadata: { kind: 'devkit_access', usd: '50' },
+            };
+            var data = await postJson('/api/payments/stripe-session', payload);
+            showResult(stripeResult, stripeJson, data);
+            stripeSession.textContent = data.sessionId || '-';
+            stripeAmountOut.textContent = data.amountUsd != null ? String(data.amountUsd) : '-';
+            if (data.checkoutUrl) {
+              stripeOpen.href = data.checkoutUrl;
+              stripeOpen.classList.remove('hidden');
+              window.open(data.checkoutUrl, '_blank', 'noopener,noreferrer');
+            } else {
+              stripeOpen.href = '#';
+              stripeOpen.classList.add('hidden');
+            }
+            setStatus(stripeStatus, 'ok', 'Checkout opened', false);
+          } catch (err) {
+            stripeOpen.classList.add('hidden');
+            setStatus(stripeStatus, 'err', err.message || 'Checkout failed', false);
+          }
+        });
+
+        var stripeVerifyForm = document.getElementById('stripe-verify-form');
+        var stripeVerifyStatus = document.getElementById('stripe-verify-status');
+
+        if (stripeVerifyForm) {
+          stripeVerifyForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            try {
+              var wallet = document.getElementById('unlock-wallet').value.trim();
+              var sessionId = document.getElementById('stripe-session-id').value.trim();
+              if (!wallet) throw new Error('Enter your wallet address.');
+              if (!sessionId) throw new Error('Paste your Stripe session ID.');
+
+              setStatus(stripeVerifyStatus, 'busy', 'Checking payment...', true);
+              var out = await postJson('/api/payments/stripe-verify', { sessionId: sessionId });
+              if (!out || !out.paid) {
+                throw new Error('Payment not confirmed yet. Try again in a minute.');
+              }
+              writeUnlockedWallet(wallet);
+              writeResolvedName({ owner: wallet, displayName: wallet });
+              renderGate();
+              setStatus(stripeVerifyStatus, 'ok', 'Unlocked for ' + wallet.slice(0, 8) + '...', false);
+              showToast('DevKit unlocked');
+            } catch (err) {
+              setStatus(stripeVerifyStatus, 'err', err.message || 'Stripe verify failed', false);
+            }
+          });
+        }
+        var vanityForm = document.getElementById('vanity-form');
+        var vanityStatus = document.getElementById('vanity-status');
+        var vanityResult = document.getElementById('vanity-result');
+        var vanityJson = document.getElementById('vanity-result-json');
+        var vanityPrefixOut = document.getElementById('vanity-prefix-out');
+        var vanityAddress = document.getElementById('vanity-address');
+        var vanityAttemptsUsed = document.getElementById('vanity-attempts-used');
+
+        vanityForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          setStatus(vanityStatus, 'busy', 'Generating vanity wallet...', true);
+          vanityResult.classList.add('hidden');
+          try {
+            var payload = {
+              prefix: document.getElementById('vanity-prefix').value.trim(),
+              // maxAttempts intentionally omitted from consumer flow
+            };
+            var data = await postJson('/api/vanity', payload);
+            showResult(vanityResult, vanityJson, data);
+            vanityPrefixOut.textContent = data.prefix || payload.prefix;
+            vanityAddress.textContent = data.address || '-';
+            vanityAttemptsUsed.textContent = data.attempts != null ? String(data.attempts) : '-';
+            setStatus(vanityStatus, 'ok', 'Vanity wallet ready', false);
+          } catch (err) {
+            setStatus(vanityStatus, 'err', err.message || 'Vanity failed', false);
+          }
+        });
+
+        var nameLookupForm = document.getElementById('name-lookup-form');
+        var nameLookupStatus = document.getElementById('name-lookup-status');
+        var nameLookupResult = document.getElementById('name-lookup-result');
+        var nameLookupJson = document.getElementById('name-lookup-json');
+        var nameAvailability = document.getElementById('name-availability');
+        var nameOwner = document.getElementById('name-owner');
+        var nameDomainOut = document.getElementById('name-domain-out');
+        var nameTldOut = document.getElementById('name-tld-out');
+        var nameOnchain = document.getElementById('name-onchain');
+        var nameTld = document.getElementById('name-tld');
+
+        nameLookupForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          setStatus(nameLookupStatus, 'busy', 'Checking name service...', true);
+          nameLookupResult.classList.add('hidden');
+          try {
+            var payload = {
+              name: document.getElementById('name-domain').value.trim(),
+              tld: nameTld.value,
+              cluster: document.getElementById('name-cluster').value,
+            };
+            var data = await postJson('/api/name/lookup', payload);
+            showResult(nameLookupResult, nameLookupJson, data);
+            nameAvailability.textContent = data.available ? 'yes' : 'no';
+            nameOwner.textContent = data.owner || '-';
+            nameDomainOut.textContent = data.name || payload.name;
+            nameTldOut.textContent = data.tld ? '.' + data.tld : '-';
+            nameOnchain.textContent = data.onChainName || '-';
+
+            lastLookup = data;
+            if (nameUse) {
+              var canUse = Boolean(data && !data.available && data.owner);
+              nameUse.classList.toggle('hidden', !canUse);
+            }
+
+            setStatus(nameLookupStatus, data.available ? 'warn' : 'ok', 'Lookup complete', false);
+          } catch (err) {
+            lastLookup = null;
+            if (nameUse) {
+              nameUse.classList.add('hidden');
+            }
+            setStatus(nameLookupStatus, 'err', err.message || 'Lookup failed', false);
+          }
+        });
+
+        if (nameUse) {
+          nameUse.addEventListener('click', function () {
+            if (!lastLookup || lastLookup.available || !lastLookup.owner) {
+              showToast('Resolve an existing name first');
+              return;
+            }
+            writeResolvedName({
+              displayName: lastLookup.name,
+              onChainName: lastLookup.onChainName,
+              tld: lastLookup.tld,
+              owner: lastLookup.owner,
+            });
+            renderGate();
+            openModule('devkit');
+            showToast('DevKit unlocked');
+          });
+        }
+
+        var nameMintForm = document.getElementById('name-mint-form');
+        var nameMintStatus = document.getElementById('name-mint-status');
+        var nameMintResult = document.getElementById('name-mint-result');
+        var nameMintJson = document.getElementById('name-mint-json');
+        var mintDomainOut = document.getElementById('mint-domain-out');
+        var mintTldOut = document.getElementById('mint-tld-out');
+        var mintOnchain = document.getElementById('mint-onchain');
+        var mintInstructionCount = document.getElementById('mint-instruction-count');
+        var mintClusterOut = document.getElementById('mint-cluster-out');
+        var mintTld = document.getElementById('mint-tld');
+
+        nameMintForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          setStatus(nameMintStatus, 'busy', 'Building registration transaction...', true);
+          nameMintResult.classList.add('hidden');
+          try {
+            var payload = {
+              name: document.getElementById('mint-domain').value.trim(),
+              tld: mintTld.value,
+              space: document.getElementById('mint-space').value
+                ? Number(document.getElementById('mint-space').value)
+                : undefined,
+              buyer: document.getElementById('mint-buyer').value.trim(),
+              buyerTokenAccount: document.getElementById('mint-token').value.trim(),
+            };
+            var data = await postJson('/api/name/register', payload);
+            showResult(nameMintResult, nameMintJson, data);
+            mintDomainOut.textContent = data.name || payload.name;
+            mintTldOut.textContent = data.tld ? '.' + data.tld : '-';
+            mintOnchain.textContent = data.onChainName || '-';
+            mintInstructionCount.textContent = data.instructions
+              ? String(data.instructions.length)
+              : '0';
+            mintClusterOut.textContent = data.cluster || 'mainnet-beta';
+            setStatus(nameMintStatus, 'ok', 'Instructions ready', false);
+          } catch (err) {
+            setStatus(nameMintStatus, 'err', err.message || 'Mint failed', false);
+          }
+        });
       })();
     </script>
   </body>
 </html>
-
