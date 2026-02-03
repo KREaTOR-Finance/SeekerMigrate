@@ -4,7 +4,7 @@ import path from 'node:path';
 
 export default defineConfig({
   plugins: [react()],
-  publicDir: path.resolve(__dirname, '../../public'),
+  // NOTE: Keep assets inside apps/web/public so Vercel (rootDir=apps/web) includes them.
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
