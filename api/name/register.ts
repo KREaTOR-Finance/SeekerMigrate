@@ -1,18 +1,25 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { registerDomainNameV2 } from '@bonfida/spl-name-service';
+import { PublicKey } from '@solana/web3.js';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { getDomainKeySync, registerDomainNameV2 } from '@bonfida/spl-name-service';
+import {
+  getConnection,
+  getRpcUrl,
+  getUsdcMint,
+  normalizeCluster,
+  type SolanaCluster,
+} from '../_utils/solana';
 
-const SOLANA_RPC = process.env.SOLANA_RPC ?? 'https://api.mainnet-beta.solana.com';
 const DEFAULT_NAME_SPACE = Number(process.env.NAME_ACCOUNT_SPACE ?? 2000);
-const connection = new Connection(SOLANA_RPC, { commitment: 'confirmed' });
 
 type RegisterPayload = {
   name?: string;
   buyer: string;
-  buyerTokenAccount: string;
+  buyerTokenAccount?: string;
   space?: number;
   tld?: string;
   domain?: string;
+  cluster?: SolanaCluster;
 };
 
 const ALLOWED_TLDS = new Set(['sol', 'skr', 'seeker', 'seismic']);
@@ -63,9 +70,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const payload = req.body as Partial<RegisterPayload> | undefined;
-  if (!(payload?.name || payload?.domain) || !payload?.buyer || !payload?.buyerTokenAccount) {
+  if (!(payload?.name || payload?.domain) || !payload?.buyer) {
     return res.status(400).json({
-      error: 'name, buyer, and buyerTokenAccount are required',
+      error: 'name and buyer are required',
     });
   }
 
@@ -77,9 +84,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'name must be at least 2 characters' });
   }
 
+  const cluster = normalizeCluster(payload?.cluster);
+  const connection = getConnection(cluster);
+
   try {
     const buyer = new PublicKey(payload.buyer);
-    const buyerTokenAccount = new PublicKey(payload.buyerTokenAccount);
+    const usdcMint = getUsdcMint(cluster);
+    const buyerTokenAccount = payload.buyerTokenAccount
+      ? new PublicKey(payload.buyerTokenAccount)
+      : getAssociatedTokenAddressSync(usdcMint, buyer);
     const space = Math.max(Number(payload.space ?? DEFAULT_NAME_SPACE), 512);
 
     const instructions = await registerDomainNameV2(
@@ -90,14 +103,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       buyerTokenAccount
     );
 
+    const nameAccount = getDomainKeySync(parsed.onChainName).pubkey;
+
     return res.status(200).json({
       name: parsed.displayName,
       onChainName: parsed.onChainName,
+      nameAccount: nameAccount.toBase58(),
       tld: parsed.tld,
       space,
       instructionCount: instructions.length,
       instructions: instructions.map(serializeInstruction),
-      rpc: SOLANA_RPC,
+      cluster,
+      rpc: getRpcUrl(cluster),
+      feeMint: usdcMint.toBase58(),
+      buyerTokenAccount: buyerTokenAccount.toBase58(),
       note:
         'Sign and send these instructions from the buyer wallet. The backend does not custody keys.',
     });

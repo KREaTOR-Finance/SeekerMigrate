@@ -1,0 +1,20 @@
+You are working in the repo C:/Users/Buidl/Desktop/SeekerMigrate/SeekerMigrate. Create a new web dev app inside the monorepo at apps/web that mimics the mobile app workflow using React Router (keep it simple).
+
+Goals:
+- Use Vite + React + TypeScript.
+- Routing should mimic mobile stack flow: /disclosure -> /wallet (mock connect) -> /identity -> /devkit -> /profile.
+- Implement an Android-like phone frame/shell (centered fixed width) with an app header and a right-side connect/status pill that routes to /wallet.
+- Implement a small session store (React context) with mock wallet: connect/disconnect, publicKey, and simple flags. Must be resilient if localStorage is unavailable (fallback in-memory).
+- Port the existing screen content & style tokens from public/index.html into these React screens. Reuse existing assets in public/ (wordmark, hero, etc.). It's OK to reuse/trim CSS.
+- Profile screen: include connect/disconnect, common profile dataset presets, and icon picker using the sprite at public/avatars/ivan-sprite.jpg (label as icons, not Ivan). Persist selection in session store.
+- Identity screen: vanity suffix length 4-6; allow Base58 characters; show validation.
+- DevKit screen: stub flow with local-run info and a placeholder "Run migration locally" action.
+
+Repo integration:
+- Create apps/web/package.json etc.
+- Add root scripts: dev:web (run apps/web dev server), build:web, preview:web.
+- Ensure no changes break apps/mobile.
+
+After implementing, run: npm install in apps/web and ensure npm run dev:web starts.
+
+When completely finished, run: clawdbot gateway wake --text "Done: created apps/web React dev app with mobile-mimic routing + mock wallet + profile presets/icon picker" --mode now

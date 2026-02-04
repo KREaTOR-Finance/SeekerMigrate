@@ -9,7 +9,7 @@ const Disclosure = () => {
 
   const handleAccept = () => {
     acceptDisclosure();
-    navigate('/wallet');
+    navigate('/app/wallet');
   };
 
   return (

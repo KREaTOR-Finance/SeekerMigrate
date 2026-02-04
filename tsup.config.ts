@@ -5,6 +5,7 @@ export default defineConfig({
   entry: {
     cli: 'src/cli.ts',
     index: 'src/index.ts',
+    'seeker-sdk': 'src/seeker-sdk/index.ts',
     telegram: 'src/server/telegram/index.ts',
   },
   outDir: 'dist',

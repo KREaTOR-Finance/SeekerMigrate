@@ -18,7 +18,14 @@ const SOL_MINT = 'So11111111111111111111111111111111111111112';
 const SKR_MINT = process.env.SKR_MINT ?? 'SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3';
 
 function pickMerchant(payload: Partial<ReceiptPayload>) {
-  return (payload.merchantAddress ?? payload.merchant ?? '').trim();
+  const incoming = (payload.merchantAddress ?? payload.merchant ?? '').trim();
+  if (incoming) return incoming;
+  return (
+    process.env.PAYMENT_TREASURY_ADDRESS ??
+    process.env.TREASURY_ADDRESS ??
+    process.env.PAYMENT_MERCHANT_ADDRESS ??
+    ''
+  ).trim();
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

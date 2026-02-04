@@ -76,10 +76,10 @@ const Devkit = () => {
       </section>
 
       <div className="screen-actions">
-        <button className="btn btn-ghost" type="button" onClick={() => navigate('/identity')}>
+        <button className="btn btn-ghost" type="button" onClick={() => navigate('/app/identity')}>
           Back
         </button>
-        <button className="btn btn-primary" type="button" onClick={() => navigate('/profile')}>
+        <button className="btn btn-primary" type="button" onClick={() => navigate('/app/profile')}>
           Continue to Profile
         </button>
       </div>

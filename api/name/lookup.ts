@@ -1,15 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { Connection } from '@solana/web3.js';
-import { ErrorType, SNSError, resolve } from '@bonfida/spl-name-service';
-
-const SOLANA_RPC = process.env.SOLANA_RPC ?? 'https://api.mainnet-beta.solana.com';
-const connection = new Connection(SOLANA_RPC, { commitment: 'confirmed' });
+import { ErrorType, SNSError, getDomainKeySync, resolve } from '@bonfida/spl-name-service';
+import { getConnection, getRpcUrl, normalizeCluster, type SolanaCluster } from '../_utils/solana';
 
 type LookupPayload = {
   name?: string;
   tld?: string;
   domain?: string;
   namespace?: string;
+  cluster?: SolanaCluster;
 };
 
 const ALLOWED_TLDS = new Set(['sol', 'skr', 'seeker', 'seismic']);
@@ -56,16 +54,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'name must be at least 2 characters' });
   }
 
+  const cluster = normalizeCluster(payload?.cluster);
+  const connection = getConnection(cluster);
+
+  const nameAccount = getDomainKeySync(names.onChainName).pubkey;
+
   try {
     const owner = await resolve(connection, names.onChainName);
     return res.status(200).json({
       name: names.displayName,
       onChainName: names.onChainName,
+      nameAccount: nameAccount.toBase58(),
       tld: names.tld,
       owner: owner.toBase58(),
       available: false,
       namespace: payload?.namespace ?? 'sns',
-      rpc: SOLANA_RPC,
+      cluster,
+      rpc: getRpcUrl(cluster),
     });
   } catch (error) {
     if (error instanceof SNSError) {
@@ -77,11 +82,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(200).json({
           name: names.displayName,
           onChainName: names.onChainName,
+          nameAccount: nameAccount.toBase58(),
           tld: names.tld,
           owner: null,
           available: true,
           namespace: payload?.namespace ?? 'sns',
-          rpc: SOLANA_RPC,
+          cluster,
+          rpc: getRpcUrl(cluster),
         });
       }
     }

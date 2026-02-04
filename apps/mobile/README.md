@@ -36,14 +36,42 @@ Create/install a dev-client build (required for MWA libraries):
 
 ```bash
 cd apps/mobile
-npx expo run:android
+npm run run:android
 ```
 
 Then start the dev server:
 
 ```bash
-npx expo start --dev-client
+npm run dev:client
 ```
+
+## Build for distribution (Solana Mobile dApp Store)
+
+This repo is wired for **EAS Build** (cloud builds).
+
+1) Install/login:
+
+```bash
+npm i -g eas-cli
+cd apps/mobile
+npm run eas:login
+npm run eas:whoami
+```
+
+2) Set the API base URL in `eas.json`:
+- `EXPO_PUBLIC_API_BASE_URL` = your **prod** Vercel URL
+
+3) Build artifacts:
+
+```bash
+# Internal testing build (APK)
+npm run build:apk
+
+# Store build (AAB)
+npm run build:aab
+```
+
+Note: you will need a stable Android application id/package name before store submission.
 
 ## Notes
 

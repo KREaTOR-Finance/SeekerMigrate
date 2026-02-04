@@ -1,24 +1,12 @@
-import { useMemo, useState, type CSSProperties, type FormEvent } from 'react';
+import { useMemo, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  PROFILE_PRESETS,
-  useSession,
-  type ProfilePresetId,
-  type SessionState,
-} from '../session/SessionContext';
-
-const avatarOptions = [
-  { id: 'icon-raven-chain', label: 'Raven (Chain)', ax: 0, ay: 0 },
-  { id: 'icon-briefcase-wing', label: 'Briefcase', ax: 1, ay: 0 },
-  { id: 'icon-skr', label: '.SKR', ax: 0, ay: 1 },
-  { id: 'icon-key', label: 'Key', ax: 1, ay: 1 },
-  { id: 'icon-raven-head', label: 'Raven (Head)', ax: 0, ay: 2 },
-  { id: 'icon-raven-coin', label: 'Raven (Coin)', ax: 1, ay: 2 },
-];
+import bs58 from 'bs58';
+import { Connection, PublicKey, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
+import { useSession, type SessionState } from '../session/SessionContext';
 
 const buildProfileJson = (state: SessionState) => {
   const profile = state.profile;
-  const wallet = profile.walletAddress || state.wallet.publicKey || undefined;
+  const wallet = state.wallet.publicKey || profile.walletAddress || undefined;
 
   return {
     schema: 'seekermigrate.profile.v1',
@@ -35,31 +23,147 @@ const buildProfileJson = (state: SessionState) => {
       discord: profile.discord || undefined,
       seekerStore: profile.store || undefined,
     },
-    icons: {
-      avatar: profile.avatarId || undefined,
-      banner: undefined,
-    },
     updatedAt: profile.updatedAt,
-    storage: 'decentralized',
-    note: 'Upload this JSON to IPFS/Arweave and reference it from the SeekerMigrate Profile Badge NFT metadata.',
+    note:
+      'This is your app-side profile tied to your connected wallet. Profile Badge NFTs are an optional paid service (on-chain business card), not required.',
   };
 };
 
+type BadgeChallengeResponse = {
+  ok: true;
+  owner: string;
+  profileHash: string;
+  nonce: string;
+  issuedAt: string;
+  expiresAt: string;
+  message: string;
+};
+
+type BadgeRequestResponse = {
+  ok: true;
+  requestId: string;
+  status: string;
+};
+
+type PaymentsMeta = {
+  treasuryAddress: string | null;
+  merchantAddress: string | null;
+};
+
+type QuoteResponse = {
+  atomicAmount: number;
+};
+
+async function postJson<T>(url: string, payload: any): Promise<T> {
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const text = await resp.text();
+  const data = text ? JSON.parse(text) : {};
+  if (!resp.ok) throw new Error(data?.error ?? `Request failed (${resp.status})`);
+  return data as T;
+}
+
+// (hashing handled server-side in /api/badges/challenge)
+
 const Profile = () => {
   const navigate = useNavigate();
-  const {
-    state,
-    connectWallet,
-    disconnectWallet,
-    setProfileField,
-    setProfileAvatar,
-    setProfilePreset,
-    applyProfilePreset,
-  } = useSession();
-  const [profileStatus, setProfileStatus] = useState('');
+  const { state, setProfileField, connectWallet } = useSession();
+  const [status, setStatus] = useState('');
+  const [badgeStatus, setBadgeStatus] = useState('');
+  const [badgeAck, setBadgeAck] = useState(false);
+  const [badgeRequestId, setBadgeRequestId] = useState<string | null>(null);
 
   const profileJson = useMemo(() => buildProfileJson(state), [state]);
   const profileJsonText = useMemo(() => JSON.stringify(profileJson, null, 2), [profileJson]);
+
+  const ensurePhantom = async () => {
+    const provider = (window as any).solana;
+    if (!provider?.isPhantom) throw new Error('Phantom not detected.');
+
+    if (!provider?.publicKey) {
+      const resp = await provider.connect();
+      const pk = resp?.publicKey?.toBase58?.() ?? resp?.publicKey?.toString?.();
+      if (pk) connectWallet(pk);
+    }
+
+    const pk = provider?.publicKey?.toBase58?.() ?? provider?.publicKey?.toString?.();
+    if (!pk) throw new Error('Wallet returned no public key');
+    return provider;
+  };
+
+  const handleBadgeRequest = async () => {
+    setBadgeStatus('');
+    setBadgeRequestId(null);
+
+    try {
+      if (import.meta.env.MODE === 'production') {
+        throw new Error('Badge request UI is available on web for development only.');
+      }
+      if (!badgeAck) throw new Error('Confirm you understand this is an on-chain badge service.');
+
+      const provider = await ensurePhantom();
+      const owner = provider.publicKey.toBase58();
+
+      // Treasury + quote
+      setBadgeStatus('Loading treasury...');
+      const meta = await (await fetch('/api/payments/meta')).json() as PaymentsMeta;
+      const treasury = (meta.treasuryAddress ?? meta.merchantAddress ?? '').trim();
+      if (!treasury) throw new Error('Treasury not configured');
+
+      setBadgeStatus('Fetching quote...');
+      const quote = await postJson<QuoteResponse>('/api/payments/quote', { usd: 25, currency: 'SOL' });
+      const lamports = Number(quote.atomicAmount);
+      if (!Number.isFinite(lamports) || lamports <= 0) throw new Error('Invalid quote');
+
+      // Pay
+      setBadgeStatus('Sending payment...');
+      const connection = new Connection(clusterApiUrl('mainnet-beta'), { commitment: 'confirmed' });
+      const { blockhash } = await connection.getLatestBlockhash('finalized');
+      const tx = new Transaction();
+      tx.feePayer = new PublicKey(owner);
+      tx.recentBlockhash = blockhash;
+      tx.add(
+        SystemProgram.transfer({
+          fromPubkey: new PublicKey(owner),
+          toPubkey: new PublicKey(treasury),
+          lamports,
+        })
+      );
+      const sent = await provider.signAndSendTransaction(tx);
+      const paymentSignature = sent?.signature ?? sent;
+      if (!paymentSignature) throw new Error('No payment signature returned');
+      await connection.confirmTransaction(paymentSignature, 'confirmed');
+
+      // Challenge
+      setBadgeStatus('Preparing badge request...');
+      const ch = await postJson<BadgeChallengeResponse>('/api/badges/challenge', { owner, profileJson });
+
+      setBadgeStatus('Signing message...');
+      const msgBytes = new TextEncoder().encode(ch.message);
+      const signed = await provider.signMessage(msgBytes, 'utf8');
+      const signatureBytes = signed?.signature ?? signed;
+      const messageSignature = bs58.encode(signatureBytes);
+
+      setBadgeStatus('Submitting badge request...');
+      const resp = await postJson<BadgeRequestResponse>('/api/badges/request', {
+        owner,
+        cluster: 'mainnet-beta',
+        nonce: ch.nonce,
+        message: ch.message,
+        messageSignature,
+        paymentSignature,
+        profileJson,
+      });
+
+      setBadgeRequestId(resp.requestId);
+      setBadgeStatus('Badge request submitted.');
+    } catch (e) {
+      setBadgeStatus(e instanceof Error ? e.message : 'Badge request failed');
+    }
+  };
 
   const walletShort = state.wallet.publicKey
     ? `${state.wallet.publicKey.slice(0, 4)}...${state.wallet.publicKey.slice(-4)}`
@@ -67,32 +171,20 @@ const Profile = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setProfileStatus('Metadata JSON ready (upload placeholder).');
-  };
-
-  const handlePresetApply = () => {
-    if (!state.profile.presetId) {
-      setProfileStatus('Choose a preset first.');
-      return;
-    }
-    applyProfilePreset(state.profile.presetId);
-    setProfileStatus('Preset applied.');
+    setStatus('Saved locally.');
   };
 
   const handleFillDemo = () => {
-    if (!state.wallet.connected) {
-      connectWallet();
-    }
-    setProfileField('displayName', 'yourname.skr');
+    setProfileField('displayName', 'yourname.sm');
     setProfileField('projectName', 'Your Project');
+    setProfileField('tagline', 'Shipping on Seeker.');
     setProfileField('website', 'https://example.com');
     setProfileField('email', 'support@example.com');
     setProfileField('x', '@yourhandle');
     setProfileField('telegram', 'https://t.me/yourchannel');
     setProfileField('discord', 'https://discord.gg/yourinvite');
     setProfileField('store', 'https://dappstore.solanamobile.com/');
-    applyProfilePreset(state.profile.presetId || 'indie');
-    setProfileStatus('Demo profile loaded.');
+    setStatus('Demo profile loaded.');
   };
 
   return (
@@ -101,8 +193,7 @@ const Profile = () => {
         <div>
           <h2>Profile</h2>
           <p className="surface-lead">
-            Wallet connect / disconnect lives here. You can generate a shared profile dataset and
-            later mint it as a Profile NFT.
+            Wallet-based, app-side profile. (Optional add-on: mint a Profile Badge as a service.)
           </p>
         </div>
       </div>
@@ -110,23 +201,11 @@ const Profile = () => {
       <section className="panel">
         <strong>Wallet</strong>
         <span>
-          <span>{state.wallet.connected ? 'Connected (demo)' : 'Disconnected'}</span>
+          <span>{state.wallet.connected ? 'Connected' : 'Disconnected'}</span>
           {walletShort ? <span className="muted"> {walletShort}</span> : null}
         </span>
-        <div className="form-actions">
-          <button className="btn btn-primary btn-inline" type="button" onClick={() => connectWallet()}>
-            Connect (Demo)
-          </button>
-          <button className="btn btn-ghost btn-inline" type="button" onClick={disconnectWallet}>
-            Disconnect
-          </button>
-          <div className={`status ${state.wallet.connected ? 'ok' : 'warn'}`} role="status">
-            {state.wallet.connected ? 'Wallet connected.' : 'Wallet disconnected.'}
-          </div>
-        </div>
         <div className="hint">
-          Web preview uses a demo wallet. Real wallet connect (Seed Vault / Phantom) runs in the
-          Android app via Solana Mobile Wallet Adapter.
+          Connect with Phantom on the Wallet screen. This profile attaches to the currently connected wallet.
         </div>
       </section>
 
@@ -134,25 +213,18 @@ const Profile = () => {
         <h3>Profile details</h3>
         <form onSubmit={handleSubmit}>
           <div className="field-grid">
-            <div className="field span-6">
-              <label htmlFor="profile-wallet">Wallet address</label>
-              <input
-                id="profile-wallet"
-                placeholder="Wallet address"
-                value={state.profile.walletAddress}
-                onChange={(event) => setProfileField('walletAddress', event.target.value)}
-              />
-            </div>
-            <div className="field span-6">
-              <label htmlFor="profile-display">Primary display name</label>
+            <div className="field span-12">
+              <label htmlFor="profile-display">Display name</label>
               <input
                 id="profile-display"
-                placeholder="yourname.skr"
+                placeholder="yourname.sm"
                 value={state.profile.displayName}
                 onChange={(event) => setProfileField('displayName', event.target.value)}
               />
+              <div className="hint">This is app-side display metadata (not your SMNS name record).</div>
             </div>
-            <div className="field span-6">
+
+            <div className="field span-12">
               <label htmlFor="profile-project">Project / app name</label>
               <input
                 id="profile-project"
@@ -161,7 +233,8 @@ const Profile = () => {
                 onChange={(event) => setProfileField('projectName', event.target.value)}
               />
             </div>
-            <div className="field span-6">
+
+            <div className="field span-12">
               <label htmlFor="profile-tagline">Tagline</label>
               <input
                 id="profile-tagline"
@@ -170,15 +243,17 @@ const Profile = () => {
                 onChange={(event) => setProfileField('tagline', event.target.value)}
               />
             </div>
+
             <div className="field span-12">
               <label htmlFor="profile-desc">Description</label>
               <textarea
                 id="profile-desc"
-                placeholder="What does your app do? Who is it for?"
+                placeholder="What do you do?"
                 value={state.profile.description}
                 onChange={(event) => setProfileField('description', event.target.value)}
               />
             </div>
+
             <div className="field span-6">
               <label htmlFor="profile-website">Website</label>
               <input
@@ -188,6 +263,7 @@ const Profile = () => {
                 onChange={(event) => setProfileField('website', event.target.value)}
               />
             </div>
+
             <div className="field span-6">
               <label htmlFor="profile-email">Contact email</label>
               <input
@@ -197,6 +273,7 @@ const Profile = () => {
                 onChange={(event) => setProfileField('email', event.target.value)}
               />
             </div>
+
             <div className="field span-6">
               <label htmlFor="profile-x">X (Twitter)</label>
               <input
@@ -206,6 +283,7 @@ const Profile = () => {
                 onChange={(event) => setProfileField('x', event.target.value)}
               />
             </div>
+
             <div className="field span-6">
               <label htmlFor="profile-telegram">Telegram</label>
               <input
@@ -215,6 +293,7 @@ const Profile = () => {
                 onChange={(event) => setProfileField('telegram', event.target.value)}
               />
             </div>
+
             <div className="field span-6">
               <label htmlFor="profile-discord">Discord</label>
               <input
@@ -224,6 +303,7 @@ const Profile = () => {
                 onChange={(event) => setProfileField('discord', event.target.value)}
               />
             </div>
+
             <div className="field span-6">
               <label htmlFor="profile-store">Seeker / dApp Store URL</label>
               <input
@@ -235,87 +315,51 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="field" style={{ marginTop: '8px' }}>
-            <label>Profile icon (preset)</label>
-            <div className="avatar-grid">
-              {avatarOptions.map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  className={`avatar-option ${
-                    state.profile.avatarId === option.id ? 'selected' : ''
-                  }`}
-                  style={{
-                    '--ax': option.ax,
-                    '--ay': option.ay,
-                  } as CSSProperties}
-                  onClick={() => setProfileAvatar(option.id)}
-                >
-                  <small>{option.label}</small>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="field-grid" style={{ marginTop: '10px' }}>
-            <div className="field span-12">
-              <label htmlFor="profile-preset">Common profile dataset</label>
-              <select
-                id="profile-preset"
-                value={state.profile.presetId}
-                onChange={(event) => setProfilePreset(event.target.value as ProfilePresetId)}
-              >
-                <option value="">Choose a preset</option>
-                {Object.entries(PROFILE_PRESETS).map(([key, preset]) => (
-                  <option key={key} value={key}>
-                    {preset.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
           <div className="form-actions">
             <button className="btn btn-primary" type="submit">
-              Generate metadata JSON
-            </button>
-            <button className="btn btn-ghost" type="button" onClick={handlePresetApply}>
-              Apply preset
+              Save profile
             </button>
             <button className="btn btn-ghost" type="button" onClick={handleFillDemo}>
               Fill demo
             </button>
             <div className="status" role="status">
-              {profileStatus}
+              {status}
             </div>
-          </div>
-          <div className="hint">
-            This generates the metadata JSON used to mint your Profile NFT. Next step (premium):
-            upload to IPFS/Arweave, then mint.
           </div>
         </form>
       </section>
 
       <section className="panel">
-        <h3>Preview</h3>
+        <h3>Profile Badge (service)</h3>
+        <p>
+          Optional add-on: mint a Profile Badge (on-chain business card) as a service. Your app-side profile remains
+          wallet-based and works without minting.
+        </p>
+        <div className="form-actions">
+          <label className="hint" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <input type="checkbox" checked={badgeAck} onChange={(e) => setBadgeAck(e.target.checked)} />
+            I understand this will create an on-chain badge request and requires payment.
+          </label>
+          <button className="btn btn-primary" type="button" onClick={handleBadgeRequest} disabled={!badgeAck}>
+            Pay & request badge ($25)
+          </button>
+          {badgeStatus ? <div className="status" role="status">{badgeStatus}</div> : null}
+          {badgeRequestId ? <div className="hint">Request ID: {badgeRequestId}</div> : null}
+        </div>
+      </section>
+
+      <section className="panel">
+        <h3>Preview JSON</h3>
         <div className="result">
-          <div className="result-row">
-            <div className="metric">
-              <strong>{profileJson.displayName || '-'}</strong>name
-            </div>
-            <div className="metric">
-              <strong>{profileJson.projectName || '-'}</strong>project
-            </div>
-          </div>
           <pre>{profileJsonText}</pre>
         </div>
       </section>
 
       <div className="screen-actions">
-        <button className="btn btn-ghost" type="button" onClick={() => navigate('/devkit')}>
+        <button className="btn btn-ghost" type="button" onClick={() => navigate('/app/devkit')}>
           Back
         </button>
-        <button className="btn btn-primary" type="button" onClick={() => navigate('/disclosure')}>
+        <button className="btn btn-primary" type="button" onClick={() => navigate('/app/disclosure')}>
           Start over
         </button>
       </div>

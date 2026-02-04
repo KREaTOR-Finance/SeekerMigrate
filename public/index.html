@@ -4,6 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SeekerMigrate | Solana Mobile DevKit</title>
+
+    <meta name="description" content="SeekerMigrate DevKit helps teams upgrade existing iOS/Android apps for Solana Mobile — wallet auth, payments, vanity, and name service." />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta property="og:title" content="SeekerMigrate | Solana Mobile DevKit" />
+    <meta property="og:description" content="Upgrade your app for Solana Mobile. Wallet auth, payments, vanity, and name service." />
+    <meta property="og:image" content="/og.jpg" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og.jpg" />
     <style>
       :root {
         --bg: #04060f;
@@ -95,18 +105,61 @@
         letter-spacing: 0.2px;
       }
 
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        min-width: 0;
+      }
+
       .brand-mark {
         width: 46px;
         height: 46px;
         border-radius: 16px;
-        background: linear-gradient(135deg, var(--accent-b), var(--accent-c));
+        background: rgba(244, 246, 255, 0.06);
+        border: 1px solid rgba(244, 246, 255, 0.12);
         display: grid;
         place-items: center;
-        color: #fff;
-        font-weight: 800;
         box-shadow: var(--shadow);
         position: relative;
         overflow: hidden;
+        flex: 0 0 auto;
+      }
+
+      .brand-mark img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .brand-title {
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      .brand-sub {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      @media (max-width: 520px) {
+        .brand-sub {
+          display: none;
+        }
+      }
+
+      .hero-logo {
+        width: min(560px, 92%);
+        aspect-ratio: 3 / 2;
+        object-fit: contain;
+        filter: drop-shadow(0 26px 60px rgba(0, 0, 0, 0.6));
+        margin: 6px 0 0;
       }
 
       .brand-mark::after {
@@ -135,7 +188,11 @@
         gap: 16px;
         padding: 30px;
         border-radius: var(--radius-lg);
-        background: var(--panel);
+        background:
+          linear-gradient(180deg, rgba(4, 6, 15, 0.55), rgba(4, 6, 15, 0.86)),
+          url('/hero.jpg');
+        background-size: cover;
+        background-position: center;
         border: 1px solid rgba(244, 246, 255, 0.1);
         box-shadow: var(--shadow);
         position: relative;
@@ -488,6 +545,37 @@
         background: var(--panel);
         display: grid;
         gap: 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .panel.card-art::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('/cards.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        pointer-events: none;
+        filter: saturate(1.05) contrast(1.05);
+      }
+
+      .panel.feather-art::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('/feathers.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.10;
+        pointer-events: none;
+        filter: saturate(1.05) contrast(1.05);
+      }
+
+      .panel.card-art > * {
+        position: relative;
+        z-index: 1;
       }
 
       .panel h3 {
@@ -710,21 +798,95 @@
         inset: 0;
         display: grid;
         place-items: center;
-        padding: 20px;
+        padding: 16px;
         background: rgba(4, 6, 15, 0.88);
         backdrop-filter: blur(14px);
         z-index: 10;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .disclosure-panel {
         width: min(820px, 100%);
-        padding: 24px;
+        padding: 16px;
         border-radius: var(--radius-lg);
         background: var(--panel-strong);
         border: 1px solid rgba(244, 246, 255, 0.14);
         box-shadow: var(--shadow);
         display: grid;
-        gap: 8px;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+        max-height: calc(100vh - 32px);
+      }
+
+      .disclosure-panel > * {
+        min-width: 0;
+      }
+
+      .disclosure-body {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-right: 2px;
+      }
+
+      .disclosure-actions {
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(10, 14, 30, 0),
+          rgba(10, 14, 30, 0.85) 35%,
+          rgba(10, 14, 30, 0.95)
+        );
+        padding-top: 10px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      }
+
+      .disclosure-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('/feathers.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.12;
+        filter: saturate(1.05) contrast(1.05);
+        pointer-events: none;
+      }
+
+      .disclosure-panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .disclosure-brand {
+        display: grid;
+        gap: 10px;
+        justify-items: start;
+        margin-bottom: 4px;
+      }
+
+      .disclosure-brand img {
+        width: min(520px, 100%);
+        height: auto;
+        max-height: 40vh;
+        display: block;
+        object-fit: contain;
+        filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+      }
+
+      @media (max-width: 520px) {
+        .disclosure-brand img {
+          max-height: 32vh;
+        }
+      }
+
+      .disclosure-kicker {
+        color: rgba(244, 246, 255, 0.72);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
       }
 
       .disclosure-panel h2 {
@@ -808,6 +970,17 @@
         filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
       }
 
+      .icon-badge img {
+        position: relative;
+        z-index: 1;
+        width: 24px;
+        height: 24px;
+        object-fit: cover;
+        border-radius: 8px;
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
+        opacity: 0.95;
+      }
+
       .brand-mark {
         display: grid;
         place-items: center;
@@ -826,6 +999,76 @@
         padding: 18px;
         display: grid;
         gap: 8px;
+      }
+
+      /* Optional card background art */
+      .unlock-card,
+      .dapp-card,
+      .avatar-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .avatar-option {
+        border-radius: 18px;
+        border: 1px solid rgba(244, 246, 255, 0.12);
+        background: rgba(10, 14, 26, 0.45);
+        overflow: hidden;
+        position: relative;
+        aspect-ratio: 1 / 1;
+        cursor: pointer;
+      }
+
+      .avatar-option::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url('/avatars/ivan-sprite.jpg');
+        background-size: 200% 300%;
+        background-repeat: no-repeat;
+        background-position: calc(var(--ax, 0) * 100%) calc(var(--ay, 0) * 50%);
+        filter: saturate(1.05) contrast(1.02);
+      }
+
+      .avatar-option.selected {
+        border-color: rgba(20, 241, 149, 0.65);
+        box-shadow: 0 0 0 2px rgba(20, 241, 149, 0.2);
+      }
+
+      .avatar-option small {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        font-size: 12px;
+        color: rgba(244, 246, 255, 0.85);
+        text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+      }
+
+      .profile-panel,
+      .summary-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .unlock-card::before,
+      .summary-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('/cards.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.08;
+        filter: saturate(1.05) contrast(1.05);
+        pointer-events: none;
+      }
+
+      .unlock-card > *,
+      .summary-card > * {
+        position: relative;
+        z-index: 1;
       }
 
       .unlock {
@@ -1025,16 +1268,53 @@
         border-radius: inherit;
         background:
           radial-gradient(120% 140% at 20% 12%, rgba(255, 255, 255, 0.22), transparent 58%),
-          linear-gradient(135deg, rgba(20, 241, 149, 0.75), rgba(61, 123, 255, 0.75));
-        opacity: 0.95;
+          linear-gradient(135deg, rgba(20, 241, 149, 0.55), rgba(153, 69, 255, 0.55));
+        opacity: 0.9;
       }
 
-      .dapp-icon svg {
-        width: 22px;
-        height: 22px;
+      .dapp-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         position: relative;
         z-index: 1;
-        opacity: 0.92;
+        opacity: 0.95;
+        filter: saturate(1.1);
+      }
+
+      /* Icon sprite (2 columns x 3 rows) using our icon-set.jpg */
+      .dapp-icon.sprite {
+        background-image: url('/icon-set.jpg');
+        background-size: 200% 300%;
+        background-repeat: no-repeat;
+      }
+      .dapp-icon.sprite::before {
+        opacity: 0.25;
+      }
+      .dapp-icon.sprite img {
+        display: none;
+      }
+      .sprite-devkit { background-position: 0% 100%; } /* bottom-left (crow head) */
+      .sprite-unlock { background-position: 100% 0%; } /* top-right (toolbox) */
+      .sprite-identity { background-position: 0% 50%; } /* middle-left (.skr tag) */
+      .sprite-vanity { background-position: 100% 50%; } /* middle-right (key) */
+
+      /* Card art overlay */
+      .dapp-card.card-art::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('/cards.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.10;
+        filter: saturate(1.05) contrast(1.05);
+        pointer-events: none;
+      }
+
+      .dapp-card.card-art > * {
+        position: relative;
+        z-index: 1;
       }
 
       .dapp-title {
@@ -1053,6 +1333,26 @@
         gap: 8px;
         position: relative;
         z-index: 1;
+      }
+
+      .link-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      .link-list a {
+        color: var(--muted);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(244, 246, 255, 0.22);
+      }
+
+      .link-list a:hover {
+        color: var(--text);
+        border-bottom-color: rgba(244, 246, 255, 0.42);
       }
 
       .profile {
@@ -1114,6 +1414,24 @@
         background: rgba(12, 18, 36, 0.78);
         display: grid;
         gap: 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .profile-panel.feather-art::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('/profile-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.10;
+        pointer-events: none;
+      }
+
+      .profile-panel.feather-art > * {
+        position: relative;
+        z-index: 1;
       }
 
       @media (min-width: 920px) {
@@ -1138,19 +1456,71 @@
 
     <div id="disclosure" class="disclosure" role="dialog" aria-modal="true">
       <div class="disclosure-panel">
-        <h2>Welcome to SeekerMigrate</h2>
-        <p>
-          SeekerMigrate is infrastructure for professional teams. It helps you ship Solana Mobile
-          compatible dApps without storing private keys and without guessing about compliance.
-        </p>
-        <ul>
-          <li>You remain responsible for custody, compliance, and production rollout decisions.</li>
-          <li>Never paste private keys or seed phrases into this app.</li>
-          <li>All mainnet flows should be validated in staging before public release.</li>
-        </ul>
+        <div class="disclosure-body">
+          <div class="disclosure-brand" aria-label="SeekerMigrate">
+            <div class="disclosure-kicker">Solana Mobile DevKit</div>
+            <img src="/wordmark.jpg" alt="SeekerMigrate" />
+          </div>
+          <h2>Welcome</h2>
+          <p>
+            SeekerMigrate helps app developers ship to Solana Mobile. You remain in control of custody and production decisions.
+          </p>
+          <ul>
+            <li><strong>Custody:</strong> never paste seed phrases or private keys.</li>
+            <li><strong>Compliance:</strong> you control your rollout and requirements.</li>
+            <li><strong>Safety:</strong> test on staging before mainnet release.</li>
+          </ul>
+        </div>
         <div class="disclosure-actions">
-          <button id="accept" class="btn btn-primary">Accept and Continue</button>
-          <button id="decline" class="btn btn-ghost">Decline</button>
+          <button
+            id="accept"
+            class="btn btn-primary"
+            onclick="try{document.getElementById('disclosure')?.classList.add('hidden');document.getElementById('connect')?.classList.remove('hidden');}catch(e){}"
+          >
+            Accept and Continue
+          </button>
+          <button
+            id="decline"
+            class="btn btn-ghost"
+            onclick="try{alert('You must accept the disclosure to continue.')}catch(e){}"
+          >
+            Decline
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="connect" class="disclosure hidden" role="dialog" aria-modal="true">
+      <div class="disclosure-panel">
+        <div class="disclosure-body">
+          <div class="disclosure-brand" aria-label="SeekerMigrate">
+            <div class="disclosure-kicker">Wallet</div>
+            <img src="/wordmark.jpg" alt="SeekerMigrate" />
+          </div>
+          <h2>Connect your wallet</h2>
+          <p>
+            This is a <strong>dummy connect</strong> for the web preview. Real wallet connect (Seed Vault / Phantom) runs in the Android app via Solana Mobile Wallet Adapter.
+          </p>
+          <ul>
+            <li>Identity is next (vanity + name service).</li>
+            <li>DevKit unlock is per-wallet ($50) and reusable.</li>
+          </ul>
+        </div>
+        <div class="disclosure-actions">
+          <button
+            id="connectBtn"
+            class="btn btn-primary"
+            onclick="try{document.getElementById('connect')?.classList.add('hidden');document.getElementById('app')?.classList.remove('hidden');}catch(e){}"
+          >
+            Connect (Demo)
+          </button>
+          <button
+            id="connectSkip"
+            class="btn btn-ghost"
+            onclick="try{document.getElementById('connect')?.classList.add('hidden');document.getElementById('app')?.classList.remove('hidden');}catch(e){}"
+          >
+            Skip
+          </button>
         </div>
       </div>
     </div>
@@ -1158,67 +1528,63 @@
     <main id="app" class="hidden">
       <header>
         <div class="brand">
-          <div class="brand-mark" aria-label="SeekerMigrate (placeholder logo)">
-            <div class="icon-badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 3.2c2.6 3.2 6.2 6.6 6.2 10.8A6.2 6.2 0 0 1 12 20.2a6.2 6.2 0 0 1-6.2-6.2c0-4.2 3.6-7.6 6.2-10.8Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
-                <path d="M8.2 14.2c.3 2.1 2.1 3.7 4.4 3.7" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-            </div>
+          <div class="brand-mark" aria-label="SeekerMigrate">
+            <img src="/app-icon.png" alt="SeekerMigrate" />
           </div>
-          <div>
-            <div>SeekerMigrate</div>
-            <div style="font-size: 12px; color: var(--muted)">Solana Mobile DevKit</div>
+          <div style="min-width:0">
+            <div class="brand-title">SeekerMigrate</div>
+            <div class="brand-sub">Solana Mobile DevKit</div>
           </div>
         </div>
-        <div class="pill">Free report</div>
+        <a class="pill" href="#profile" style="text-decoration:none">Profile</a>
       </header>
 
-      <section class="hero">
-        <h1>Upgrade your app for Solana Mobile.</h1>
+      <section class="hero" id="start">
+        <img class="hero-logo" src="/wordmark.jpg" alt="SeekerMigrate" loading="lazy" />
+        <h1>Escape the app store duopoly.</h1>
         <p class="lead">
-          SeekerMigrate DevKit is an <strong>Upgrade Kit</strong>: simple, step-by-step tools that help you move an existing
-          iOS/Android app into the Solana Mobile ecosystem.
+          SeekerMigrate is a rebellious onboarding ramp for app developers entering the <strong>SKR ecosystem</strong> and the
+          <strong>Solana Mobile dApp Store</strong>. It ships a DevKit for fast migration away from the exploitative Google Play + iOS App Store model,
+          plus <strong>.SOL / .SKR / .Seeker / .Seismic</strong> name registrations and browser-based Solana vanity wallets (4-6 character suffix).
+          Pay in <strong>SOL</strong> or <strong>SKR</strong>.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#devkit">Start (free report)</a>
-          <a class="btn btn-ghost" href="#explore">Explore Solana Mobile</a>
+          <a class="btn btn-primary" href="#identity">Claim identity</a>
+          <a class="btn btn-ghost" href="#devkit">DevKit</a>
+          <a class="btn btn-ghost" href="#explore">Docs</a>
         </div>
       </section>
 
-      <section class="summary-grid" aria-label="What you get">
+      <section class="summary-grid" aria-label="Actions">
         <article class="summary-card span-4">
-          <strong>1) Free DevKit</strong>
+          <strong>Vanity wallet</strong>
           <span>
-            Run the free report first. It tells you what to change for Solana Mobile.
+            Reserve a 4-6 character suffix vanity wallet. Pay in SOL or SKR.
           </span>
+          <div class="form-actions">
+            <a class="btn btn-primary btn-inline" href="#identity">Create vanity</a>
+          </div>
         </article>
-        <article class="summary-card span-4">
-          <strong>2) Payments that fit</strong>
-          <span>
-            Accept SKR or SOL on-chain, and offer Stripe for teams that still need card rails. Keep
-            receipts and unlocks in one place.
-          </span>
-        </article>
-        <article class="summary-card span-4">
-          <strong>3) Identity upgrades</strong>
-          <span>
-            SeekerMigrate issues premium names: `.skr`, `.seeker`, `.seismic`, and `.sol`. Resolve a
-            name to unlock all modules.
-          </span>
-        </article>
-      </section>
 
-      <section class="ad-slot" id="ad-primary" aria-label="Sponsored">
-        <strong>Sponsored placement (placeholder)</strong>
-        <span>
-          This is reserved for a future ad banner / promoted dApp card. Add an image + destination URL later
-          without breaking layout.
-        </span>
-        <div class="form-actions">
-          <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Ad URL placeholder</a>
-          <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Creative placeholder</a>
-        </div>
+        <article class="summary-card span-4">
+          <strong>Name service</strong>
+          <span>
+            Register a name: <strong>.sol</strong>, <strong>.skr</strong>, <strong>.seeker</strong>, <strong>.seismic</strong>.
+          </span>
+          <div class="form-actions">
+            <a class="btn btn-primary btn-inline" href="#identity">Register name</a>
+          </div>
+        </article>
+
+        <article class="summary-card span-4">
+          <strong>DevKit</strong>
+          <span>
+            Run the <strong>free</strong> migration report, then unlock DevKit ($50 / wallet) to receive the deliverables.
+          </span>
+          <div class="form-actions">
+            <a class="btn btn-ghost btn-inline" href="#devkit">Open DevKit</a>
+          </div>
+        </article>
       </section>
 
       <section class="unlock" id="unlock" aria-label="Unlock DevKit">
@@ -1266,38 +1632,42 @@
         </div>
 
         <div class="featured-grid">
-          <article class="dapp-card">
+          <article class="dapp-card card-art">
             <div class="dapp-top">
-              <div class="dapp-icon" aria-hidden="true"></div>
+              <div class="dapp-icon" aria-hidden="true"><img src="/solana-mobile.png" alt="" /></div>
               <div>
                 <div class="dapp-title">Seeker</div>
                 <div class="dapp-meta">Device + ecosystem overview (official)</div>
               </div>
             </div>
             <div class="dapp-actions">
-              <a class="btn btn-primary btn-inline" href="https://solanamobile.com/seeker" target="_blank" rel="noreferrer noopener">Open</a>
-              <a class="btn btn-ghost btn-inline" href="https://solanamobile.com/" target="_blank" rel="noreferrer noopener">Solana Mobile</a>
+              <a class="btn btn-primary btn-inline" href="https://solanamobile.com/seeker" target="_blank" rel="noreferrer noopener">Open overview</a>
+            </div>
+            <div class="link-list">
+              <a href="https://solanamobile.com/" target="_blank" rel="noreferrer noopener">SolanaMobile.com</a>
             </div>
           </article>
 
-          <article class="dapp-card">
+          <article class="dapp-card card-art">
             <div class="dapp-top">
-              <div class="dapp-icon" aria-hidden="true"></div>
+              <div class="dapp-icon" aria-hidden="true"><img src="/solana-docs.ico" alt="" /></div>
               <div>
-                <div class="dapp-title">MWA (Mobile Wallet Adapter)</div>
-                <div class="dapp-meta">Connect to wallets for sign-in + signing (official)</div>
+                <div class="dapp-title">Mobile Wallet Adapter (MWA)</div>
+                <div class="dapp-meta">Connect wallets for sign-in + signing (official)</div>
               </div>
             </div>
             <div class="dapp-actions">
-              <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/developers/mobile-wallet-adapter" target="_blank" rel="noreferrer noopener">Docs</a>
-              <a class="btn btn-ghost btn-inline" href="https://github.com/solana-mobile/mobile-wallet-adapter" target="_blank" rel="noreferrer noopener">GitHub</a>
-              <a class="btn btn-ghost btn-inline" href="https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html" target="_blank" rel="noreferrer noopener">Spec</a>
+              <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/developers/mobile-wallet-adapter" target="_blank" rel="noreferrer noopener">Read docs</a>
+            </div>
+            <div class="link-list">
+              <a href="https://github.com/solana-mobile/mobile-wallet-adapter" target="_blank" rel="noreferrer noopener">GitHub</a>
+              <a href="https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html" target="_blank" rel="noreferrer noopener">Spec</a>
             </div>
           </article>
 
-          <article class="dapp-card">
+          <article class="dapp-card card-art">
             <div class="dapp-top">
-              <div class="dapp-icon" aria-hidden="true"></div>
+              <div class="dapp-icon" aria-hidden="true"><img src="/expo.png" alt="" /></div>
               <div>
                 <div class="dapp-title">Expo (recommended)</div>
                 <div class="dapp-meta">Expo setup for Solana Mobile (official)</div>
@@ -1305,204 +1675,176 @@
             </div>
             <div class="dapp-actions">
               <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/react-native/expo" target="_blank" rel="noreferrer noopener">Expo setup</a>
-              <a class="btn btn-ghost btn-inline" href="https://docs.solanamobile.com/react-native/overview" target="_blank" rel="noreferrer noopener">RN overview</a>
+            </div>
+            <div class="link-list">
+              <a href="https://docs.solanamobile.com/react-native/overview" target="_blank" rel="noreferrer noopener">RN overview</a>
             </div>
           </article>
 
-          <article class="dapp-card">
+          <article class="dapp-card card-art">
             <div class="dapp-top">
-              <div class="dapp-icon" aria-hidden="true"></div>
+              <div class="dapp-icon" aria-hidden="true"><img src="/solana-mobile.png" alt="" /></div>
               <div>
                 <div class="dapp-title">Solana Mobile Stack</div>
                 <div class="dapp-meta">What Seeker apps need to support (official)</div>
               </div>
             </div>
             <div class="dapp-actions">
-              <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/getting-started/overview" target="_blank" rel="noreferrer noopener">Overview</a>
-              <a class="btn btn-ghost btn-inline" href="https://solanamobile.com/wallets" target="_blank" rel="noreferrer noopener">Wallets</a>
+              <a class="btn btn-primary btn-inline" href="https://docs.solanamobile.com/getting-started/overview" target="_blank" rel="noreferrer noopener">Read overview</a>
+            </div>
+            <div class="link-list">
+              <a href="https://solanamobile.com/wallets" target="_blank" rel="noreferrer noopener">Wallets</a>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="featured" id="featured" aria-label="Featured dApps">
+      <section class="featured" id="featured" aria-label="Get started">
         <div class="featured-head">
           <div>
-            <h2>Featured dApps</h2>
+            <h2>Get started</h2>
             <p>
-              Discover teams shipping on Seeker. Highlight recent migrations (iOS/Android), upcoming releases,
-              new on Seeker, and trending experiences.
+              SeekerMigrate is for app developers. It guides you through a clean migration path to Solana Mobile.
+              Start free   then unlock   then add identity.
             </p>
-            <div class="chip-row" role="tablist" aria-label="Featured filters">
-              <div class="chip active" data-featured-filter="new">New on Seeker</div>
-              <div class="chip" data-featured-filter="ios">Recently migrated (iOS)</div>
-              <div class="chip" data-featured-filter="android">Recently migrated (Android)</div>
-              <div class="chip" data-featured-filter="upcoming">Upcoming releases</div>
-              <div class="chip" data-featured-filter="trending">Trending</div>
+            <div class="chip-row" aria-label="Quick links">
+              <a class="chip" href="#devkit">Free report</a>
+              <a class="chip" href="#unlock">Unlock ($50)</a>
+              <a class="chip" href="#identity">Identity</a>
+              <a class="chip" href="#explore">Docs</a>
             </div>
-          </div>
-          <div class="form-actions">
-            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Submit your dApp (placeholder)</a>
           </div>
         </div>
 
         <div class="featured-grid" id="featured-grid">
-          <article class="dapp-card" data-featured-item="new trending">
+          <article class="dapp-card card-art">
             <div class="dapp-top">
-              <div class="dapp-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 3.8c2.6 3.2 6.2 6.6 6.2 10.8A6.2 6.2 0 0 1 12 20.2a6.2 6.2 0 0 1-6.2-6.2c0-4.2 3.6-7.6 6.2-10.8Z" stroke="white" stroke-width="1.8"/>
-                </svg>
-              </div>
+              <div class="dapp-icon sprite sprite-devkit" aria-hidden="true"></div>
               <div>
-                <div class="dapp-title">Placeholder dApp One</div>
-                <div class="dapp-meta">New on Seeker · Category placeholder</div>
+                <div class="dapp-title">Free migration report</div>
+                <div class="dapp-meta">Run the report for free — get a clear checklist + upgrade steps for Solana Mobile.</div>
               </div>
             </div>
             <div class="dapp-actions">
-              <a class="btn btn-primary btn-inline" href="#" aria-disabled="true">Open</a>
-              <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Learn more</a>
+              <a class="btn btn-primary btn-inline" href="#devkit">Run free report</a>
             </div>
           </article>
 
-          <article class="dapp-card" data-featured-item="ios new">
+          <article class="dapp-card card-art">
             <div class="dapp-top">
-              <div class="dapp-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8.5 7.8h7a2.2 2.2 0 0 1 2.2 2.2v7A2.2 2.2 0 0 1 15.5 19.2h-7A2.2 2.2 0 0 1 6.3 17v-7A2.2 2.2 0 0 1 8.5 7.8Z" stroke="white" stroke-width="1.8"/>
-                  <path d="M10.1 6.2h3.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-              </div>
+              <div class="dapp-icon sprite sprite-unlock" aria-hidden="true"></div>
               <div>
-                <div class="dapp-title">Placeholder dApp Two</div>
-                <div class="dapp-meta">Recently migrated (iOS) · Category placeholder</div>
+                <div class="dapp-title">Unlock DevKit ($50)</div>
+                <div class="dapp-meta">Unlock the migration modules (wallet auth + payments). Vanity + names are separate services.</div>
               </div>
             </div>
             <div class="dapp-actions">
-              <a class="btn btn-primary btn-inline" href="#" aria-disabled="true">Open</a>
-              <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Learn more</a>
+              <a class="btn btn-primary btn-inline" href="#unlock">Unlock DevKit</a>
             </div>
           </article>
 
-          <article class="dapp-card" data-featured-item="android upcoming">
+          <article class="dapp-card card-art">
             <div class="dapp-top">
-              <div class="dapp-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.8 8.7h8.4a2.2 2.2 0 0 1 2.2 2.2v6.1a2.2 2.2 0 0 1-2.2 2.2H7.8a2.2 2.2 0 0 1-2.2-2.2v-6.1a2.2 2.2 0 0 1 2.2-2.2Z" stroke="white" stroke-width="1.8"/>
-                  <path d="M9 8.6 8 6.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                  <path d="M15 8.6 16 6.8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-              </div>
+              <div class="dapp-icon sprite sprite-identity" aria-hidden="true"></div>
               <div>
-                <div class="dapp-title">Placeholder dApp Three</div>
-                <div class="dapp-meta">Upcoming release · Recently migrated (Android)</div>
+                <div class="dapp-title">Names & vanity (add-ons)</div>
+                <div class="dapp-meta">SeekerMigrate offers name registration (.sol/.skr/.seeker/.seismic) + vanity wallets (priced separately).</div>
               </div>
             </div>
             <div class="dapp-actions">
-              <a class="btn btn-primary btn-inline" href="#" aria-disabled="true">Notify me</a>
-              <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Learn more</a>
+              <a class="btn btn-primary btn-inline" href="#identity">Open</a>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="gate-banner" id="gate-banner" aria-live="polite">
-        <strong id="gate-title">DevKit access: $50 per wallet</strong>
-        <div id="gate-detail" class="gate-detail">
-          Free: report (what to change). Paid: DevKit tools that generate and download code.
-          Identity is separate: custom address ($25) + name ($25).
-        </div>
-        <div class="gate-row">
-          <div class="gate-pill">
-            <span id="gate-dot" class="lock-dot off" aria-hidden="true"></span>
-            <span id="gate-state-label">Locked</span>
-          </div>
-          <div id="gate-name-pill" class="gate-pill">No wallet selected</div>
-        </div>
-        <div class="gate-actions">
-          <button id="gate-open-unlock" class="btn btn-primary btn-inline" type="button">
-            Unlock DevKit
-          </button>
-          <button id="gate-open-identity" class="btn btn-ghost btn-inline" type="button">
-            Start identity
-          </button>
-        </div>
-      </section>
+      <!-- gate banner removed (redundant) -->
 
       <section class="modules" aria-label="App modules">
         <section id="devkit" class="module open" data-module="devkit">
           <button class="module-head" type="button" data-module-toggle="devkit">
             <div class="module-title">
               <div class="icon-badge" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 14.2c0 3 2.4 5.5 5.4 5.5 2.7 0 4.9-1.9 5.3-4.4" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                  <path d="M12 3.5c2.4 3 5.7 6.2 5.7 10.1A5.7 5.7 0 0 1 12 19.3a5.7 5.7 0 0 1-5.7-5.7C6.3 9.7 9.6 6.5 12 3.5Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
-                </svg>
+                <img src="/icon-devkit-toolbox.jpg" alt="" />
               </div>
               <div>
                 <strong>DevKit</strong>
-                <span>Free report · Full access $50 / wallet.</span>
+                <span>Submit code · migrate · deliverables.</span>
               </div>
             </div>
             <div class="chevron" aria-hidden="true">v</div>
           </button>
           <div class="module-body" data-module-body="devkit">
             <div class="panel-grid">
-              <article class="panel span-6">
-                <h3>Simple steps</h3>
-                <p>Follow the steps. No Solana knowledge needed.</p>
-                <div class="checklist">
-                  <strong>Recommended order</strong>
-                  <span>
-                    1) Run the free DevKit report. 2) Unlock DevKit ($50). 3) Add identity (vanity + name) if you want.
-                  </span>
-                  <span>Each step should pass smoke tests before moving forward.</span>
-                </div>
-                <div class="locked-note">
-                  <strong>Free:</strong> DevKit report (what to change).
-                  <strong>Paid:</strong> Full DevKit access is <strong>$50 per wallet</strong>.
-                </div>
-                <div class="locked-note">
-                  Disclaimer: We do our best to prepare your app, but you are responsible for verifying correctness,
-                  compliance, and testing. We assume no liability for app failures.
-                </div>
-                <div class="form-actions">
-                  <a class="btn btn-primary btn-inline" href="/api/health">Deployment Health</a>
-                  <a class="btn btn-ghost btn-inline" href="/webhook">Ops Webhook</a>
-                </div>
-                <div class="hint">
-                  Full access includes code generation (full migration or individual modules) and add-ons.
+              <article class="panel span-6 feather-art">
+                <h3>DevKit   submit your code</h3>
+                <p>
+                  Upload your project files, then click <strong>Migrate my app</strong>. We return a migration report and the DevKit deliverables.
+                  <strong>The report is free.</strong> DevKit unlock is <strong>$50 per wallet</strong> and can be reused for future runs.
+                </p>
+
+                <form id="devkit-submit" style="margin-top: 6px">
+                  <div class="field-grid">
+                    <div class="field span-12">
+                      <label for="devkit-files">Upload project files</label>
+                      <input id="devkit-files" name="files" type="file" multiple />
+                      <div class="hint">Upload the files you want migrated (source, config). Do not upload secrets.</div>
+                    </div>
+                    <div class="field span-12">
+                      <label for="devkit-notes">Notes (optional)</label>
+                      <textarea id="devkit-notes" placeholder="What are you migrating from? Firebase auth? Payments? What framework? Any constraints?"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button class="btn btn-primary" type="button" disabled>Submit code (wiring next)</button>
+                    <button class="btn btn-ghost" type="button" disabled>Migrate my app (wiring next)</button>
+                    <div class="status" style="display:none"></div>
+                  </div>
+
+                  <div class="locked-note">
+                    <strong>Unlock model:</strong> DevKit is tied to a wallet. Once unlocked, the same wallet can run DevKit again and again.
+                  </div>
+                </form>
+
+                <div class="result" style="margin-top: 10px">
+                  <strong>Deliverables</strong>
+                  <div class="hint">After migration youll receive: migration report + module bundle + next-steps checklist.</div>
                 </div>
 
                 <div class="form-actions">
                   <a class="btn btn-primary btn-inline" href="#unlock">Unlock DevKit ($50)</a>
-                  <a class="btn btn-ghost btn-inline" href="#identity">Start with Identity</a>
+                  <a class="btn btn-ghost btn-inline" href="#identity">Names & Vanity</a>
                 </div>
 
                 <div class="ad-slot" style="margin-top: 10px">
-                  <strong>Request a module</strong>
-                  <span>Need something specific (AI chatbot, messaging, etc.)? Send a request.</span>
+                  <strong>Need a custom module?</strong>
+                  <span>Tell us what youre building and well scope it.</span>
                   <div class="form-actions">
-                    <a class="btn btn-primary btn-inline" href="mailto:buidlerlabs@gmail.com?subject=%5BSeekerMigrate%5D%20Module%20request%3A%20%3Cmodule%20name%3E&body=Module%20name%3A%0D%0A%0D%0AWhat%20you%20need%3A%0D%0A%0D%0AStack%20(Expo%2FRN%2FBackend)%3A%0D%0A%0D%0ALinks%20(repo%2Fscreenshots)%3A%0D%0A%0D%0APriority%2Ftimeline%3A%0D%0A">Email module request</a>
+                    <a class="btn btn-primary btn-inline" href="mailto:buidlerlabs@gmail.com?subject=%5BSeekerMigrate%5D%20Custom%20module%20request&body=What%20are%20you%20building%3F%0D%0A%0D%0AStack%20(Expo%2FRN%2FBackend)%3A%0D%0A%0D%0AWhat%20you%20need%3A%0D%0A%0D%0ALinks%20(repo%2Fscreenshots)%3A%0D%0A">Email request</a>
                   </div>
                 </div>
               </article>
 
-              <article class="panel span-6">
-                <h3>What this surface controls</h3>
-                <p>Use this as your QA control center while building the mobile app.</p>
+              <article class="panel span-6 card-art">
+                <h3>What you get</h3>
+                <p>A single place to migrate your app, claim identity, and ship to Solana Mobile.</p>
                 <div class="result">
                   <div class="result-row">
-                    <div class="metric"><strong>DevKit</strong> free forever</div>
-                    <div class="metric"><strong>Premium</strong> vanity + SNS</div>
+                    <div class="metric"><strong>Free</strong>Migration report</div>
+                    <div class="metric"><strong>$50</strong>DevKit unlock</div>
                   </div>
                   <div class="result-row">
-                    <div class="metric"><strong>Payments</strong> SKR, SOL, Stripe</div>
-                    <div class="metric"><strong>Ops</strong> webhook only</div>
+                    <div class="metric"><strong>$25</strong>Name service</div>
+                    <div class="metric"><strong>$25</strong>Vanity wallet</div>
                   </div>
                 </div>
                 <div class="hint">
-                  Identity (vanity + name) is a core part of the Seeker experience. DevKit access is $50 per wallet.
+                  DevKit unlock is wallet-based: the same wallet can run DevKit again and again for future migration work.
+                </div>
+                <div class="form-actions">
+                  <a class="btn btn-ghost btn-inline" href="https://t.me/seekermigrate" target="_blank" rel="noreferrer noopener">Telegram</a>
+                  <a class="btn btn-ghost btn-inline" href="https://seekermigrate.com" target="_blank" rel="noreferrer noopener">Website</a>
                 </div>
               </article>
             </div>
@@ -1519,32 +1861,31 @@
                 </svg>
               </div>
               <div>
-                <strong>DevKit access</strong>
-                <span>Unlock full DevKit ($50 / wallet).</span>
+                <strong>Unlock DevKit</strong>
+                <span>$50 per wallet   unlock the full DevKit.</span>
               </div>
             </div>
             <div class="chevron" aria-hidden="true">v</div>
           </button>
           <div class="module-body hidden" data-module-body="payments">
             <div class="panel-grid">
-              <article class="panel span-6">
-                <h3>Unlock full DevKit</h3>
+              <article class="panel span-6 card-art">
+                <h3>Unlock DevKit</h3>
                 <p>
-                  Full DevKit access is <strong>$50 per wallet</strong>. Once unlocked, you can generate code modules and download
-                  the DevKit bundle.
+                  Unlock DevKit for <strong>$50 per wallet</strong>. After payment, you can generate and download the migration modules.
                 </p>
                 <div class="result">
                   <div class="result-row">
-                    <div class="metric"><strong>$50</strong>DevKit access</div>
-                    <div class="metric"><strong>FREE</strong>DevKit report</div>
+                    <div class="metric"><strong>$50</strong>Unlock</div>
+                    <div class="metric"><strong>Free</strong>Report</div>
                   </div>
                 </div>
                 <div class="hint">
-                  Checkout verification happens automatically when possible. If anything goes wrong, use Troubleshooting below.
+                  Once the receipt is verified, this wallet is unlocked. If you need to verify manually, use the section below.
                 </div>
 
                 <details style="margin-top: 10px">
-                  <summary class="hint">Troubleshooting (paste transaction signature)</summary>
+                  <summary class="hint">Verify payment manually (paste transaction signature)</summary>
                   <div style="margin-top: 10px">
                     <form id="payments-form">
                       <div class="field-grid">
@@ -1583,11 +1924,11 @@
                 </details>
               </article>
 
-              <article class="panel span-6">
-                <div class="panel-meta">/api/payments/stripe-session</div>
-                <h3>Pay $50 (Stripe)</h3>
+              <article class="panel span-6 card-art">
+                <div class="panel-meta">Card payment (optional)</div>
+                <h3>Pay by card (Stripe)</h3>
                 <p>
-                  Unlock DevKit access for this wallet. Card payments are the simplest option.
+                  Prefer card rails? Create a Stripe checkout for <strong>$50</strong>. (SOL/SKR payments are the primary path.)
                 </p>
 
                 <form id="stripe-form">
@@ -1614,7 +1955,7 @@
                     </div>
                   </div>
                   <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">Create Stripe checkout</button>
+                    <button class="btn btn-primary" type="submit">Create checkout</button>
                     <button class="btn btn-ghost" type="button" data-fill="stripe" style="display:none">Fill demo</button>
                     <div id="stripe-status" class="status" aria-live="polite"></div>
                   </div>
@@ -1637,7 +1978,7 @@
                 </div>
 
                 <details style="margin-top: 10px">
-                  <summary class="hint">I already paid (paste Stripe session)</summary>
+                  <summary class="hint">Already paid? Verify Stripe session</summary>
                   <form id="stripe-verify-form" style="margin-top: 10px">
                     <div class="field-grid">
                       <div class="field span-6">
@@ -1681,33 +2022,33 @@
           </button>
           <div class="module-body hidden" data-module-body="identity">
             <div class="panel-grid">
-              <article class="panel span-6">
-                <div class="panel-meta">/api/vanity</div>
-                <h3>Generate a vanity address</h3>
+              <article class="panel span-6 feather-art">
+                <div class="panel-meta">Vanity address ($25)</div>
+                <h3>Reserve a vanity wallet</h3>
                 <p>
-                  Pick a short prefix (4–6 characters). Longer prefixes cost more and take longer.
-                  We recommend starting with 4.
+                  Choose a short <strong>suffix</strong> (4–6 letters/numbers). Well generate a wallet that ends with it.
+                  4 characters is fastest.
                 </p>
 
                 <form id="vanity-form">
                   <div class="field-grid">
                     <div class="field span-12">
-                      <label for="vanity-prefix">Prefix (4–6 characters)</label>
-                      <input id="vanity-prefix" name="prefix" placeholder="skr" minlength="4" maxlength="6" required />
+                      <label for="vanity-prefix">Suffix (4–6 characters)</label>
+                      <input id="vanity-prefix" name="suffix" placeholder="ABCD" minlength="4" maxlength="6" required />
                       <div class="hint">
-                        Tip: 4 characters is fast. 5–6 characters can take significantly longer.
+                        Tip: 4 characters is fastest. 5–6 characters may take longer.
                       </div>
                     </div>
                   </div>
                   <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">Continue</button>
+                    <button class="btn btn-primary" type="submit">Check price & ETA</button>
                     <button class="btn btn-ghost" type="button" data-fill="vanity">Fill demo</button>
                     <div id="vanity-status" class="status" aria-live="polite"></div>
                   </div>
                 </form>
 
                 <div id="vanity-result" class="result hidden" aria-live="polite">
-                  <strong>Vanity result</strong>
+                  <strong>Vanity quote</strong>
                   <div class="result-row">
                     <div class="metric"><strong id="vanity-prefix-out">-</strong>prefix</div>
                     <div class="metric"><strong id="vanity-address">-</strong>address</div>
@@ -1717,31 +2058,27 @@
                 </div>
               </article>
 
-              <article class="panel span-6">
-                <div class="panel-meta">/api/name/lookup and /api/name/register</div>
-                <h3>SeekerMigrate name service</h3>
+              <article class="panel span-6 feather-art">
+                <div class="panel-meta">Name registration ($25)</div>
+                <h3>Register a name</h3>
                 <p>
-                  Check availability, then register your name. This is the key that unlocks the full DevKit.
+                  Search availability, then register your name on-chain. Supported: <strong>.sol</strong>, <strong>.skr</strong>, <strong>.seeker</strong>, <strong>.seismic</strong>.
                 </p>
 
                 <form id="name-lookup-form">
                   <div class="field-grid">
                     <div class="field span-6">
                       <label for="name-domain">Name</label>
-                      <input id="name-domain" name="domain" placeholder="seekermigrate" required />
+                      <input id="name-domain" name="domain" placeholder="yourname" required />
                     </div>
                     <div class="field span-6">
-                      <label for="name-tld">Name type</label>
+                      <label for="name-tld">TLD</label>
                       <select id="name-tld" name="tld">
                         <option value="skr">.skr</option>
                         <option value="seeker">.seeker</option>
                         <option value="seismic">.seismic</option>
                         <option value="sol">.sol</option>
                       </select>
-                    </div>
-                    <div class="field span-6">
-                      <label>Network</label>
-                      <input value="mainnet-beta" disabled />
                     </div>
                   </div>
                   <div class="form-actions">
@@ -1762,7 +2099,7 @@
                   </div>
                   <div class="form-actions">
                     <button id="name-use" class="btn btn-primary btn-inline hidden" type="button">
-                      Use this name to unlock DevKit
+                      Use this name
                     </button>
                   </div>
                   <div class="hint">Custom TLDs map to real `.sol` domains on-chain.</div>
@@ -1788,7 +2125,7 @@
                   </div>
 
                   <details style="margin-top: 10px">
-                    <summary class="hint">Advanced (developer-only)</summary>
+                    <summary class="hint">Advanced (optional)</summary>
                     <div class="field-grid" style="margin-top: 10px">
                       <div class="field span-6">
                         <label for="mint-space">Account space</label>
@@ -1832,30 +2169,45 @@
         </section>
       </section>
 
-      <section class="profile" id="profile" aria-label="Project profile badge">
-        <div class="ad-slot" id="ad-profile" aria-label="Sponsored (profile)">
-          <strong>Sponsored placement (placeholder)</strong>
-          <span>Reserved for a future promoted project / ad creative. Safe placeholder.</span>
-          <div class="form-actions">
-            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Ad URL placeholder</a>
-            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Creative placeholder</a>
-          </div>
-        </div>
+      <section class="profile" id="profile" aria-label="Profile">
         <div class="profile-head">
           <div>
-            <h2>Project profile (badge)</h2>
+            <h2>Profile</h2>
             <p>
-              One profile per wallet. This information will live in the decentralized badge NFT metadata
-              (IPFS/Arweave). It does not affect name resolution.
+              Wallet connect / disconnect lives here. You can generate a shared profile dataset (metadata JSON) and later mint it as a Profile NFT.
             </p>
           </div>
           <div class="form-actions">
-            <a class="btn btn-ghost btn-inline" href="#" aria-disabled="true">Upload to IPFS/Arweave (placeholder)</a>
+            <a class="btn btn-ghost btn-inline" href="#profile-lookup">Look up a profile</a>
           </div>
         </div>
 
+        <div class="ad-slot" aria-label="Wallet">
+          <strong>Wallet</strong>
+          <span>
+            <span id="profile-wallet-status">Disconnected</span>
+            <span class="muted" id="profile-wallet-short" style="margin-left:10px"></span>
+          </span>
+          <div class="form-actions" style="margin-top:10px">
+            <button class="btn btn-primary btn-inline" type="button" id="profile-connect">Connect (Demo)</button>
+            <button class="btn btn-ghost btn-inline" type="button" id="profile-disconnect">Disconnect</button>
+            <div class="status" id="profile-wallet-msg" aria-live="polite"></div>
+          </div>
+          <div class="hint">
+            Web preview uses a demo wallet. Real wallet connect (Seed Vault / Phantom) runs in the Android app via Solana Mobile Wallet Adapter.
+          </div>
+        </div>
+
+        <div class="ad-slot" aria-label="What you get">
+          <strong>What you get</strong>
+          <span>
+            A single profile per wallet: name, project, links, and metadata JSON ready for IPFS/Arweave.
+            (Minting + upload flow wiring next.)
+          </span>
+        </div>
+
         <div class="lookup" id="profile-lookup">
-          <strong>Look up a profile by name (placeholder)</strong>
+          <strong>Look up a profile NFT by name</strong>
           <div class="field-grid">
             <div class="field span-6">
               <label for="lookup-name">Name</label>
@@ -1876,8 +2228,7 @@
             <div id="lookup-status" class="status" aria-live="polite"></div>
           </div>
           <div class="hint">
-            This will resolve the name owner via SNS, then scan the owner wallet for the SeekerMigrate Profile Badge NFT
-            (collection/verified creator). Wiring is placeholder for now.
+            This resolves the name owner, then checks whether they have a SeekerMigrate Profile NFT. (Wiring next.)
           </div>
           <div class="result hidden" id="lookup-result">
             <div class="result-row">
@@ -1890,7 +2241,7 @@
         </div>
 
         <div class="profile-grid">
-          <article class="profile-panel span-6">
+          <article class="profile-panel span-6 feather-art">
             <h3>Profile details</h3>
             <form id="profile-form">
               <div class="field-grid">
@@ -1938,19 +2289,44 @@
                   <label for="profile-store">Seeker / dApp Store URL</label>
                   <input id="profile-store" placeholder="https://" />
                 </div>
+                <div class="field span-12">
+                  <label>Profile icon (preset)</label>
+                  <input id="profile-avatar" type="hidden" value="icon-raven-chain" />
+                  <div class="avatar-grid" id="avatar-grid">
+                    <div class="avatar-option selected" data-avatar="icon-raven-chain" style="--ax:0;--ay:0"><small>Raven (Chain)</small></div>
+                    <div class="avatar-option" data-avatar="icon-briefcase-wing" style="--ax:1;--ay:0"><small>Briefcase</small></div>
+                    <div class="avatar-option" data-avatar="icon-skr" style="--ax:0;--ay:1"><small>.SKR</small></div>
+                    <div class="avatar-option" data-avatar="icon-key" style="--ax:1;--ay:1"><small>Key</small></div>
+                    <div class="avatar-option" data-avatar="icon-raven-head" style="--ax:0;--ay:2"><small>Raven (Head)</small></div>
+                    <div class="avatar-option" data-avatar="icon-raven-coin" style="--ax:1;--ay:2"><small>Raven (Coin)</small></div>
+                  </div>
+                </div>
+              </div>
+              <div class="field-grid" style="margin-top:10px">
+                <div class="field span-12">
+                  <label for="profile-preset">Common profile dataset</label>
+                  <select id="profile-preset">
+                    <option value="">Choose a preset…</option>
+                    <option value="indie">Indie builder</option>
+                    <option value="studio">Studio / agency</option>
+                    <option value="protocol">Protocol / infra</option>
+                    <option value="tooling">Tooling / devtools</option>
+                  </select>
+                </div>
               </div>
               <div class="form-actions">
                 <button class="btn btn-primary" type="submit">Generate metadata JSON</button>
+                <button class="btn btn-ghost" type="button" id="profile-apply-preset">Apply preset</button>
                 <button class="btn btn-ghost" type="button" id="profile-fill">Fill demo</button>
                 <div id="profile-status" class="status" aria-live="polite"></div>
               </div>
               <div class="hint">
-                This generates the JSON that will be uploaded to IPFS/Arweave and referenced by the profile badge NFT.
+                This generates the metadata JSON used to mint your Profile NFT. Next step (premium): upload to IPFS/Arweave, then mint.
               </div>
             </form>
           </article>
 
-          <article class="profile-panel span-6">
+          <article class="profile-panel span-6 feather-art">
             <h3>Preview</h3>
             <div class="result" id="profile-preview">
               <div class="result-row">
@@ -1965,17 +2341,17 @@
 
       <footer>
         <div>
-          SeekerMigrate DevKit is an Upgrade Kit for moving apps into Solana Mobile. Free: report (what to change).
-          Paid: DevKit access ($50 / wallet), custom address ($25), and name ($25).
+          SeekerMigrate helps app developers migrate to Solana Mobile. Free: migration report. Paid: DevKit unlock ($50 / wallet),
+          vanity address ($25), name registration ($25), and a premium Profile NFT (coming online).
         </div>
 
-        <div class="social-grid" aria-label="Contact and social (placeholders)">
-          <a class="social-pill" href="#" aria-disabled="true"><strong>Website</strong> <small>placeholder</small></a>
-          <a class="social-pill" href="#" aria-disabled="true"><strong>X</strong> <small>@placeholder</small></a>
-          <a class="social-pill" href="#" aria-disabled="true"><strong>Discord</strong> <small>invite link</small></a>
-          <a class="social-pill" href="#" aria-disabled="true"><strong>Telegram</strong> <small>channel</small></a>
-          <a class="social-pill" href="#" aria-disabled="true"><strong>Email</strong> <small>support@</small></a>
-          <a class="social-pill" href="#" aria-disabled="true"><strong>Docs</strong> <small>placeholder</small></a>
+        <div class="social-grid" aria-label="Contact and social">
+          <a class="social-pill" href="https://seekermigrate.com" target="_blank" rel="noreferrer noopener"><strong>Website</strong> <small>seekermigrate.com</small></a>
+          <a class="social-pill" href="https://t.me/seekermigrate" target="_blank" rel="noreferrer noopener"><strong>Telegram</strong> <small>t.me/seekermigrate</small></a>
+          <a class="social-pill" href="mailto:buidlerlabs@gmail.com?subject=%5BSeekerMigrate%5D%20Support" ><strong>Email</strong> <small>buidlerlabs@gmail.com</small></a>
+        </div>
+        <div style="margin-top: 10px; color: rgba(244, 246, 255, 0.6)">
+          Powered by Kreation Studios   BuidLer Labs.
         </div>
       </footer>
     </main>
@@ -1985,9 +2361,12 @@
       (function () {
         var disclosureKey = 'seekermigrate.disclosure.accepted';
         var disclosure = document.getElementById('disclosure');
+        var connect = document.getElementById('connect');
         var app = document.getElementById('app');
         var accept = document.getElementById('accept');
         var decline = document.getElementById('decline');
+        var connectBtn = document.getElementById('connectBtn');
+        var connectSkip = document.getElementById('connectSkip');
         var toast = document.getElementById('toast');
 
         var modules = Array.prototype.slice.call(document.querySelectorAll('[data-module]'));
@@ -2010,32 +2389,7 @@
 
         var lastLookup = null;
 
-        // Featured dApps filter (placeholder; safe no-op if section removed later)
-        var featuredChips = Array.prototype.slice.call(
-          document.querySelectorAll('[data-featured-filter]')
-        );
-        var featuredItems = Array.prototype.slice.call(
-          document.querySelectorAll('[data-featured-item]')
-        );
-
-        function setFeaturedFilter(filter) {
-          featuredChips.forEach(function (chip) {
-            chip.classList.toggle('active', chip.getAttribute('data-featured-filter') === filter);
-          });
-          featuredItems.forEach(function (item) {
-            var tags = (item.getAttribute('data-featured-item') || '').split(/\s+/);
-            var show = !filter || tags.indexOf(filter) !== -1;
-            item.classList.toggle('hidden', !show);
-          });
-        }
-
-        featuredChips.forEach(function (chip) {
-          chip.addEventListener('click', function () {
-            setFeaturedFilter(chip.getAttribute('data-featured-filter'));
-          });
-        });
-
-        setFeaturedFilter('new');
+        // Featured filter removed (this section is no longer a placeholder gallery).
 
         // ---- Profile lookup (name -> owner -> scan for profile badge NFT) ----
         var lookupName = document.getElementById('lookup-name');
@@ -2168,8 +2522,14 @@
           }, 1500);
         }
 
+        function showConnect() {
+          disclosure.classList.add('hidden');
+          if (connect) connect.classList.remove('hidden');
+        }
+
         function showApp() {
           disclosure.classList.add('hidden');
+          if (connect) connect.classList.add('hidden');
           app.classList.remove('hidden');
         }
 
@@ -2203,20 +2563,60 @@
           });
         }
 
-        if (window.localStorage.getItem(disclosureKey) === 'yes') {
-          showApp();
+        // iOS in-app browsers / private mode can throw on localStorage access.
+        var canUseStorage = true;
+        try {
+          if (window.localStorage && window.localStorage.getItem(disclosureKey) === 'yes') {
+            showConnect();
+          }
+        } catch (e) {
+          canUseStorage = false;
         }
 
         accept.addEventListener('click', function () {
-          window.localStorage.setItem(disclosureKey, 'yes');
-          showApp();
+          try {
+            if (canUseStorage && window.localStorage) {
+              window.localStorage.setItem(disclosureKey, 'yes');
+            }
+          } catch (e) {
+            // ignore
+          }
+          showConnect();
           showToast('Disclosure accepted');
         });
 
         decline.addEventListener('click', function () {
-          window.localStorage.removeItem(disclosureKey);
+          try {
+            if (window.localStorage) window.localStorage.removeItem(disclosureKey);
+          } catch (e) {
+            // ignore
+          }
           alert('You must accept the disclosure to continue.');
         });
+
+        if (connectBtn) {
+          connectBtn.addEventListener('click', function () {
+            // Demo only: set a placeholder wallet value for the UI.
+            try {
+              if (typeof setDemoWallet === 'function') {
+                setDemoWallet('DEMO_WALLET_PUBLIC_KEY');
+              } else {
+                var walletEl = document.getElementById('profile-wallet');
+                if (walletEl && !walletEl.value) walletEl.value = 'DEMO_WALLET_PUBLIC_KEY';
+              }
+            } catch (e) {}
+            showApp();
+            openModule('identity');
+            showToast('Connected (demo)');
+          });
+        }
+
+        if (connectSkip) {
+          connectSkip.addEventListener('click', function () {
+            showApp();
+            openModule('identity');
+          });
+        }
 
         modules.forEach(function (mod) {
           var name = mod.getAttribute('data-module');
@@ -2236,6 +2636,36 @@
         var profileFill = document.getElementById('profile-fill');
         var profilePreviewName = document.getElementById('profile-preview-name');
         var profilePreviewProject = document.getElementById('profile-preview-project');
+        var profilePreset = document.getElementById('profile-preset');
+        var profileApplyPreset = document.getElementById('profile-apply-preset');
+
+        var profileConnect = document.getElementById('profile-connect');
+        var profileDisconnect = document.getElementById('profile-disconnect');
+        var profileWalletStatus = document.getElementById('profile-wallet-status');
+        var profileWalletShort = document.getElementById('profile-wallet-short');
+        var profileWalletMsg = document.getElementById('profile-wallet-msg');
+
+        var demoWallet = '';
+
+        function shortWallet(pk) {
+          if (!pk) return '';
+          if (pk.length <= 10) return pk;
+          return pk.slice(0, 4) + '…' + pk.slice(-4);
+        }
+
+        function setDemoWallet(pk) {
+          demoWallet = pk || '';
+          var walletEl = document.getElementById('profile-wallet');
+          if (walletEl) walletEl.value = demoWallet;
+
+          if (profileWalletStatus) profileWalletStatus.textContent = demoWallet ? 'Connected (demo)' : 'Disconnected';
+          if (profileWalletShort) profileWalletShort.textContent = demoWallet ? shortWallet(demoWallet) : '';
+        }
+
+        function setWalletMsg(msg) {
+          if (profileWalletMsg) profileWalletMsg.textContent = msg || '';
+        }
+
 
         function buildProfileJson() {
           return {
@@ -2254,7 +2684,7 @@
               seekerStore: (document.getElementById('profile-store').value || '').trim() || undefined,
             },
             images: {
-              avatar: undefined,
+              avatar: (document.getElementById('profile-avatar').value || '').trim() || undefined,
               banner: undefined,
             },
             updatedAt: new Date().toISOString(),
@@ -2268,21 +2698,100 @@
           profileJsonEl.textContent = JSON.stringify(json, null, 2);
           if (profilePreviewName) profilePreviewName.textContent = json.displayName || '-';
           if (profilePreviewProject) profilePreviewProject.textContent = json.projectName || '-';
+
+          // Avatar preview: if we ever add a real image element, we can map avatar ids here.
         }
+
+        function applyPreset(kind) {
+          var k = kind || '';
+          if (!k) return;
+
+          if (k === 'indie') {
+            document.getElementById('profile-tagline').value = 'Indie builder shipping on Seeker.';
+            document.getElementById('profile-desc').value = 'A focused, mobile-first dApp built for Solana Mobile users.';
+          } else if (k === 'studio') {
+            document.getElementById('profile-tagline').value = 'Studio delivering production Solana Mobile apps.';
+            document.getElementById('profile-desc').value = 'We ship end-to-end mobile builds: wallet auth, payments, and on-chain identity.';
+          } else if (k === 'protocol') {
+            document.getElementById('profile-tagline').value = 'Infra powering Solana Mobile.';
+            document.getElementById('profile-desc').value = 'Protocol + SDKs for secure mobile signing and great UX.';
+          } else if (k === 'tooling') {
+            document.getElementById('profile-tagline').value = 'Devtools for Solana Mobile.';
+            document.getElementById('profile-desc').value = 'Tooling that makes migrations, testing, and shipping faster.';
+          }
+
+          var json = buildProfileJson();
+          renderProfilePreview(json);
+          if (profileStatus) setStatus(profileStatus, 'ok', 'Preset applied', false);
+        }
+
+        if (profileApplyPreset) {
+          profileApplyPreset.addEventListener('click', function () {
+            applyPreset(profilePreset ? profilePreset.value : '');
+          });
+        }
+
+        // Avatar picker
+        var avatarGrid = document.getElementById('avatar-grid');
+        var profileAvatar = document.getElementById('profile-avatar');
+        if (avatarGrid && profileAvatar) {
+          // Back-compat: upgrade old ivan-* values to the first icon.
+          try {
+            if ((profileAvatar.value || '').indexOf('ivan-') === 0) profileAvatar.value = 'icon-raven-chain';
+          } catch (e) {}
+
+          avatarGrid.addEventListener('click', function (e) {
+            var el = e.target;
+            while (el && el !== avatarGrid && !el.classList.contains('avatar-option')) {
+              el = el.parentElement;
+            }
+            if (!el || el === avatarGrid) return;
+            var id = el.getAttribute('data-avatar');
+            if (!id) return;
+            profileAvatar.value = id;
+            Array.prototype.slice.call(avatarGrid.querySelectorAll('.avatar-option')).forEach(function (opt) {
+              opt.classList.toggle('selected', opt.getAttribute('data-avatar') === id);
+            });
+            var json = buildProfileJson();
+            renderProfilePreview(json);
+          });
+        }
+
+        if (profileConnect) {
+          profileConnect.addEventListener('click', function () {
+            setDemoWallet('DEMO_WALLET_PUBLIC_KEY');
+            setWalletMsg('Connected (demo).');
+            showToast('Connected (demo)');
+          });
+        }
+
+        if (profileDisconnect) {
+          profileDisconnect.addEventListener('click', function () {
+            setDemoWallet('');
+            setWalletMsg('Disconnected.');
+            showToast('Disconnected');
+          });
+        }
+
+        // initialize wallet UI
+        setDemoWallet(demoWallet);
 
         if (profileFill) {
           profileFill.addEventListener('click', function () {
-            document.getElementById('profile-wallet').value = 'WalletAddressHere';
+            if (!demoWallet) setDemoWallet('DEMO_WALLET_PUBLIC_KEY');
+
             document.getElementById('profile-display').value = 'yourname.skr';
             document.getElementById('profile-project').value = 'Your Project';
-            document.getElementById('profile-tagline').value = 'Build for Seeker, ship faster.';
-            document.getElementById('profile-desc').value = 'Short description of your app and what makes it great on Seeker.';
             document.getElementById('profile-website').value = 'https://example.com';
             document.getElementById('profile-email').value = 'support@example.com';
             document.getElementById('profile-x').value = '@yourhandle';
             document.getElementById('profile-telegram').value = 'https://t.me/yourchannel';
             document.getElementById('profile-discord').value = 'https://discord.gg/yourinvite';
             document.getElementById('profile-store').value = 'https://dappstore.solanamobile.com/';
+
+            // Apply preset if selected, otherwise default.
+            applyPreset(profilePreset && profilePreset.value ? profilePreset.value : 'indie');
+
             var demo = buildProfileJson();
             renderProfilePreview(demo);
             if (profileStatus) setStatus(profileStatus, 'ok', 'Demo profile loaded', false);

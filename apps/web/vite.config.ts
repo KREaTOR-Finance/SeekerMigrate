@@ -10,4 +10,16 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+    // Local dev: proxy Vercel-style /api/* routes to the root dev API server.
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_PROXY ?? 'http://localhost:5055',
+        changeOrigin: true,
+      },
+    },
+  },
 });
