@@ -1,74 +1,47 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-import health from './health';
-
-import contentFeatured from './content/featured';
-import contentAds from './content/ads';
-import contentSocial from './content/social';
-
-import nameLookup from './name/lookup';
-import nameRegister from './name/register';
-import nameMint from './name/mint';
-
-import paymentsMeta from './payments/meta';
-import paymentsQuote from './payments/quote';
-import paymentsReceipt from './payments/receipt';
-import paymentsStripeSession from './payments/stripe-session';
-import paymentsStripeVerify from './payments/stripe-verify';
-
-import smnsLookup from './smns/lookup';
-import smnsChallenge from './smns/challenge';
-import smnsRegister from './smns/register';
-import smnsReverse from './smns/reverse';
-import smnsSetPrimary from './smns/set-primary';
-
-import vanityRequest from './vanity/request';
-import vanityStatus from './vanity/status';
-import vanityChallenge from './vanity/challenge';
-import vanityReveal from './vanity/reveal';
-
-import badgeChallenge from './badges/challenge';
-import badgeRequest from './badges/request';
-
 type Handler = (req: VercelRequest, res: VercelResponse) => unknown | Promise<unknown>;
 
-const routes: Record<string, Handler> = {
+type Loader = () => Promise<{ default: Handler }>;
+
+// Lazy-load handlers so one failing import doesn't take down the entire API router.
+const routes: Record<string, Loader> = {
   // Health
-  'GET /health': health,
+  'GET /health': () => import('./health'),
 
   // Content
-  'GET /content/featured': contentFeatured,
-  'GET /content/ads': contentAds,
-  'GET /content/social': contentSocial,
+  'GET /content/featured': () => import('./content/featured'),
+  'GET /content/ads': () => import('./content/ads'),
+  'GET /content/social': () => import('./content/social'),
 
   // Legacy SNS name routes (kept)
-  'POST /name/lookup': nameLookup,
-  'POST /name/register': nameRegister,
-  'POST /name/mint': nameMint,
+  'POST /name/lookup': () => import('./name/lookup'),
+  'POST /name/register': () => import('./name/register'),
+  'POST /name/mint': () => import('./name/mint'),
 
   // Payments
-  'GET /payments/meta': paymentsMeta,
-  'POST /payments/quote': paymentsQuote,
-  'POST /payments/receipt': paymentsReceipt,
-  'POST /payments/stripe-session': paymentsStripeSession,
-  'POST /payments/stripe-verify': paymentsStripeVerify,
+  'GET /payments/meta': () => import('./payments/meta'),
+  'POST /payments/quote': () => import('./payments/quote'),
+  'POST /payments/receipt': () => import('./payments/receipt'),
+  'POST /payments/stripe-session': () => import('./payments/stripe-session'),
+  'POST /payments/stripe-verify': () => import('./payments/stripe-verify'),
 
   // SMNS
-  'POST /smns/lookup': smnsLookup,
-  'POST /smns/challenge': smnsChallenge,
-  'POST /smns/register': smnsRegister,
-  'POST /smns/reverse': smnsReverse,
-  'POST /smns/set-primary': smnsSetPrimary,
+  'POST /smns/lookup': () => import('./smns/lookup'),
+  'POST /smns/challenge': () => import('./smns/challenge'),
+  'POST /smns/register': () => import('./smns/register'),
+  'POST /smns/reverse': () => import('./smns/reverse'),
+  'POST /smns/set-primary': () => import('./smns/set-primary'),
 
   // Vanity
-  'POST /vanity/request': vanityRequest,
-  'POST /vanity/status': vanityStatus,
-  'POST /vanity/challenge': vanityChallenge,
-  'POST /vanity/reveal': vanityReveal,
+  'POST /vanity/request': () => import('./vanity/request'),
+  'POST /vanity/status': () => import('./vanity/status'),
+  'POST /vanity/challenge': () => import('./vanity/challenge'),
+  'POST /vanity/reveal': () => import('./vanity/reveal'),
 
   // Badge service
-  'POST /badges/challenge': badgeChallenge,
-  'POST /badges/request': badgeRequest,
+  'POST /badges/challenge': () => import('./badges/challenge'),
+  'POST /badges/request': () => import('./badges/request'),
 };
 
 function getPath(req: VercelRequest) {
@@ -88,8 +61,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const path = getPath(req);
   const key = `${req.method?.toUpperCase?.() ?? 'GET'} ${path}`;
 
-  const route = routes[key];
-  if (!route) {
+  const load = routes[key];
+  if (!load) {
     return res.status(404).json({
       error: 'Not found',
       path,
@@ -99,7 +72,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    return await route(req, res);
+    const mod = await load();
+    return await mod.default(req, res);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unhandled error';
     return res.status(500).json({ error: message });
