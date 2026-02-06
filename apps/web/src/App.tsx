@@ -27,10 +27,24 @@ const AppHeader = () => {
           <div className="brand-sub">Solana Mobile DevKit</div>
         </div>
       </div>
-      <Link className={`pill pill-action ${connected ? 'pill-ok' : ''}`} to="wallet">
-        <span className={`pill-dot ${connected ? 'on' : 'off'}`} aria-hidden="true" />
-        {label}
-      </Link>
+
+      <div className="app-header-actions">
+        <a
+          className="pill pill-action pill-icon-only"
+          href="https://dappstore.solanamobile.com/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Download SeekerMigrate on Solana Mobile dApp Store"
+          title="Download app now"
+        >
+          <img className="pill-icon" src="/solana-mobile.png" alt="" />
+        </a>
+
+        <Link className={`pill pill-action ${connected ? 'pill-ok' : ''}`} to="wallet">
+          <span className={`pill-dot ${connected ? 'on' : 'off'}`} aria-hidden="true" />
+          {label}
+        </Link>
+      </div>
     </header>
   );
 };

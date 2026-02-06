@@ -462,6 +462,23 @@ button > *,
   gap: 6px;
 }
 
+.pill-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+.pill-icon-only {
+  padding: 8px;
+}
+
+.app-header-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .pill-action:hover {
   border-color: rgba(244, 246, 255, 0.3);
   transform: translateY(-1px);
