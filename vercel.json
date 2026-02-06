@@ -2,13 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "apps/web/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "apps/web/dist",
-        "installCommand": "npm --prefix apps/web ci",
-        "buildCommand": "npm --prefix apps/web run build"
-      }
+      "src": "site/**",
+      "use": "@vercel/static"
     },
     {
       "src": "api/index.ts",
@@ -24,7 +19,7 @@
   ],
   "routes": [
     {
-      "src": "/webhook",
+      "src": "/webhook$",
       "dest": "src/server/telegram/index.ts"
     },
     {
@@ -40,7 +35,8 @@
     },
     {
       "src": "/(.*)",
-      "dest": "index.html"
+      "dest": "site/index.html"
     }
   ]
 }
+

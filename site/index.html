@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SeekerMigrate</title>
+    <meta
+      name="description"
+      content="SeekerMigrate helps teams upgrade iOS/Android apps for Solana Seeker: wallet auth, payments, vanity addresses, and name services."
+    />
+
+    <meta property="og:title" content="SeekerMigrate" />
+    <meta
+      property="og:description"
+      content="Wallet-native onboarding + identity services for Solana Seeker apps. Join the waitlist on Telegram."
+    />
+    <meta property="og:type" content="website" />
+
+    <style>
+      :root {
+        --bg: #050610;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel2: rgba(255, 255, 255, 0.08);
+        --text: #f5f7ff;
+        --muted: rgba(245, 247, 255, 0.72);
+        --line: rgba(255, 255, 255, 0.12);
+        --accent: #14f195;
+        --accent2: #9945ff;
+        --radius: 18px;
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(1200px 900px at -10% -20%, rgba(153, 69, 255, 0.25), transparent 60%),
+          radial-gradient(1000px 900px at 110% -10%, rgba(20, 241, 149, 0.18), transparent 60%),
+          radial-gradient(900px 800px at 40% 120%, rgba(61, 123, 255, 0.18), transparent 65%),
+          var(--bg);
+        min-height: 100vh;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 56px 20px 84px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 28px;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .brand strong {
+        font-size: 16px;
+        letter-spacing: 0.2px;
+      }
+
+      .brand span {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        font-weight: 650;
+        font-size: 13px;
+      }
+
+      .btn-primary {
+        border: 1px solid rgba(20, 241, 149, 0.35);
+        background: linear-gradient(135deg, rgba(20, 241, 149, 0.18), rgba(153, 69, 255, 0.18));
+        box-shadow: 0 10px 50px rgba(20, 241, 149, 0.12);
+      }
+
+      .hero {
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.035));
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(30px, 5vw, 44px);
+        letter-spacing: -0.02em;
+      }
+
+      .subhead {
+        margin-top: 10px;
+        font-size: 16px;
+        color: var(--muted);
+        line-height: 1.5;
+        max-width: 60ch;
+      }
+
+      .cta-row {
+        margin-top: 18px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .micro {
+        margin-top: 10px;
+        font-size: 12px;
+        color: rgba(245, 247, 255, 0.62);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .card {
+        grid-column: span 6;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: var(--radius);
+        padding: 16px;
+      }
+
+      .card strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 13px;
+      }
+
+      .section {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: var(--radius);
+        padding: 16px;
+      }
+
+      .section h2 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(245, 247, 255, 0.7);
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.7;
+        font-size: 14px;
+      }
+
+      footer {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 14px;
+        align-items: center;
+        justify-content: space-between;
+        color: rgba(245, 247, 255, 0.6);
+        font-size: 12px;
+      }
+
+      footer a {
+        color: rgba(245, 247, 255, 0.82);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(245, 247, 255, 0.18);
+      }
+
+      @media (max-width: 740px) {
+        .card {
+          grid-column: span 12;
+        }
+
+        header {
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand" aria-label="SeekerMigrate">
+          <strong>SeekerMigrate</strong>
+          <span>Solana Seeker DevKit — wallet auth, payments, vanity, and names</span>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="https://t.me/SeekerMigrate" target="_blank" rel="noreferrer">Join Waitlist</a>
+          <a class="btn" href="mailto:buidlerlabs@gmail.com?subject=%5BSeekerMigrate%5D%20Waitlist%20Request&body=What%20are%20you%20building%3F%0A%0ATimeline%3A%0A%0AWhich%20services%20do%20you%20need%3F%20(auth%20%2F%20payments%20%2F%20vanity%20%2F%20names)%0A%0ALinks%20(repo%20%2F%20screenshots)%3A%0A">Email</a>
+        </div>
+      </header>
+
+      <main class="hero">
+        <h1>Wallet-native onboarding for Solana Seeker apps.</h1>
+        <p class="subhead">
+          SeekerMigrate helps teams upgrade existing iOS/Android apps for Solana Mobile with a
+          clean path to wallet authentication, payments, vanity addresses, and name services.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://t.me/SeekerMigrate" target="_blank" rel="noreferrer">Join Waitlist on Telegram</a>
+          <a class="btn" href="mailto:buidlerlabs@gmail.com?subject=%5BSeekerMigrate%5D%20Waitlist%20Request">Contact via Email</a>
+        </div>
+        <div class="micro">Early access updates + onboarding instructions are shared in Telegram.</div>
+
+        <div class="grid" aria-label="Services">
+          <div class="card">
+            <strong>Wallet Authentication</strong>
+            <p>Seeker wallet connect + session patterns to replace legacy email/password flows.</p>
+          </div>
+          <div class="card">
+            <strong>Payments</strong>
+            <p>SOL payments and optional Stripe checkout flows for mobile-friendly purchases.</p>
+          </div>
+          <div class="card">
+            <strong>Vanity Addresses</strong>
+            <p>Request / status / reveal flows for prefix vanity wallets and issuance pipelines.</p>
+          </div>
+          <div class="card">
+            <strong>Name Service</strong>
+            <p>Lookup and mint support for user identities tied to on-chain naming systems.</p>
+          </div>
+        </div>
+
+        <section class="section" aria-label="What’s coming">
+          <h2>What’s coming</h2>
+          <ul>
+            <li>DevKit UI polish and smoother onboarding.</li>
+            <li>Expanded integrations and improved reliability/ops tooling.</li>
+            <li>More documentation and examples for production rollouts.</li>
+          </ul>
+        </section>
+
+        <section class="section" aria-label="Join the waitlist">
+          <h2>Join the waitlist</h2>
+          <ul>
+            <li>Open Telegram: <a href="https://t.me/SeekerMigrate" target="_blank" rel="noreferrer">@SeekerMigrate</a></li>
+            <li>Tap <em>Join</em>.</li>
+            <li>Message: what you’re building + timeline + which services you need (auth / payments / vanity / names).</li>
+          </ul>
+        </section>
+
+        <footer>
+          <div>
+            Telegram: <a href="https://t.me/SeekerMigrate" target="_blank" rel="noreferrer">t.me/SeekerMigrate</a>
+            &nbsp;•&nbsp;
+            Email: <a href="mailto:buidlerlabs@gmail.com">buidlerlabs@gmail.com</a>
+          </div>
+          <div>© <span id="year"></span> SeekerMigrate</div>
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      document.getElementById('year').textContent = String(new Date().getFullYear());
+    </script>
+  </body>
+</html>
