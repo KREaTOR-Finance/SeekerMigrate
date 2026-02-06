@@ -5,9 +5,9 @@
       "src": "apps/web/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist",
-        "installCommand": "npm ci",
-        "buildCommand": "npm run build"
+        "distDir": "apps/web/dist",
+        "installCommand": "npm --prefix apps/web ci",
+        "buildCommand": "npm --prefix apps/web run build"
       }
     },
     {
