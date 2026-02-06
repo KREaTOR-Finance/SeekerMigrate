@@ -5,12 +5,15 @@
       "src": "apps/web/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "apps/web/dist"
+        "distDir": "dist"
       }
     },
     {
       "src": "api/index.ts",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["api/**"]
+      }
     },
     {
       "src": "src/server/telegram/index.ts",
