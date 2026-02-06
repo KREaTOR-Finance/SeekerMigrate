@@ -7,41 +7,41 @@ type Loader = () => Promise<{ default: Handler }>;
 // Lazy-load handlers so one failing import doesn't take down the entire API router.
 const routes: Record<string, Loader> = {
   // Health
-  'GET /health': () => import('./health'),
+  'GET /health': () => import('./health.js'),
 
   // Content
-  'GET /content/featured': () => import('./content/featured'),
-  'GET /content/ads': () => import('./content/ads'),
-  'GET /content/social': () => import('./content/social'),
+  'GET /content/featured': () => import('./content/featured.js'),
+  'GET /content/ads': () => import('./content/ads.js'),
+  'GET /content/social': () => import('./content/social.js'),
 
   // Legacy SNS name routes (kept)
-  'POST /name/lookup': () => import('./name/lookup'),
-  'POST /name/register': () => import('./name/register'),
-  'POST /name/mint': () => import('./name/mint'),
+  'POST /name/lookup': () => import('./name/lookup.js'),
+  'POST /name/register': () => import('./name/register.js'),
+  'POST /name/mint': () => import('./name/mint.js'),
 
   // Payments
-  'GET /payments/meta': () => import('./payments/meta'),
-  'POST /payments/quote': () => import('./payments/quote'),
-  'POST /payments/receipt': () => import('./payments/receipt'),
-  'POST /payments/stripe-session': () => import('./payments/stripe-session'),
-  'POST /payments/stripe-verify': () => import('./payments/stripe-verify'),
+  'GET /payments/meta': () => import('./payments/meta.js'),
+  'POST /payments/quote': () => import('./payments/quote.js'),
+  'POST /payments/receipt': () => import('./payments/receipt.js'),
+  'POST /payments/stripe-session': () => import('./payments/stripe-session.js'),
+  'POST /payments/stripe-verify': () => import('./payments/stripe-verify.js'),
 
   // SMNS
-  'POST /smns/lookup': () => import('./smns/lookup'),
-  'POST /smns/challenge': () => import('./smns/challenge'),
-  'POST /smns/register': () => import('./smns/register'),
-  'POST /smns/reverse': () => import('./smns/reverse'),
-  'POST /smns/set-primary': () => import('./smns/set-primary'),
+  'POST /smns/lookup': () => import('./smns/lookup.js'),
+  'POST /smns/challenge': () => import('./smns/challenge.js'),
+  'POST /smns/register': () => import('./smns/register.js'),
+  'POST /smns/reverse': () => import('./smns/reverse.js'),
+  'POST /smns/set-primary': () => import('./smns/set-primary.js'),
 
   // Vanity
-  'POST /vanity/request': () => import('./vanity/request'),
-  'POST /vanity/status': () => import('./vanity/status'),
-  'POST /vanity/challenge': () => import('./vanity/challenge'),
-  'POST /vanity/reveal': () => import('./vanity/reveal'),
+  'POST /vanity/request': () => import('./vanity/request.js'),
+  'POST /vanity/status': () => import('./vanity/status.js'),
+  'POST /vanity/challenge': () => import('./vanity/challenge.js'),
+  'POST /vanity/reveal': () => import('./vanity/reveal.js'),
 
   // Badge service
-  'POST /badges/challenge': () => import('./badges/challenge'),
-  'POST /badges/request': () => import('./badges/request'),
+  'POST /badges/challenge': () => import('./badges/challenge.js'),
+  'POST /badges/request': () => import('./badges/request.js'),
 };
 
 function getPath(req: VercelRequest) {
