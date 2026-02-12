@@ -4,8 +4,9 @@ import nacl from 'tweetnacl';
 import { getSupabaseAdmin } from '../_utils/supabase';
 import { getRpcUrl, normalizeCluster, type SolanaCluster } from '../_utils/solana';
 import { parseSmnsName } from './_names';
-import { getUsdPrice, requiredLamportsForUsd, type SmnsProduct } from './_pricing';
-import { verifySolPayment } from './_verifyPayment';
+import { getUsdPrice, type SmnsProduct } from './_pricing';
+import { verifyPayment, type PaymentCurrency } from './_verifyPayment';
+import { quoteUsd, DEFAULT_SKR_MINT, USDC_MINT, SOL_MINT } from '../payments/_quote';
 
 type Payload = {
   name?: string;
@@ -15,7 +16,9 @@ type Payload = {
   nonce?: string;
   message?: string;
   messageSignature?: string; // base58
-  paymentSignature?: string; // sol tx sig
+  paymentSignature?: string; // tx sig
+  paymentCurrency?: PaymentCurrency; // SOL | SKR | USDC
+  paymentMint?: string; // optional override for SPL
   product?: SmnsProduct;
 };
 
@@ -91,19 +94,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const product: SmnsProduct = payload.product ?? 'smns_name';
   const usd = getUsdPrice(product);
+  const currency: PaymentCurrency = payload.paymentCurrency ?? 'SOL';
+
+  const skrMint = (process.env.SKR_MINT ?? DEFAULT_SKR_MINT).trim();
+  const mint = (payload.paymentMint ?? (currency === 'SOL' ? SOL_MINT : currency === 'USDC' ? USDC_MINT : skrMint)).trim();
 
   try {
-    const minLamports = await requiredLamportsForUsd(usd);
+    const quoted = await quoteUsd({ usd, currency, skrMint });
+    const minAtomic = BigInt(String(quoted.atomicAmount));
 
-    const payment = await verifySolPayment({
+    const payment = await verifyPayment({
       signature: paymentSignature,
       rpcUrl,
       treasury,
-      minLamports,
+      currency,
+      mint: currency === 'SOL' ? undefined : mint,
+      minAtomic,
     });
 
     if (!payment.ok) {
-      return res.status(402).json({ error: payment.error, matchedLamports: (payment as any).matchedLamports ?? null });
+      return res.status(402).json({
+        error: payment.error,
+        matchedAtomic: (payment as any).matchedAtomic?.toString?.() ?? null,
+        treasuryTokenAccount: (payment as any).treasuryTokenAccount ?? null,
+      });
     }
 
     // Check availability
@@ -143,9 +157,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       product,
       payment_signature: paymentSignature,
       usd,
-      matched_lamports: payment.matchedLamports,
+      matched_lamports: currency === 'SOL' ? Number((payment as any).matchedAtomic ?? 0n) : null,
       cluster,
     });
+
+    const paidAtomic = (payment as any).matchedAtomic?.toString?.() ?? null;
 
     return res.status(200).json({
       ok: true,
@@ -156,8 +172,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       owner,
       treasury,
       paymentSignature,
-      paidLamports: payment.matchedLamports,
-      requiredLamports: minLamports,
+      // Back-compat: old fields for SOL-only clients.
+      paidLamports: currency === 'SOL' ? Number(paidAtomic ?? 0) : null,
+      requiredLamports: currency === 'SOL' ? Number(minAtomic) : null,
+      paymentCurrency: currency,
+      paymentMint: currency === 'SOL' ? SOL_MINT : mint,
+      paidAtomic,
+      requiredAtomic: minAtomic.toString(),
       cluster,
       rpc: rpcUrl,
       note: 'SMNS registration completed. SNS mirror publishing can be handled asynchronously when enabled.',

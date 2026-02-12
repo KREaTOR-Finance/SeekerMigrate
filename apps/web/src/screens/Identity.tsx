@@ -347,7 +347,7 @@ const Identity = () => {
 
     try {
       if (!state.wallet.publicKey) {
-        throw new Error('Connect a wallet first (demo is fine).');
+        throw new Error('Connect a wallet first.');
       }
       if (validation.tone !== 'ok') {
         throw new Error(validation.message);
@@ -654,7 +654,7 @@ const Identity = () => {
                     disabled={import.meta.env.MODE === 'production' || !ackReveal}
                     title={!ackReveal ? 'Check the acknowledgment to enable reveal.' : undefined}
                   >
-                    Reveal secret (dev)
+                    Reveal secret (one-time)
                   </button>
                 </div>
               ) : null}
@@ -678,7 +678,7 @@ const Identity = () => {
           Back
         </button>
         <button className="btn btn-primary" type="button" onClick={() => navigate('/app/devkit')}>
-          Continue to DevKit
+          Continue to migration tools
         </button>
       </div>
     </div>

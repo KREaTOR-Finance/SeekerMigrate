@@ -6,8 +6,10 @@ This folder contains the **Expo-first** SeekerMigrate mobile app scaffold intend
 
 - Feel like a polished Solana wallet app (Phantom/Jupiter-grade UX)
 - Mainnet-only for initial store builds
-- Core flows: Welcome → Disclosure → Tabs (Home / Unlock / Profile / Featured)
+- Core onboarding flow: `Tutorial -> Disclosure -> Wallet -> Identity -> Migrate`
+- Migration-only branch for qualified users: `Tutorial -> Disclosure -> Wallet -> Migrate`
 - Calls the existing SeekerMigrate backend endpoints under `/api/*`
+- Enforce Identity completion before Migrate access (state-machine gate)
 
 ## Prerequisites
 
@@ -58,10 +60,18 @@ npm run eas:login
 npm run eas:whoami
 ```
 
-2) Set the API base URL in `eas.json`:
-- `EXPO_PUBLIC_API_BASE_URL` = your **prod** Vercel URL
+2) Configure variables:
+- create `apps/mobile/.env` from `apps/mobile/.env.example`
+- set `EAS_PROJECT_ID` (required for stable EAS project linkage)
+- set `EXPO_PUBLIC_API_BASE_URL` / Supabase public vars for your environment
 
-3) Build artifacts:
+3) Optional one-liner project setup:
+
+```bash
+npm run eas:configure
+```
+
+4) Build artifacts:
 
 ```bash
 # Internal testing build (APK)
@@ -71,9 +81,20 @@ npm run build:apk
 npm run build:aab
 ```
 
+From repo root, you can also run the single PowerShell build script:
+
+```powershell
+# Internal testing artifact (APK)
+powershell -ExecutionPolicy Bypass -File scripts/build-mobile-android.ps1 -Artifact apk -InstallDeps
+
+# Store artifact (AAB)
+powershell -ExecutionPolicy Bypass -File scripts/build-mobile-android.ps1 -Artifact aab -InstallDeps
+```
+
 Note: you will need a stable Android application id/package name before store submission.
 
 ## Notes
 
 - `index.js` sets up Solana web3 polyfills for Expo SDK 49+ style (crypto + Buffer).
-- Current screens are minimal scaffolds; we will iterate UI/animations to match Phantom/Jupiter.
+- `/identity` now points to the full Seeker Identity flow (SMNS lookup/register + vanity request/reveal).
+- Mobile onboarding state is backed by shared domain packages in `../../packages/*` (`types`, `state`, `identity`, `migrate`, `api`).

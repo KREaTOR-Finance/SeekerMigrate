@@ -1,0 +1,12 @@
+# .molt example
+# Local-only environment overlay loaded before .env (without overriding existing variables).
+# Use for machine-specific dev settings. Never commit real secrets.
+
+APP_ENV=development
+SOLANA_NETWORK=devnet
+SOLANA_RPC=https://api.devnet.solana.com
+EXPO_PUBLIC_API_BASE_URL=http://localhost:5055
+EXPO_PUBLIC_SUPABASE_URL=
+EXPO_PUBLIC_SUPABASE_ANON_KEY=
+EAS_PROJECT_ID=
+LOG_LEVEL=debug

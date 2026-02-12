@@ -1,6 +1,12 @@
-import 'dotenv/config';
+import fs from 'fs';
+import dotenv from 'dotenv';
 import express from 'express';
 import crypto from 'crypto';
+
+if (fs.existsSync('.molt')) {
+  dotenv.config({ path: '.molt', override: false });
+}
+dotenv.config({ path: '.env', override: false });
 import bs58 from 'bs58';
 import nacl from 'tweetnacl';
 import { Keypair } from '@solana/web3.js';
@@ -9,11 +15,15 @@ type Cluster = 'mainnet-beta' | 'devnet' | 'testnet';
 
 type JobStatus = 'queued' | 'running' | 'done' | 'failed';
 
+type VanityMode = 'suffix' | 'prefix';
+
 type Job = {
   id: string;
   createdAt: number;
   updatedAt: number;
-  suffix: string;
+  mode: VanityMode;
+  suffix: string | null;
+  prefix: string | null;
   requester: string;
   cluster: Cluster;
   status: JobStatus;
@@ -36,6 +46,13 @@ function validateSuffix(suffix: string) {
   if (!suffix) return 'suffix is required';
   if (suffix.length < 4 || suffix.length > 6) return 'suffix must be 4-6 characters';
   if (!BASE58_RE.test(suffix)) return 'suffix must be base58 (no 0,O,I,l)';
+  return null;
+}
+
+function validatePrefix(prefix: string) {
+  if (!prefix) return 'prefix is required';
+  if (prefix.length < 2 || prefix.length > 8) return 'prefix must be 2-8 characters';
+  if (!BASE58_RE.test(prefix)) return 'prefix must be base58 (no 0,O,I,l)';
   return null;
 }
 
@@ -64,6 +81,7 @@ async function processQueue() {
 
   try {
     const suffix = job.suffix;
+    const prefix = job.prefix;
     let attempts = 0;
 
     while (attempts < MAX_ATTEMPTS) {
@@ -71,7 +89,12 @@ async function processQueue() {
       const addr = kp.publicKey.toBase58();
       attempts++;
 
-      if (addr.endsWith(suffix)) {
+      const hit =
+        job.mode === 'prefix'
+          ? Boolean(prefix && addr.startsWith(prefix))
+          : Boolean(suffix && addr.endsWith(suffix));
+
+      if (hit) {
         job.attempts = attempts;
         job.address = addr;
         job.secretKeyBase58 = bs58.encode(kp.secretKey);
@@ -106,11 +129,15 @@ const app = express();
 app.use(express.json({ limit: '1mb' }));
 
 app.post('/request', (req, res) => {
+  const mode = (String(req.body?.mode ?? '').trim() || null) as 'suffix' | 'prefix' | null;
   const suffix = String(req.body?.suffix ?? '').trim();
+  const prefix = String(req.body?.prefix ?? '').trim();
   const requester = String(req.body?.requester ?? '').trim();
   const cluster = (req.body?.cluster ?? 'mainnet-beta') as Cluster;
 
-  const err = validateSuffix(suffix);
+  const resolvedMode: 'suffix' | 'prefix' = mode ?? (prefix ? 'prefix' : 'suffix');
+
+  const err = resolvedMode === 'prefix' ? validatePrefix(prefix) : validateSuffix(suffix);
   if (err) return res.status(400).json({ error: err });
   if (!requester) return res.status(400).json({ error: 'requester is required' });
 
@@ -121,7 +148,9 @@ app.post('/request', (req, res) => {
     id,
     createdAt: now,
     updatedAt: now,
-    suffix,
+    mode: resolvedMode,
+    suffix: resolvedMode === 'suffix' ? suffix : null,
+    prefix: resolvedMode === 'prefix' ? prefix : null,
     requester,
     cluster,
     status: 'queued',

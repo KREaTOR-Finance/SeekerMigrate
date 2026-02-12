@@ -1,5 +1,11 @@
-import 'dotenv/config';
+import fs from 'fs';
+import dotenv from 'dotenv';
 import express from 'express';
+
+if (fs.existsSync('.molt')) {
+  dotenv.config({ path: '.molt', override: false });
+}
+dotenv.config({ path: '.env', override: false });
 import featured from '../content/featured';
 import ads from '../content/ads';
 import social from '../content/social';
@@ -7,12 +13,14 @@ import social from '../content/social';
 import nameLookup from '../name/lookup';
 import nameRegister from '../name/register';
 import vanityRequest from '../vanity/request';
+import vanitySkr from '../vanity/skr';
 import vanityStatus from '../vanity/status';
 import vanityChallenge from '../vanity/challenge';
 import vanityReveal from '../vanity/reveal';
 
 import paymentsMeta from '../payments/meta';
 import paymentsQuote from '../payments/quote';
+import paymentsReceipt from '../payments/receipt';
 
 import smnsLookup from '../smns/lookup';
 import smnsChallenge from '../smns/challenge';
@@ -34,11 +42,13 @@ const DEV_ENDPOINTS = [
   '/api/name/lookup',
   '/api/name/register',
   '/api/vanity/request',
+  '/api/vanity/skr',
   '/api/vanity/status',
   '/api/vanity/challenge',
   '/api/vanity/reveal',
   '/api/payments/meta',
   '/api/payments/quote',
+  '/api/payments/receipt',
   '/api/smns/lookup',
   '/api/smns/challenge',
   '/api/smns/register',
@@ -63,12 +73,14 @@ app.get('/api/content/social', (req, res) => social(req as any, res as any));
 app.post('/api/name/lookup', (req, res) => nameLookup(req as any, res as any));
 app.post('/api/name/register', (req, res) => nameRegister(req as any, res as any));
 app.post('/api/vanity/request', (req, res) => vanityRequest(req as any, res as any));
+app.post('/api/vanity/skr', (req, res) => vanitySkr(req as any, res as any));
 app.post('/api/vanity/status', (req, res) => vanityStatus(req as any, res as any));
 app.post('/api/vanity/challenge', (req, res) => vanityChallenge(req as any, res as any));
 app.post('/api/vanity/reveal', (req, res) => vanityReveal(req as any, res as any));
 
 app.get('/api/payments/meta', (req, res) => paymentsMeta(req as any, res as any));
 app.post('/api/payments/quote', (req, res) => paymentsQuote(req as any, res as any));
+app.post('/api/payments/receipt', (req, res) => paymentsReceipt(req as any, res as any));
 
 app.post('/api/smns/lookup', (req, res) => smnsLookup(req as any, res as any));
 app.post('/api/smns/challenge', (req, res) => smnsChallenge(req as any, res as any));

@@ -4,8 +4,6 @@ import Disclosure from './screens/Disclosure';
 import Wallet from './screens/Wallet';
 import Identity from './screens/Identity';
 import Devkit from './screens/Devkit';
-import Profile from './screens/Profile';
-import Landing from './screens/Landing';
 
 const shortKey = (key: string) => `${key.slice(0, 4)}...${key.slice(-4)}`;
 
@@ -24,7 +22,7 @@ const AppHeader = () => {
         </div>
         <div className="brand-copy">
           <div className="brand-title">SeekerMigrate</div>
-          <div className="brand-sub">Solana Mobile DevKit</div>
+          <div className="brand-sub">Web preview</div>
         </div>
       </div>
 
@@ -34,8 +32,8 @@ const AppHeader = () => {
           href="https://dappstore.solanamobile.com/"
           target="_blank"
           rel="noreferrer"
-          aria-label="Download SeekerMigrate on Solana Mobile dApp Store"
-          title="Download app now"
+          aria-label="Open Solana Mobile dApp Store"
+          title="Open dApp Store"
         >
           <img className="pill-icon" src="/solana-mobile.png" alt="" />
         </a>
@@ -64,7 +62,6 @@ const AppShell = () => {
               <Route path="wallet" element={<Wallet />} />
               <Route path="identity" element={<Identity />} />
               <Route path="devkit" element={<Devkit />} />
-              <Route path="profile" element={<Profile />} />
               <Route path="*" element={<Navigate to="disclosure" replace />} />
             </Routes>
           </div>
@@ -77,12 +74,7 @@ const AppShell = () => {
 const App = () => {
   return (
     <Routes>
-      {/* Default entry: client-facing app flow */}
       <Route path="/" element={<Navigate to="/app/disclosure" replace />} />
-
-      {/* Keep the old marketing-style page reachable (optional) */}
-      <Route path="/about" element={<Landing />} />
-
       <Route path="/app/*" element={<AppShell />} />
       <Route path="*" element={<Navigate to="/app/disclosure" replace />} />
     </Routes>

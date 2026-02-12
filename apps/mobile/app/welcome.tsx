@@ -1,40 +1,89 @@
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { Image, ImageBackground, StyleSheet, View } from 'react-native';
-import { Button, Paragraph, YStack } from 'tamagui';
+import { Checkbox, Paragraph, XStack, YStack } from 'tamagui';
+import { useState } from 'react';
 
-export default function Welcome() {
+import { useOnboarding } from '../src/onboarding/OnboardingContext';
+import { triggerHaptic } from '../src/onboarding/feedback';
+import { enforceMinFeedbackWindow } from '../src/onboarding/motion';
+import { ActionButton, StateNotice } from './ui';
+
+export default function WelcomeDisclosureScreen() {
   const router = useRouter();
+  const onboarding = useOnboarding();
+  const [confirmed, setConfirmed] = useState(false);
+
+  if (!onboarding.ready) {
+    return (
+      <YStack flex={1} justifyContent="center" padding="$5">
+        <StateNotice title="Loading" body="Preparing your setup..." />
+      </YStack>
+    );
+  }
+
+  if (onboarding.status.disclosureAccepted) {
+    if (!onboarding.status.tutorialSeen) return <Redirect href="/tutorial" />;
+    return <Redirect href="/wallet" />;
+  }
+
+  async function acceptAndContinue() {
+    if (!confirmed) {
+      void triggerHaptic('warning');
+      return;
+    }
+
+    const startedAt = Date.now();
+    await onboarding.setDisclosureAccepted(true);
+    await enforceMinFeedbackWindow(startedAt);
+    void triggerHaptic('success');
+
+    if (!onboarding.status.tutorialSeen) {
+      router.replace('/tutorial');
+      return;
+    }
+    router.replace('/wallet');
+  }
 
   return (
-    <ImageBackground
-      source={require('../assets/images/splash.brand.png')}
-      resizeMode="cover"
-      style={styles.bg}
-    >
+    <ImageBackground source={require('../assets/images/splash.brand.png')} resizeMode="cover" style={styles.bg}>
       <View style={styles.overlay} />
-      <YStack flex={1} justifyContent="flex-end" padding="$6" gap="$4">
-        <View style={styles.wordmarkWrap}>
-          <View style={styles.wordmarkFrame}>
-            <Image
-              source={require('../assets/images/wordmark.jpg')}
-              style={styles.wordmark}
-              resizeMode="contain"
+      <YStack flex={1} justifyContent="center" padding="$5" gap="$4">
+        <Image source={require('../assets/images/wordmark.jpg')} style={styles.wordmark} resizeMode="contain" />
+
+        <StateNotice
+          title="Welcome to SeekerMigrate"
+          body="Move to a wallet-first Solana Mobile flow with guided setup for wallet, identity, and migration."
+        >
+          <Paragraph color="$gray11">You stay in control of your wallet and keys at every step.</Paragraph>
+
+          <XStack gap="$2" alignItems="center" marginTop="$2">
+            <Checkbox
+              size="$4"
+              checked={confirmed}
+              onCheckedChange={(v) => {
+                const checked = Boolean(v);
+                setConfirmed(checked);
+                void triggerHaptic(checked ? 'selection' : 'impact-light');
+              }}
+              accessibilityLabel="Confirm terms"
             />
-          </View>
-        </View>
+            <Paragraph color="$gray11" flex={1}>
+              I understand and accept these terms to continue.
+            </Paragraph>
+          </XStack>
 
-        <Paragraph opacity={0.85}>
-          Upgrade Kit for Solana Mobile: wallet auth, payments, vanity, and name service.
-        </Paragraph>
-
-        <YStack gap="$2">
-          <Button size="$5" theme="active" onPress={() => router.push('/seeker')}>
-            Get started
-          </Button>
-          <Button size="$5" chromeless onPress={() => router.push('/seeker')}>
-            Skip
-          </Button>
-        </YStack>
+          <ActionButton
+            marginTop="$2"
+            theme="active"
+            size="$5"
+            disabled={!confirmed}
+            onPress={acceptAndContinue}
+            haptic={confirmed ? 'success' : 'warning'}
+            accessibilityLabel="Accept terms and continue"
+          >
+            Accept and continue
+          </ActionButton>
+        </StateNotice>
       </YStack>
     </ImageBackground>
   );
@@ -44,22 +93,11 @@ const styles = StyleSheet.create({
   bg: { flex: 1 },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-  },
-  wordmarkWrap: {
-    alignItems: 'flex-start',
-  },
-  wordmarkFrame: {
-    width: 320,
-    height: 210,
-    borderRadius: 18,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
+    backgroundColor: 'rgba(0,0,0,0.62)',
   },
   wordmark: {
-    width: '100%',
-    height: '100%',
+    width: 280,
+    height: 140,
+    alignSelf: 'center',
   },
 });

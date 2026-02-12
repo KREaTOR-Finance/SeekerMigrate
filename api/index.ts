@@ -35,6 +35,7 @@ const routes: Record<string, Loader> = {
 
   // Vanity
   'POST /vanity/request': () => import('./vanity/request.js'),
+  'POST /vanity/skr': () => import('./vanity/skr.js'),
   'POST /vanity/status': () => import('./vanity/status.js'),
   'POST /vanity/challenge': () => import('./vanity/challenge.js'),
   'POST /vanity/reveal': () => import('./vanity/reveal.js'),

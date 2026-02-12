@@ -4,8 +4,9 @@ import bs58 from 'bs58';
 import nacl from 'tweetnacl';
 import { getSupabaseAdmin } from '../_utils/supabase';
 import { getRpcUrl, normalizeCluster, type SolanaCluster } from '../_utils/solana';
-import { getUsdPrice, requiredLamportsForUsd } from '../smns/_pricing';
-import { verifySolPayment } from '../smns/_verifyPayment';
+import { getUsdPrice } from '../smns/_pricing';
+import { verifyPayment } from '../smns/_verifyPayment';
+import { quoteUsd } from '../payments/_quote';
 
 type Payload = {
   owner?: string;
@@ -92,17 +93,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const usd = getUsdPrice('profile_badge_service');
-    const minLamports = await requiredLamportsForUsd(usd);
+    const quoted = await quoteUsd({ usd, currency: 'SOL' });
+    const minAtomic = BigInt(String(quoted.atomicAmount));
 
-    const payment = await verifySolPayment({
+    const payment = await verifyPayment({
       signature: paymentSignature,
       rpcUrl: rpc,
       treasury,
-      minLamports,
+      currency: 'SOL',
+      minAtomic,
     });
 
     if (!payment.ok) {
-      return res.status(402).json({ error: payment.error, matchedLamports: (payment as any).matchedLamports ?? null });
+      return res.status(402).json({
+        error: payment.error,
+        matchedAtomic: (payment as any).matchedAtomic?.toString?.() ?? null,
+      });
     }
 
     const requestId = crypto.randomUUID();
@@ -129,7 +135,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       product: 'profile_badge_service',
       payment_signature: paymentSignature,
       usd,
-      matched_lamports: payment.matchedLamports,
+      matched_lamports: Number((payment as any).matchedAtomic ?? 0n),
       cluster,
     });
 
@@ -143,8 +149,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       rpc,
       treasury,
       paymentSignature,
-      paidLamports: payment.matchedLamports,
-      requiredLamports: minLamports,
+      paidLamports: Number((payment as any).matchedAtomic ?? 0n),
+      requiredLamports: Number(minAtomic),
       note: 'Badge request queued. Minting/publishing is performed as a service asynchronously.',
     });
   } catch (err) {

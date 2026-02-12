@@ -11,10 +11,17 @@ export default {
       'ts-jest',
       {
         useESM: true,
+        tsconfig: {
+          rootDir: '.',
+          module: 'esnext',
+          moduleResolution: 'bundler',
+          esModuleInterop: true,
+          types: ['jest', 'node'],
+        },
       },
     ],
   },
-  testMatch: ['**/__tests__/**/*.test.ts'],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.js'],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',

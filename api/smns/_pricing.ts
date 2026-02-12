@@ -1,6 +1,6 @@
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
-export type SmnsProduct = 'smns_name' | 'vanity' | 'devkit' | 'profile_badge_service';
+export type SmnsProduct = 'smns_name' | 'vanity' | 'wizard' | 'devkit' | 'profile_badge_service';
 
 export function getUsdPrice(product: SmnsProduct): number {
   switch (product) {
@@ -8,6 +8,8 @@ export function getUsdPrice(product: SmnsProduct): number {
       return 25;
     case 'vanity':
       return 25;
+    case 'wizard':
+      return 50;
     case 'devkit':
       return 50;
     case 'profile_badge_service':

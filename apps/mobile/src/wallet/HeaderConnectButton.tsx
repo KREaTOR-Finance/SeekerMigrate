@@ -8,7 +8,7 @@ export function HeaderConnectButton() {
   const { connected, publicKey } = useWallet();
 
   return (
-    <Pressable onPress={() => router.push('/wallet')}>
+    <Pressable onPress={() => router.push('/wallet')} accessibilityRole="button" accessibilityLabel="Open wallet setup">
       <XStack
         alignItems="center"
         gap="$2"
@@ -20,7 +20,7 @@ export function HeaderConnectButton() {
         borderColor="rgba(244, 246, 255, 0.14)"
       >
         <Paragraph fontSize={12} opacity={0.9}>
-          {connected && publicKey ? formatPk(publicKey) : 'Connect'}
+          {connected && publicKey ? `Wallet ${formatPk(publicKey)}` : 'Connect wallet'}
         </Paragraph>
       </XStack>
     </Pressable>

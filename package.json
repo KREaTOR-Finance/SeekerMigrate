@@ -7,13 +7,26 @@
     "seekermigrate": "dist/cli.js"
   },
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsup",
-    "dev": "tsup --watch",
+    "dev": "npm run dev:mobile",
     "dev:web": "npm --prefix apps/web run dev",
     "build:web": "npm --prefix apps/web run build",
     "preview:web": "npm --prefix apps/web run preview",
+    "dev:mobile": "npm --prefix apps/mobile run dev:client",
+    "dev:mobile:lan": "npm --prefix apps/mobile run start -- --lan",
+    "dev:mobile:android": "npm --prefix apps/mobile run android",
+    "dev:mobile:quick": "npm run mobile:bootstrap && npm run dev:mobile",
+    "mobile:bootstrap": "npm install --workspaces --include-workspace-root",
+    "mobile:eas:configure": "npm --prefix apps/mobile run eas:configure",
+    "build:mobile:apk": "npm --prefix apps/mobile run build:apk",
+    "build:mobile:aab": "npm --prefix apps/mobile run build:aab",
+    "submit:mobile:android": "npm --prefix apps/mobile run submit:android",
     "start": "node dist/cli.js",
     "preview:local": "node scripts/local-preview.mjs",
     "telegram:start": "node dist/telegram.js",
@@ -21,8 +34,11 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests",
     "lint": "eslint src/ --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
+    "typecheck:mobile": "npm --prefix apps/mobile exec tsc --noEmit",
     "prepublishOnly": "npm run build",
-    "dev:api": "tsx watch api/_dev/server.ts"
+    "dev:api": "tsx watch api/_dev/server.ts",
+    "test:onboarding-wizard": "node --experimental-vm-modules node_modules/jest/bin/jest.js onboarding-wizard-edge --passWithNoTests",
+    "checks:sweeping": "powershell -ExecutionPolicy Bypass -File scripts/sweeping-checks.ps1"
   },
   "keywords": [
     "solana",

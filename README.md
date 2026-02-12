@@ -2,7 +2,7 @@
 
 SeekerMigrate started as a migration CLI and now powers a Solana Mobile onboarding experience for Solana Seeker (SKR) users. The repo still contains the CLI/analyzer for developers, but what SKR users open is the mobile app that embeds the generated wallet, payment, vanity, and name-service components. The Telegram bot is an operational tool for the team, not something end users interact with.
 
-Auth conversion and the migration report are free. Full DevKit access is designed to unlock after a developer registers and resolves a SeekerMigrate name.
+Auth conversion and the migration report are free. Full migration delivery unlocks per wallet after the user completes wallet identity setup.
 
 - **Wallet authentication:** existing analyzer + generator output still provides `WalletConnectButton`, `WalletAuthContext`, and `SolanaWalletProvider`.
 - **Payments:** the new `WalletPaymentModule` component wires a connected Solana wallet to a merchant account and an optional payment backend.
@@ -12,7 +12,7 @@ Auth conversion and the migration report are free. Full DevKit access is designe
 
 Each feature can be scaffolded through `npx seekermigrate auth`/`analyze`, which writes all of the components above into your output directory.
 
-The deployed surface on Vercel now includes a Solana-themed landing page at `/`, API routes under `/api/*`, and the operations webhook at `/webhook`.
+The deployed production surface is mobile-first (Solana Mobile dApp Store app + API routes under `/api/*` + operations webhook at `/webhook`). The web app in `apps/web` is retained only as an internal emulator/dev-client for testing.
 
 ## CLI usage (developer-only)
 
@@ -126,3 +126,11 @@ See: `apps/mobile/README.md`
 ## License
 
 MIT
+
+
+## Web surface policy
+
+- pps/web is **internal/testing-only** (emulator/dev-client validation).
+- Public product surface is mobile (pps/mobile) for Solana Mobile dApp Store.
+- Legacy web onboarding routes/screens were pruned to reduce accidental public use and maintenance risk.
+
